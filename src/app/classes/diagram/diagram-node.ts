@@ -53,5 +53,4 @@ export class DiagramNode {
         }
         this._svgElement.setAttribute('fill', 'black');
     }
-
 }
