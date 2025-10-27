@@ -27,6 +27,6 @@ export class MainTabComponent {
     constructor(private drawingStateService: DrawingStateService) {}
 
     onTabChange(event: MatTabChangeEvent) {
-        this.drawingStateService.set(event.index == Tab.DRAW)
+        this.drawingStateService.set(event.index === Tab.DRAW)
     }
 }
