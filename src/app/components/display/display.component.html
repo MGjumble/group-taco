@@ -1,9 +1,10 @@
-<svg #drawingArea class="canvas"
-     [class.disabled]="!isDrawingEnabled()"
-     (drop)="processDropEvent($event)"
-     (dragover)="prevent($event)">
-
+<svg
+    #drawingArea
+    class="canvas"
+    [class.disabled]="!isDrawingEnabled()"
+    (drop)="processDropEvent($event)"
+    (dragover)="prevent($event)">
     @for (node of diagram()?.nodes; track node.id) {
-        <g SvgNode [diagramNode]="node"/>
+        <g appSvgNode [diagramNode]="node" />
     }
 </svg>

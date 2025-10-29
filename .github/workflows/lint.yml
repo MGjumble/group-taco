@@ -1,0 +1,33 @@
+name: Linting & Checks
+
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - master
+
+jobs:
+    lint-and-format:
+        name: Linting, Formatting & Styles
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Code auschecken
+              uses: actions/checkout@v4
+
+            - name: Node.js einrichten
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '25'
+                  cache: 'npm'
+
+            - name: Abhängigkeiten installieren
+              run: npm ci
+
+            - name: ESLint ausführen
+              run: npm run lint
+
+            - name: Prettier-Check ausführen
+              run: npm run prettier:check

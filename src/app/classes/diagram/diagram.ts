@@ -1,13 +1,13 @@
-import {DiagramNode} from './diagram-node';
+import { DiagramNode } from './diagram-node';
 
 export class Diagram {
-    private readonly _nodes: Array<DiagramNode>;
+    private readonly _nodes: DiagramNode[];
 
-    constructor(elements: Array<DiagramNode>) {
+    constructor(elements: DiagramNode[]) {
         this._nodes = elements;
     }
 
-    get nodes(): Array<DiagramNode> {
+    get nodes(): DiagramNode[] {
         return this._nodes;
     }
 }

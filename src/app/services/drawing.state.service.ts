@@ -1,8 +1,7 @@
-import {Injectable, signal} from "@angular/core";
+import { Injectable, signal } from '@angular/core';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class DrawingStateService {
-
     readonly isDrawingEnabled = signal(true);
 
     enable() {
@@ -14,5 +13,4 @@ export class DrawingStateService {
     set(enabled: boolean) {
         this.isDrawingEnabled.set(enabled);
     }
-
 }
