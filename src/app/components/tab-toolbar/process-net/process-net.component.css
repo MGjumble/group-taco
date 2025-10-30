@@ -1,0 +1,14 @@
+:host {
+    border: 2px solid red;
+    display: block;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.process-net-container {
+    border: 1px solid #ccc;
+    padding: 15px;
+    background-color: #00ff00;
+    min-height: 100px;
+    min-width: 200px;
+}

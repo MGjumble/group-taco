@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { DrawingStateService } from '../../services/drawing.state.service';
@@ -23,9 +23,24 @@ import { Tab } from '../../classes/tabs';
     styleUrl: './main-tab.component.css',
 })
 export class MainTabComponent {
+    readonly clearAll = output<void>();
+    readonly fileContent = output<string>();
+
     private drawingStateService: DrawingStateService = inject(DrawingStateService);
 
+    selectedIndex = Tab.PROCESS_NET; // Start with Process Net tab selected
+
     onTabChange(event: MatTabChangeEvent) {
-        this.drawingStateService.set(event.index === Tab.DRAW);
+        this.drawingStateService.set(event.index === Tab.PROCESS_NET);
+    }
+
+    onClearAll() {
+        this.clearAll.emit();
+        console.log('MainTabComponent: Clear all event emitted');
+    }
+
+    onFileContent(content: string) {
+        this.fileContent.emit(content);
+        console.log('MainTabComponent: File content event emitted');
     }
 }

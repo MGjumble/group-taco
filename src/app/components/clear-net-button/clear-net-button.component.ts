@@ -13,12 +13,14 @@ import { MatIcon } from '@angular/material/icon';
 export class ClearNetButtonComponent {
     readonly title = input<string>('Clear Net');
     readonly buttonCleared = output<void>();
+    readonly clearAll = output<void>();
 
     private _displayService = inject(DisplayService);
 
     public clearNet() {
         this._displayService.clear();
         this.buttonCleared.emit();
+        this.clearAll.emit();
         console.log('Network cleared');
     }
 }

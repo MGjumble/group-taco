@@ -10,6 +10,7 @@ import { DrawingStateService } from '../../services/drawing.state.service';
 
 @Component({
     selector: 'app-display',
+    standalone: true,
     templateUrl: './display.component.html',
     imports: [SvgNodeComponent],
     styleUrls: ['./display.component.css'],

@@ -1,4 +1,4 @@
-<mat-tab-group (selectedTabChange)="onTabChange($event)">
+<mat-tab-group [selectedIndex]="selectedIndex" (selectedTabChange)="onTabChange($event)">
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon class="tab-icon">edit</mat-icon>
@@ -28,6 +28,6 @@
             <mat-icon class="tab-icon">flowchart</mat-icon>
             Process Net
         </ng-template>
-        <app-process-net></app-process-net>
+        <app-process-net (clearAll)="onClearAll()" (fileContent)="onFileContent($event)"></app-process-net>
     </mat-tab>
 </mat-tab-group>
