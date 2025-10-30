@@ -1,15 +1,41 @@
-<svg:polygon
-    xmlns:svg="http://www.w3.org/2000/svg"
-    [attr.points]="points()"
-    [attr.fill]="fillColor()"
-    (mousedown)="mouseDown($event)"
-    (mouseup)="mouseUp($event)" />
+<!-- Render places as circles -->
+@if (isPlace()) {
+    <svg:circle
+        xmlns:svg="http://www.w3.org/2000/svg"
+        [attr.cx]="circleX()"
+        [attr.cy]="circleY()"
+        [attr.r]="RADIUS"
+        [attr.fill]="placeFillColor()"
+        stroke="black"
+        stroke-width="2"
+        (mousedown)="mouseDown($event)"
+        (mouseup)="mouseUp($event)" />
+
+    <!-- ...existing code... -->
+}
+
+<!-- Render transitions as rectangles -->
+@if (isTransition()) {
+    <svg:rect
+        xmlns:svg="http://www.w3.org/2000/svg"
+        [attr.x]="rectX()"
+        [attr.y]="rectY()"
+        [attr.width]="RECT_WIDTH"
+        [attr.height]="RECT_HEIGHT"
+        [attr.fill]="transitionFillColor()"
+        stroke="black"
+        stroke-width="2"
+        (mousedown)="mouseDown($event)"
+        (mouseup)="mouseUp($event)" />
+}
+
+<!-- Node label -->
 <svg:text
     xmlns:svg="http://www.w3.org/2000/svg"
     [attr.x]="textX()"
     [attr.y]="textY()"
     text-anchor="middle"
     dominant-baseline="central"
-    class="node-label">
-    {{ diagramNode()?.id }}
+    [attr.class]="isTransition() ? 'transition-label' : 'node-label'">
+    {{ displayLabel() }}
 </svg:text>

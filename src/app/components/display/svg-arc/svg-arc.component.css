@@ -1,0 +1,8 @@
+.arc-label {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+    fill: blue;
+    pointer-events: none;
+}
+

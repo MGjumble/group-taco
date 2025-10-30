@@ -6,3 +6,19 @@
     pointer-events: none; /* Prevent text from interfering with mouse events */
 }
 
+.transition-label {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    fill: white;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.token-count {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    fill: black;
+    pointer-events: none;
+}
+

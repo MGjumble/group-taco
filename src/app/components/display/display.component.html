@@ -4,7 +4,29 @@
     [class.disabled]="!isDrawingEnabled()"
     (drop)="processDropEvent($event)"
     (dragover)="prevent($event)">
+
+    <!-- Arrow marker definition -->
+    <defs>
+        <marker
+            id="arrowhead"
+            markerWidth="10"
+            markerHeight="7"
+            refX="9"
+            refY="3.5"
+            orient="auto">
+            <polygon
+                points="0 0, 10 3.5, 0 7"
+                fill="black" />
+        </marker>
+    </defs>
+
+    <!-- Render arcs first (behind nodes) -->
+    @for (arc of diagram()?.arcs; track arc.id) {
+        <g appSvgArc [diagramArc]="arc" [nodes]="diagram()?.nodes || []" />
+    }
+
+    <!-- Render nodes on top -->
     @for (node of diagram()?.nodes; track node.id) {
-        <g appSvgNode [diagramNode]="node" />
+        <g appSvgNode [diagramNode]="node" [marking]="diagram()?.marking || {}" [labels]="diagram()?.labels || {}" />
     }
 </svg>

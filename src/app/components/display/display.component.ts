@@ -6,13 +6,14 @@ import { ExampleFileComponent } from '../example-file/example-file.component';
 import { FileReaderService } from '../../services/file-reader.service';
 import { HttpClient } from '@angular/common/http';
 import { SvgNodeComponent } from './svg-node/svg-node.component';
+import { SvgArcComponent } from './svg-arc/svg-arc.component';
 import { DrawingStateService } from '../../services/drawing.state.service';
 
 @Component({
     selector: 'app-display',
     standalone: true,
     templateUrl: './display.component.html',
-    imports: [SvgNodeComponent],
+    imports: [SvgNodeComponent, SvgArcComponent],
     styleUrls: ['./display.component.css'],
 })
 export class DisplayComponent implements OnInit, OnDestroy {
