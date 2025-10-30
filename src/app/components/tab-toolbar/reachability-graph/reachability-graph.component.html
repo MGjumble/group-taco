@@ -1,1 +1,5 @@
-<p>reachability-graph works!</p>
+<div>
+    <clear-net-button title="Clear Reachability Graph" (buttonCleared)="onNetCleared()" (clearAll)="onClearAll()"></clear-net-button>
+    <app-display (fileContent)="processSourceChange($event)"></app-display>
+</div>
+

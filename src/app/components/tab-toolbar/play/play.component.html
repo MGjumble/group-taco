@@ -1,1 +1,5 @@
-<p>play works!</p>
+<div>
+    <clear-net-button title="Clear Play" (buttonCleared)="onNetCleared()" (clearAll)="onClearAll()"></clear-net-button>
+    <app-display (fileContent)="processSourceChange($event)"></app-display>
+</div>
+

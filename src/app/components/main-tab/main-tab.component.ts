@@ -28,10 +28,11 @@ export class MainTabComponent {
 
     private drawingStateService: DrawingStateService = inject(DrawingStateService);
 
-    selectedIndex = Tab.PROCESS_NET; // Start with Process Net tab selected
+    selectedIndex = Tab.DRAW; // Select which tab to show by default
 
-    onTabChange(event: MatTabChangeEvent) {
-        this.drawingStateService.set(event.index === Tab.PROCESS_NET);
+    onTabChange() {
+        // Enable drawing for all tabs to allow file dropdowns everywhere
+        this.drawingStateService.set(true);
     }
 
     onClearAll() {
