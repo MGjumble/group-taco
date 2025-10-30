@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'clear-net-button',
+    selector: 'app-clear-net-button',
     standalone: true,
     imports: [MatButton, MatIcon],
     templateUrl: './clear-net-button.component.html',
