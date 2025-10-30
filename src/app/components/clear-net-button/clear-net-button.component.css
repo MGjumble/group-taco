@@ -1,0 +1,10 @@
+.clear-button {
+    margin: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.clear-button mat-icon {
+    margin-right: 0;
+}
