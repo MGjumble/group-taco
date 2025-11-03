@@ -8,7 +8,7 @@ export class DiagramPlace extends DiagramNode {
         this._tokens = initialTokens;
     }
 
-   override get tokenCount(): number {
+    override get tokenCount(): number {
         return this._tokens;
     }
 
