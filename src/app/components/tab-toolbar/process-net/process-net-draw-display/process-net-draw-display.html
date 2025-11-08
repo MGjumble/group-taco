@@ -3,7 +3,26 @@
         <h3>Drawing Area</h3>
         <button class="clear-btn" (click)="clearDrawing()">Clear Drawing</button>
         <button class="log-btn" (click)="logGraph()">Log Graph</button>
+        <button class="validate-btn" (click)="onValidate()">Validate Process Net</button>
+        @if (validation()) {
+            <button class="clear-validation-btn" (click)="clearValidation()">Clear Validation</button>
+        }
     </div>
+    @if (validation()) {
+        <div class="validation-result" [class.valid]="validation()?.valid" [class.invalid]="!validation()?.valid">
+            <h4>Validation Result: {{ validation()?.valid ? 'Valid ✅' : 'Invalid ❌' }}</h4>
+            @if (!validation()?.valid) {
+                <ul>
+                    @for (err of validation()?.errors; track $index) {
+                        <li>{{ err }}</li>
+                    }
+                </ul>
+            }
+            @if (validation()?.valid) {
+                <p>Keine Fehler gefunden.</p>
+            }
+        </div>
+    }
     <svg
         class="drawing-canvas"
         [class.drag-over]="isDragOver()"

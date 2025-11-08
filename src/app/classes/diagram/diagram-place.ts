@@ -22,6 +22,11 @@ export class DiagramPlace extends DiagramNode {
         return SHAPE.CIRCLE;
     }
 
+    // Expose original label (place id) if available
+    get label(): string | undefined {
+        return this._label;
+    }
+
     override get displayLabel(): string {
         return this._label ?? this.id;
     }
