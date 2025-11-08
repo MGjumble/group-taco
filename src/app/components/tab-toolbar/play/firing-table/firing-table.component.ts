@@ -9,5 +9,5 @@ import { FiringEntry } from '../../../../classes/firing-entry';
   styleUrl: './firing-table.component.css'
 })
 export class FiringTableComponent {
-  firingEntries = input.required<FiringEntry[]>();
+  firingEntries = input<FiringEntry[]>();
 }
