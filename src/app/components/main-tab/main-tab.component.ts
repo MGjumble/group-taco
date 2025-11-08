@@ -29,7 +29,7 @@ export class MainTabComponent {
     private _tabStateService: TabStateService = inject(TabStateService);
     private readonly _tabs: Tab[] = [Tab.DRAW, Tab.PLAY, Tab.REACHABILITY_GRAPH, Tab.PROCESS_NET];
 
-    selectedIndex = Tab.DRAW; // Select which tab to show by default
+    selectedIndex = Tab.PROCESS_NET; // Select which tab to show by default
 
     onTabChange(event: MatTabChangeEvent) {
         this._tabStateService.switchTo(this._tabs[event.index]);

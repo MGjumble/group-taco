@@ -10,6 +10,28 @@
         stroke-width="2"
         (mousedown)="mouseDown($event)"
         (mouseup)="mouseUp($event)" />
+
+    <!-- Tokens visualization inside place -->
+    @if (!showTokenNumber()) {
+        @for (token of tokenPositions(); track token.x + '-' + token.y) {
+            <svg:circle
+                xmlns:svg="http://www.w3.org/2000/svg"
+                [attr.cx]="token.x"
+                [attr.cy]="token.y"
+                r="5"
+                fill="black" />
+        }
+    } @else {
+        <svg:text
+            xmlns:svg="http://www.w3.org/2000/svg"
+            [attr.x]="circleX()"
+            [attr.y]="circleY()"
+            text-anchor="middle"
+            dominant-baseline="central"
+            class="token-count">
+            {{ tokenCount() }}
+        </svg:text>
+    }
 }
 
 <!-- Render transitions as rectangles -->

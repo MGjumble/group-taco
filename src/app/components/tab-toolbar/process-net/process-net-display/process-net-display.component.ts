@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { DisplayComponent } from '../../../display/display.component';
 import { SvgNodeComponent } from '../../../display/svg-node/svg-node.component';
 import { SvgArcComponent } from '../../../display/svg-arc/svg-arc.component';
+import { SHAPE } from '../../../../classes/diagram/diagram-node';
+import { DisplayableNode } from '../../../../classes/displayable-graph.interface';
 
 @Component({
     selector: 'app-process-net-display',
@@ -11,6 +13,15 @@ import { SvgArcComponent } from '../../../display/svg-arc/svg-arc.component';
     styleUrls: ['./process-net-display.component.css'],
 })
 export class ProcessNetDisplayComponent extends DisplayComponent {
+    private isDragging = false;
+    private dragStartPos = { x: 0, y: 0 };
+    private currentDragData: {
+        elementType: string;
+        elementId: string;
+        elementLabel: string;
+        elementTokens?: number;
+    } | null = null;
+
     override processDropEvent(e: DragEvent) {
         console.log('ProcessNetDisplayComponent: Drop event received', e);
         super.processDropEvent(e);
@@ -18,6 +29,114 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
 
     override prevent(e: DragEvent) {
         super.prevent(e);
+    }
+
+    onNodeMouseDown(event: MouseEvent, node: DisplayableNode) {
+        // Only start drag if left mouse button
+        if (event.button !== 0) {
+            return;
+        }
+
+        this.isDragging = false;
+        this.dragStartPos = { x: event.clientX, y: event.clientY };
+
+        const elementType = node.shape === SHAPE.CIRCLE ? 'place' : 'transition';
+        const elementId = node.id;
+        const elementLabel = node.displayLabel;
+        const elementTokens = elementType === 'place' ? node.tokenCount : undefined;
+
+        // Store the data for later use in drag
+        const dragData = {
+            elementType,
+            elementId,
+            elementLabel,
+            elementTokens,
+        };
+
+        // Add document-level listeners
+        const onMouseMove = (e: MouseEvent) => {
+            // Check if we've moved enough to start dragging (5px threshold)
+            const dx = e.clientX - this.dragStartPos.x;
+            const dy = e.clientY - this.dragStartPos.y;
+            if (!this.isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+                this.isDragging = true;
+                this.currentDragData = dragData;
+                this.startDrag(e, dragData);
+            }
+
+            if (this.isDragging) {
+                // Update drag data position
+                (window as any).__dragData = {
+                    ...dragData,
+                    clientX: e.clientX,
+                    clientY: e.clientY,
+                };
+            }
+        };
+
+        const onMouseUp = (e: MouseEvent) => {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+
+            if (this.isDragging) {
+                // Simulate drop event
+                this.simulateDrop(e);
+            }
+
+            this.isDragging = false;
+            this.currentDragData = null;
+        };
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    private startDrag(
+        event: MouseEvent,
+        dragData: { elementType: string; elementId: string; elementLabel: string; elementTokens?: number },
+    ) {
+        // Store data globally for the drop event
+        (window as any).__dragData = {
+            ...dragData,
+            clientX: event.clientX,
+            clientY: event.clientY,
+        };
+        console.log('ProcessNetDisplayComponent: Drag started for', dragData);
+    }
+
+    private simulateDrop(event: MouseEvent) {
+        // Find the drawing canvas element
+        const drawingCanvas = document.querySelector('.drawing-canvas');
+        if (!drawingCanvas) {
+            delete (window as any).__dragData;
+            return;
+        }
+
+        // Check if mouse is over the drawing canvas
+        const rect = drawingCanvas.getBoundingClientRect();
+        const isOverCanvas =
+            event.clientX >= rect.left &&
+            event.clientX <= rect.right &&
+            event.clientY >= rect.top &&
+            event.clientY <= rect.bottom;
+
+        if (isOverCanvas && this.currentDragData) {
+            // Trigger a custom drop event on the drawing canvas
+            const dropEvent = new CustomEvent('customDrop', {
+                detail: {
+                    ...this.currentDragData,
+                    clientX: event.clientX,
+                    clientY: event.clientY,
+                },
+            });
+            drawingCanvas.dispatchEvent(dropEvent);
+        }
+
+        // Clean up
+        delete (window as any).__dragData;
     }
 
     // Add any additional functionality specific to process-net-display here

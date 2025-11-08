@@ -1,0 +1,101 @@
+.drawing-area-container {
+    margin-top: 20px;
+    border: 2px solid blue;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #fafafa;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 5px;
+    background-color: #e8e8e8;
+    border-radius: 4px;
+}
+
+.toolbar h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.clear-btn {
+    padding: 6px 12px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.clear-btn:hover {
+    background-color: #d32f2f;
+}
+
+.drawing-canvas {
+    width: 100%;
+    height: 500px;
+    border: 2px dashed #2196F3;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.drawing-canvas:hover {
+    border-color: #1976D2;
+}
+
+.drawing-canvas.drag-over {
+    border-color: #4CAF50;
+    border-width: 3px;
+    background-color: #E8F5E9;
+    box-shadow: inset 0 0 20px rgba(76, 175, 80, 0.2);
+}
+
+.instructions {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #e3f2fd;
+    border-left: 4px solid #2196F3;
+    border-radius: 4px;
+}
+
+.instructions p {
+    margin: 5px 0;
+    font-size: 13px;
+    color: #1565C0;
+}
+
+/* Styling for draggable elements */
+g[appSvgNode] {
+    cursor: move;
+    transition: opacity 0.2s;
+}
+
+g[appSvgNode]:hover {
+    opacity: 0.8;
+}
+
+g[appSvgNode]:active {
+    cursor: grabbing;
+}
+
+/* Prevent text selection on all SVG elements */
+svg text {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none;
+}
+

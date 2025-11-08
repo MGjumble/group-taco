@@ -1,5 +1,6 @@
 import { Component, inject, output } from '@angular/core';
 import { ProcessNetDisplayComponent } from './process-net-display/process-net-display.component';
+import { ProcessNetDrawDisplayComponent } from './process-net-draw-display/process-net-draw-display';
 import { ParserService } from '../../../services/parser.service';
 import { DisplayService } from '../../../services/display.service';
 import { ClearNetButtonComponent } from '../../clear-net-button/clear-net-button.component';
@@ -7,7 +8,7 @@ import { ClearNetButtonComponent } from '../../clear-net-button/clear-net-button
 @Component({
     selector: 'app-process-net',
     standalone: true,
-    imports: [ProcessNetDisplayComponent, ClearNetButtonComponent],
+    imports: [ProcessNetDisplayComponent, ProcessNetDrawDisplayComponent, ClearNetButtonComponent],
     templateUrl: './process-net.component.html',
     styleUrl: './process-net.component.css',
 })

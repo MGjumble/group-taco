@@ -4,6 +4,10 @@
     height: 400px;
     border-style: dotted;
     border-color: lightgrey;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .canvas.disabled {
@@ -20,3 +24,28 @@
 }
 
 /* Additional styles specific to ProcessNetDisplayComponent */
+
+/* Draggable nodes styling */
+g[appSvgNode] {
+    cursor: grab;
+    transition: opacity 0.2s;
+}
+
+g[appSvgNode]:hover {
+    opacity: 0.7;
+}
+
+g[appSvgNode]:active {
+    cursor: grabbing;
+    opacity: 0.5;
+}
+
+/* Prevent text selection on all SVG elements */
+svg text {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none;
+}
+
