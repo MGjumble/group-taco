@@ -15,6 +15,8 @@ export class SvgNodeComponent {
     readonly RECT_HEIGHT = 30;
 
     readonly diagramNode = input<DisplayableNode>();
+    // Mark if this node is currently selected (for connection creation)
+    readonly selected = input<boolean>(false);
 
     readonly fillColor = signal('white');
 
@@ -116,6 +118,10 @@ export class SvgNodeComponent {
     readonly showTokenNumber = computed(() => {
         return this.isPlace() && this.tokenCount() > 6;
     });
+
+    // Computed values for selection highlighting
+    readonly isSelected = computed(() => !!this.selected());
+    readonly selectionStrokeColor = computed(() => (this.isSelected() ? 'orange' : 'transparent'));
 
     public mouseDown(e: MouseEvent) {
         this.fillColor.set('lightgray');

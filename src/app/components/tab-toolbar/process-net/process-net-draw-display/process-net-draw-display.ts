@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, OnDestroy, ElementRef, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy, ElementRef, inject, ChangeDetectorRef, computed } from '@angular/core';
 import { SvgNodeComponent } from '../../../display/svg-node/svg-node.component';
 import { DiagramNode } from '../../../../classes/diagram/diagram-node';
 import { DiagramPlace } from '../../../../classes/diagram/diagram-place';
@@ -7,6 +7,12 @@ import { DiagramTransition } from '../../../../classes/diagram/diagram-transitio
 interface DrawnElement {
     node: DiagramNode;
     id: string;
+}
+
+interface Connection {
+    id: string;
+    aId: string; // endpoint A element id
+    bId: string; // endpoint B element id
 }
 
 @Component({
@@ -19,8 +25,24 @@ interface DrawnElement {
 export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
     readonly drawnElements = signal<DrawnElement[]>([]);
     readonly isDragOver = signal<boolean>(false);
+    // Connections between nodes (undirected line between a place and a transition)
+    readonly connections = signal<Connection[]>([]);
+    // Derived lines with coordinates for rendering
+    readonly connectionLines = computed(() => {
+        return this.connections()
+            .map((c) => {
+                const a = this.getElementById(c.aId);
+                const b = this.getElementById(c.bId);
+                if (!a || !b) return null;
+                return { id: c.id, x1: a.node.x, y1: a.node.y, x2: b.node.x, y2: b.node.y };
+            })
+            .filter((v): v is { id: string; x1: number; y1: number; x2: number; y2: number } => v !== null);
+    });
+    // Currently selected element for making a connection (highlighted)
+    readonly selectedElementId = signal<string | null>(null);
 
     private elementIdCounter = 0;
+    private connectionIdCounter = 0;
     private draggedElement: DrawnElement | null = null;
     private dragOffset = { x: 0, y: 0 };
     private svgElement: SVGSVGElement | null = null;
@@ -54,6 +76,9 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
 
     private handleCanvasMouseDown = (event: MouseEvent) => {
         console.log('Drawing area: Canvas mousedown, target:', event.target);
+
+        // Only handle left clicks for dragging/moving
+        if (event.button !== 0) return;
 
         // Check if this is the drag overlay rect (which has its own handler)
         const target = event.target as Element;
@@ -210,6 +235,11 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
     onElementMouseDown(event: MouseEvent, element: DrawnElement) {
         console.log('Drawing area: Mouse down on element', element.id);
 
+        // Only start dragging for left mouse button
+        if (event.button !== 0) {
+            return;
+        }
+
         // Stop the event from reaching svg-node component's handlers
         event.stopImmediatePropagation();
         event.preventDefault();
@@ -226,6 +256,59 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
 
         document.addEventListener('mousemove', this.onDocumentMouseMove, true);
         document.addEventListener('mouseup', this.onDocumentMouseUp, true);
+    }
+
+    onElementRightClick(event: MouseEvent, element: DrawnElement) {
+        // Right-click selection and connection logic
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        const currentSelectedId = this.selectedElementId();
+        if (!currentSelectedId) {
+            // Nothing selected yet -> select this one
+            this.selectedElementId.set(element.id);
+            return;
+        }
+
+        if (currentSelectedId === element.id) {
+            // Toggle off selection if clicking the same element
+            this.selectedElementId.set(null);
+            return;
+        }
+
+        const first = this.drawnElements().find((e) => e.id === currentSelectedId);
+        const second = element;
+        if (!first) {
+            // Safety: reset selection
+            this.selectedElementId.set(null);
+            return;
+        }
+
+        const firstIsPlace = first.node instanceof DiagramPlace;
+        const firstIsTransition = first.node instanceof DiagramTransition;
+        const secondIsPlace = second.node instanceof DiagramPlace;
+        const secondIsTransition = second.node instanceof DiagramTransition;
+
+        // Only connect if exactly one is place and one is transition
+        if ((firstIsPlace && secondIsTransition) || (firstIsTransition && secondIsPlace)) {
+            // Check for duplicate connection (undirected)
+            const exists = this.connections().some(
+                (c) => (c.aId === first.id && c.bId === second.id) || (c.aId === second.id && c.bId === first.id),
+            );
+            if (!exists) {
+                const newConn: Connection = {
+                    id: `conn-${++this.connectionIdCounter}`,
+                    aId: first.id,
+                    bId: second.id,
+                };
+                this.connections.update((cs) => [...cs, newConn]);
+            }
+            // Clear selection after connecting
+            this.selectedElementId.set(null);
+        } else {
+            // If types don't match, replace selection with the newly clicked element
+            this.selectedElementId.set(element.id);
+        }
     }
 
     private onDocumentMouseMove = (event: MouseEvent) => {
@@ -321,10 +404,25 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
 
     clearDrawing() {
         this.drawnElements.set([]);
+        this.connections.set([]);
+        this.selectedElementId.set(null);
         this.elementIdCounter = 0;
+        this.connectionIdCounter = 0;
     }
 
     deleteElement(element: DrawnElement) {
+        // Remove the element
         this.drawnElements.update((elements) => elements.filter((e) => e.id !== element.id));
+        // Remove any connections referencing this element
+        this.connections.update((cs) => cs.filter((c) => c.aId !== element.id && c.bId !== element.id));
+        // Clear selection if it was this element
+        if (this.selectedElementId() === element.id) {
+            this.selectedElementId.set(null);
+        }
+    }
+
+    // Helpers for template
+    getElementById(id: string): DrawnElement | undefined {
+        return this.drawnElements().find((e) => e.id === id);
     }
 }
