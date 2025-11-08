@@ -4,4 +4,7 @@
         (buttonCleared)="onNetCleared()"
         (clearAll)="onClearAll()"></app-clear-net-button>
     <app-display (fileContent)="processSourceChange($event)"></app-display>
+    <br />
+    <app-firing-table [firingEntries]="firingEntries()"></app-firing-table>
+    <br />
 </div>
