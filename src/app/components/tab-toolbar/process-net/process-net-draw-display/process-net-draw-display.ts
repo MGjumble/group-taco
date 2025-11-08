@@ -13,6 +13,7 @@ interface Connection {
     id: string;
     aId: string; // endpoint A element id
     bId: string; // endpoint B element id
+    weight: number; // arc weight, >= 1
 }
 
 @Component({
@@ -34,9 +35,11 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
                 const a = this.getElementById(c.aId);
                 const b = this.getElementById(c.bId);
                 if (!a || !b) return null;
-                return { id: c.id, x1: a.node.x, y1: a.node.y, x2: b.node.x, y2: b.node.y };
+                return { id: c.id, x1: a.node.x, y1: a.node.y, x2: b.node.x, y2: b.node.y, weight: c.weight };
             })
-            .filter((v): v is { id: string; x1: number; y1: number; x2: number; y2: number } => v !== null);
+            .filter(
+                (v): v is { id: string; x1: number; y1: number; x2: number; y2: number; weight: number } => v !== null,
+            );
     });
     // Currently selected element for making a connection (highlighted)
     readonly selectedElementId = signal<string | null>(null);
@@ -300,6 +303,7 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
                     id: `conn-${++this.connectionIdCounter}`,
                     aId: first.id,
                     bId: second.id,
+                    weight: 1,
                 };
                 this.connections.update((cs) => [...cs, newConn]);
             }
@@ -309,6 +313,36 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
             // If types don't match, replace selection with the newly clicked element
             this.selectedElementId.set(element.id);
         }
+    }
+
+    // Increment connection weight (used by left click)
+    onConnectionMouseDown(event: MouseEvent, connectionId: string) {
+        // Accept left click only
+        if (event.button !== 0) return;
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        this.decrementConnectionWeight(connectionId);
+    }
+
+    // Increment connection weight (used by right click / context menu)
+    onConnectionRightClick(event: MouseEvent, connectionId: string) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        this.incrementConnectionWeight(connectionId);
+    }
+
+    private incrementConnectionWeight(connectionId: string) {
+        this.connections.update((cs) => cs.map((c) => (c.id === connectionId ? { ...c, weight: c.weight + 1 } : c)));
+    }
+
+    private decrementConnectionWeight(connectionId: string) {
+        this.connections.update((cs) =>
+            cs.map((c) => {
+                if (c.id !== connectionId) return c;
+                const newWeight = c.weight > 1 ? c.weight - 1 : 1; // enforce minimum 1
+                return { ...c, weight: newWeight };
+            }),
+        );
     }
 
     private onDocumentMouseMove = (event: MouseEvent) => {

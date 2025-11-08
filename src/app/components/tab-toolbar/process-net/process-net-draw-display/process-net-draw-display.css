@@ -99,3 +99,9 @@ svg text {
     pointer-events: none;
 }
 
+.connection-weight-label {
+    font-size: 12px;
+    fill: #222;
+    background: white; /* not visible in SVG, but kept for potential future foreignObject */
+    pointer-events: none;
+}
