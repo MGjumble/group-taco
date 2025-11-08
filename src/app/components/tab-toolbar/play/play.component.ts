@@ -2,12 +2,18 @@ import { Component, inject, output } from '@angular/core';
 import { DisplayComponent } from '../../display/display.component';
 import { ParserService } from '../../../services/parser.service';
 import { DisplayService } from '../../../services/display.service';
+import { PlayService } from '../../../services/play.service';
 import { ClearNetButtonComponent } from '../../clear-net-button/clear-net-button.component';
+import { FiringTableComponent } from './firing-table/firing-table.component';
 
 @Component({
     selector: 'app-play',
     standalone: true,
-    imports: [DisplayComponent, ClearNetButtonComponent],
+    imports: [
+        DisplayComponent,
+        ClearNetButtonComponent,
+        FiringTableComponent
+    ],
     templateUrl: './play.component.html',
     styleUrl: './play.component.css',
 })
@@ -17,6 +23,9 @@ export class PlayComponent {
 
     private _parserService = inject(ParserService);
     private _displayService = inject(DisplayService);
+    private _playService = inject(PlayService);
+
+    firingEntries = this._playService.firingEntries;
 
     public processSourceChange(newSource: string) {
         console.log('PlayComponent: Processing file content', newSource);
