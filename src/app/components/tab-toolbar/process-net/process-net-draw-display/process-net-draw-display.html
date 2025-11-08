@@ -37,13 +37,14 @@
                     [attr.y2]="line.y2"
                     (mousedown)="onConnectionMouseDown($event, line.id)"
                     (contextmenu)="onConnectionRightClick($event, line.id)" />
-                <!-- Visible thin line -->
+                <!-- Visible thin directed line -->
                 <line
                     class="connection-line"
                     [attr.x1]="line.x1"
                     [attr.y1]="line.y1"
                     [attr.x2]="line.x2"
-                    [attr.y2]="line.y2" />
+                    [attr.y2]="line.y2"
+                    marker-end="url(#arrowhead-draw)" />
                 @if (line.weight > 1) {
                     <text
                         [attr.x]="(line.x1 + line.x2) / 2"
@@ -81,7 +82,7 @@
         <p>Drag and drop elements from the display area above to create your process net.</p>
         <p>Left-click and drag elements to move them around.</p>
         <p>Middle-click a place or transition to delete it (connections removed automatically).</p>
-        <p>Right-click one place or transition to select, then right-click the opposite type to connect them.</p>
+        <p>Right-click one place or transition to select it as the source, then right-click an opposite type to create a directed connection toward the second element.</p>
         <p>Left-click a connection to decrease its weight (minimum 1, hidden at 1). Right-click to increase its weight.</p>
         <p>Middle-click a connection to delete it.</p>
     </div>

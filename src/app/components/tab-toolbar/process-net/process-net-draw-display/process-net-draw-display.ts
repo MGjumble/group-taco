@@ -11,8 +11,8 @@ interface DrawnElement {
 
 interface Connection {
     id: string;
-    aId: string; // endpoint A element id
-    bId: string; // endpoint B element id
+    aId: string; // source element id (first clicked)
+    bId: string; // target element id (second clicked)
     weight: number; // arc weight, >= 1
 }
 
@@ -26,7 +26,7 @@ interface Connection {
 export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
     readonly drawnElements = signal<DrawnElement[]>([]);
     readonly isDragOver = signal<boolean>(false);
-    // Connections between nodes (undirected line between a place and a transition)
+    // Connections between nodes (directed: from aId -> bId)
     readonly connections = signal<Connection[]>([]);
     // Derived lines with coordinates for rendering
     readonly connectionLines = computed(() => {
@@ -35,7 +35,10 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
                 const a = this.getElementById(c.aId);
                 const b = this.getElementById(c.bId);
                 if (!a || !b) return null;
-                return { id: c.id, x1: a.node.x, y1: a.node.y, x2: b.node.x, y2: b.node.y, weight: c.weight };
+
+                // Compute trimmed endpoints so the line starts/ends at shape boundaries
+                const { x1, y1, x2, y2 } = this.computeTrimmedLine(a, b);
+                return { id: c.id, x1, y1, x2, y2, weight: c.weight };
             })
             .filter(
                 (v): v is { id: string; x1: number; y1: number; x2: number; y2: number; weight: number } => v !== null,
@@ -53,6 +56,11 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
     private elementRef = inject(ElementRef);
     private cdr = inject(ChangeDetectorRef);
     private customDropListener: ((event: Event) => void) | null = null;
+
+    // Dimensions consistent with SvgNodeComponent
+    private readonly PLACE_RADIUS = 25;
+    private readonly TRANSITION_HALF_W = 25; // RECT_WIDTH/2
+    private readonly TRANSITION_HALF_H = 15; // RECT_HEIGHT/2
 
     ngOnInit() {
         // Listen for custom drop events
@@ -302,19 +310,21 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
 
         // Only connect if exactly one is place and one is transition
         if ((firstIsPlace && secondIsTransition) || (firstIsTransition && secondIsPlace)) {
-            // Check for duplicate connection (undirected)
-            const exists = this.connections().some(
-                (c) => (c.aId === first.id && c.bId === second.id) || (c.aId === second.id && c.bId === first.id),
+            // Remove any existing connection between these two nodes (either direction)
+            this.connections.update((cs) =>
+                cs.filter(
+                    (c) =>
+                        !((c.aId === first.id && c.bId === second.id) || (c.aId === second.id && c.bId === first.id)),
+                ),
             );
-            if (!exists) {
-                const newConn: Connection = {
-                    id: `conn-${++this.connectionIdCounter}`,
-                    aId: first.id,
-                    bId: second.id,
-                    weight: 1,
-                };
-                this.connections.update((cs) => [...cs, newConn]);
-            }
+            // Add new directed connection first -> second
+            const newConn: Connection = {
+                id: `conn-${++this.connectionIdCounter}`,
+                aId: first.id,
+                bId: second.id,
+                weight: 1,
+            };
+            this.connections.update((cs) => [...cs, newConn]);
             // Clear selection after connecting
             this.selectedElementId.set(null);
         } else {
@@ -451,6 +461,34 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
         return { x: svgPoint.x, y: svgPoint.y };
     }
 
+    // Compute trimmed line from center of a to center of b, shortened by shape radii/half-sizes
+    private computeTrimmedLine(a: DrawnElement, b: DrawnElement): { x1: number; y1: number; x2: number; y2: number } {
+        const ax = a.node.x;
+        const ay = a.node.y;
+        const bx = b.node.x;
+        const by = b.node.y;
+        const dx = bx - ax;
+        const dy = by - ay;
+        const len = Math.hypot(dx, dy) || 1;
+        const ux = dx / len;
+        const uy = dy / len;
+
+        const aOffset =
+            a.node instanceof DiagramPlace
+                ? this.PLACE_RADIUS
+                : Math.min(this.TRANSITION_HALF_W, this.TRANSITION_HALF_H);
+        const bOffset =
+            b.node instanceof DiagramPlace
+                ? this.PLACE_RADIUS
+                : Math.min(this.TRANSITION_HALF_W, this.TRANSITION_HALF_H);
+
+        const x1 = ax + ux * aOffset;
+        const y1 = ay + uy * aOffset;
+        const x2 = bx - ux * bOffset;
+        const y2 = by - uy * bOffset;
+        return { x1, y1, x2, y2 };
+    }
+
     clearDrawing() {
         this.drawnElements.set([]);
         this.connections.set([]);
@@ -525,25 +563,23 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
                 const b = this.getElementById(c.bId);
                 console.log({
                     id: c.id,
-                    aId: c.aId,
-                    aLabel: a?.node.displayLabel,
-                    bId: c.bId,
-                    bLabel: b?.node.displayLabel,
+                    from: c.aId,
+                    fromLabel: a?.node.displayLabel,
+                    to: c.bId,
+                    toLabel: b?.node.displayLabel,
                     weight: c.weight,
                 });
             });
             console.groupEnd();
         }
 
-        // Simple adjacency representation
+        // Directed adjacency representation
         const adjacency: Record<string, { to: string; weight: number }[]> = {};
         connections.forEach((c) => {
             if (!adjacency[c.aId]) adjacency[c.aId] = [];
-            if (!adjacency[c.bId]) adjacency[c.bId] = [];
             adjacency[c.aId].push({ to: c.bId, weight: c.weight });
-            adjacency[c.bId].push({ to: c.aId, weight: c.weight });
         });
-        console.groupCollapsed('Adjacency List');
+        console.groupCollapsed('Adjacency List (directed)');
         Object.entries(adjacency).forEach(([id, edges]) => {
             const el = this.getElementById(id);
             console.log(
