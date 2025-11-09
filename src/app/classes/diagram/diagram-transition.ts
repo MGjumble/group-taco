@@ -10,12 +10,12 @@ export class DiagramTransition extends DiagramNode {
     private readonly _outputArcs: DiagramArc[];
 
     constructor(
-            id: string,
-            label: string,
-            inputPlaces: DiagramPlace[],
-            outputPlaces: DiagramPlace[],
-            inputArcs: DiagramArc[],
-            outputArcs: DiagramArc[]
+        id: string,
+        label: string,
+        inputPlaces: DiagramPlace[],
+        outputPlaces: DiagramPlace[],
+        inputArcs: DiagramArc[],
+        outputArcs: DiagramArc[],
     ) {
         super(id);
         this._label = label || id;
@@ -36,25 +36,33 @@ export class DiagramTransition extends DiagramNode {
     override get displayLabel(): string {
         return this._label;
     }
-    
-    public isActivated() : boolean {
-        return this._inputPlaces.every((place, index) => 
-            place.tokenCount >= this._inputArcs[index].weight
-        );
+
+    private isActivated(): boolean {
+        return this._inputPlaces.every((place, index) => place.tokenCount >= this._inputArcs[index].weight);
     }
 
-    public processClick(): boolean {
-        if (!this.isActivated()) return false;
+    private fire(): void {
         this._inputArcs.forEach((arc, i) => {
             const place = this._inputPlaces[i];
             place.tokens = place.tokenCount - arc.weight;
-            console.log(`Transition ${this.label}: Removed ${arc.weight} tokens from Place ${place.id}, new token count: ${place.tokenCount}`);
+            console.log(
+                `Transition ${this.label}: Removed ${arc.weight} tokens from Place ${place.id}, new token count: ${place.tokenCount}`,
+            );
         });
         this._outputArcs.forEach((arc, i) => {
             const place = this._outputPlaces[i];
             place.tokens = place.tokenCount + arc.weight;
-            console.log(`Transition ${this.label}: Added ${arc.weight} tokens to Place ${place.id}, new token count: ${place.tokenCount}`);
+            console.log(
+                `Transition ${this.label}: Added ${arc.weight} tokens to Place ${place.id}, new token count: ${place.tokenCount}`,
+            );
         });
-        return true;
+    }
+
+    public processClick(): boolean {
+        if (this.isActivated()) {
+            this.fire();
+            return true;
+        }
+        return false;
     }
 }
