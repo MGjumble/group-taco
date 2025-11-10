@@ -5,6 +5,24 @@ import { SvgArcComponent } from '../../../display/svg-arc/svg-arc.component';
 import { SHAPE } from '../../../../classes/diagram/diagram-node';
 import { DisplayableNode } from '../../../../classes/displayable-graph.interface';
 
+// Added strongly typed drag data interfaces and Window augmentation
+interface BasicDragData {
+    elementType: 'place' | 'transition';
+    elementId: string;
+    elementLabel: string;
+    elementTokens?: number;
+}
+interface DragData extends BasicDragData {
+    clientX: number;
+    clientY: number;
+}
+
+declare global {
+    interface Window {
+        __dragData?: DragData;
+    }
+}
+
 @Component({
     selector: 'app-process-net-display',
     standalone: true,
@@ -15,12 +33,7 @@ import { DisplayableNode } from '../../../../classes/displayable-graph.interface
 export class ProcessNetDisplayComponent extends DisplayComponent {
     private isDragging = false;
     private dragStartPos = { x: 0, y: 0 };
-    private currentDragData: {
-        elementType: string;
-        elementId: string;
-        elementLabel: string;
-        elementTokens?: number;
-    } | null = null;
+    private currentDragData: BasicDragData | null = null;
 
     override processDropEvent(e: DragEvent) {
         console.log('ProcessNetDisplayComponent: Drop event received', e);
@@ -40,13 +53,13 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
         this.isDragging = false;
         this.dragStartPos = { x: event.clientX, y: event.clientY };
 
-        const elementType = node.shape === SHAPE.CIRCLE ? 'place' : 'transition';
+        const elementType: BasicDragData['elementType'] = node.shape === SHAPE.CIRCLE ? 'place' : 'transition';
         const elementId = node.id;
         const elementLabel = node.displayLabel;
         const elementTokens = elementType === 'place' ? node.tokenCount : undefined;
 
         // Store the data for later use in drag
-        const dragData = {
+        const dragData: BasicDragData = {
             elementType,
             elementId,
             elementLabel,
@@ -66,7 +79,7 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
 
             if (this.isDragging) {
                 // Update drag data position
-                (window as any).__dragData = {
+                window.__dragData = {
                     ...dragData,
                     clientX: e.clientX,
                     clientY: e.clientY,
@@ -94,12 +107,9 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
         event.stopPropagation();
     }
 
-    private startDrag(
-        event: MouseEvent,
-        dragData: { elementType: string; elementId: string; elementLabel: string; elementTokens?: number },
-    ) {
+    private startDrag(event: MouseEvent, dragData: BasicDragData) {
         // Store data globally for the drop event
-        (window as any).__dragData = {
+        window.__dragData = {
             ...dragData,
             clientX: event.clientX,
             clientY: event.clientY,
@@ -111,7 +121,7 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
         // Find the drawing canvas element
         const drawingCanvas = document.querySelector('.drawing-canvas');
         if (!drawingCanvas) {
-            delete (window as any).__dragData;
+            delete window.__dragData;
             return;
         }
 
@@ -136,7 +146,7 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
         }
 
         // Clean up
-        delete (window as any).__dragData;
+        delete window.__dragData;
     }
 
     // Add any additional functionality specific to process-net-display here
