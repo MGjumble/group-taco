@@ -36,7 +36,6 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
     private currentDragData: BasicDragData | null = null;
 
     override processDropEvent(e: DragEvent) {
-        console.log('ProcessNetDisplayComponent: Drop event received', e);
         super.processDropEvent(e);
     }
 
@@ -114,7 +113,6 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
             clientX: event.clientX,
             clientY: event.clientY,
         };
-        console.log('ProcessNetDisplayComponent: Drag started for', dragData);
     }
 
     private simulateDrop(event: MouseEvent) {

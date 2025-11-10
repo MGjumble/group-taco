@@ -111,31 +111,22 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
     }
 
     private handleCanvasMouseDown = (event: MouseEvent) => {
-        console.log('Drawing area: Canvas mousedown, target:', event.target);
-
         // Only handle left clicks for dragging/moving
         if (event.button !== 0) return;
 
         // Check if this is the drag overlay rect (which has its own handler)
         const target = event.target as Element;
         if (target.classList.contains('drag-overlay')) {
-            console.log('Drawing area: Event handled by overlay rect, skipping');
             return;
         }
 
         // Find if we clicked on an element wrapper
         const wrapper = target.closest('.element-wrapper');
 
-        console.log('Drawing area: Found wrapper:', wrapper);
-
         if (wrapper) {
             const elementId = wrapper.getAttribute('data-element-id');
-            console.log('Drawing area: Element ID:', elementId);
-
             if (elementId) {
                 const element = this.drawnElements().find((e) => e.id === elementId);
-                console.log('Drawing area: Found element:', element);
-
                 if (element) {
                     this.onElementMouseDown(event, element);
                 }
@@ -178,7 +169,6 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
         };
 
         this.drawnElements.update((elements) => [...elements, newElement]);
-        console.log('Drawing area: Element added', newElement);
     }
 
     onDragOver(event: DragEvent) {
@@ -269,8 +259,6 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
     }
 
     onElementMouseDown(event: MouseEvent, element: DrawnElement) {
-        console.log('Drawing area: Mouse down on element', element.id);
-
         // Middle click (button 1) deletes the element and its connections
         if (event.button === 1) {
             event.stopImmediatePropagation();
@@ -295,7 +283,6 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
         if (svgPoint) {
             this.dragOffset.x = svgPoint.x - element.node.x;
             this.dragOffset.y = svgPoint.y - element.node.y;
-            console.log('Drawing area: Starting drag from', element.node.x, element.node.y, 'offset:', this.dragOffset);
         }
 
         document.addEventListener('mousemove', this.onDocumentMouseMove, true);
@@ -441,14 +428,10 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
 
             // Force Angular to detect the changes just in case
             this.cdr.detectChanges();
-
-            console.log('Drawing area: Moving to', newX, newY);
         }
     };
 
     private onDocumentMouseUp = (event: MouseEvent) => {
-        console.log('Drawing area: Mouse up, dragging was:', this.isDraggingElement);
-
         if (this.isDraggingElement) {
             event.preventDefault();
             event.stopImmediatePropagation();
