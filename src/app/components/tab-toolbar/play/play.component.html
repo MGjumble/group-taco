@@ -1,10 +1,11 @@
-<div>
+<div class="draw-tab-toolbar-container">
+    <app-upload></app-upload>
     <app-clear-net-button
         title="Clear Play"
         (buttonCleared)="onNetCleared()"
         (clearAll)="onClearAll()"></app-clear-net-button>
-    <app-display (fileContent)="processSourceChange($event)"></app-display>
-    <br />
-    <app-firing-table [firingEntries]="firingEntries()"></app-firing-table>
-    <br />
 </div>
+<app-display></app-display>
+<br />
+<app-firing-table [firingEntries]="firingEntries()"></app-firing-table>
+<br />
