@@ -1,7 +1,9 @@
-import { Component, computed, input, signal, TemplateRef, untracked, viewChild } from '@angular/core';
+import { Component, computed, inject, input, signal, TemplateRef, untracked, viewChild } from '@angular/core';
 import { Coords } from '../../../classes/json-petri-net';
 import { SHAPE } from '../../../classes/diagram/diagram-node';
 import { DisplayableNode } from '../../../classes/displayable-graph.interface';
+import { DiagramTransition } from '../../../classes/diagram/diagram-transition';
+import { PlayService } from '../../../services/play.service';
 
 @Component({
     selector: 'g[appSvgNode]',
@@ -17,6 +19,8 @@ export class SvgNodeComponent {
     readonly diagramNode = input<DisplayableNode>();
     // Mark if this node is currently selected (for connection creation)
     readonly selected = input<boolean>(false);
+
+    private _playService = inject(PlayService);
 
     readonly fillColor = signal('white');
 
@@ -129,6 +133,14 @@ export class SvgNodeComponent {
 
     public mouseUp(e: MouseEvent) {
         this.fillColor.set('white');
+    }
+
+    public click() {
+        const node = this.diagramNode();
+        if (node instanceof DiagramTransition) {
+            const isActivated = node.processClick();
+            this._playService.processTransitionClick(node.label, isActivated);
+        }
     }
 
     protected readonly untracked = untracked;

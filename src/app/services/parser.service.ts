@@ -18,15 +18,17 @@ export class ParserService {
             const marking = rawData['marking'] || {};
             const labels = rawData['labels'] || {};
 
-            // Parse places and transitions as nodes
+            // Parse places as nodes
             const places = this.parsePlaces(rawData['places'], marking);
-            const transitions = this.parseTransitions(rawData['transitions'], labels);
-
-            const allNodes = [...places, ...transitions];
-            this.setPosition(allNodes, rawData['layout']);
 
             // Parse arcs
             const arcs = this.parseArcs(rawData['arcs'], rawData['layout']);
+
+            // Parse transitions as nodes
+            const transitions = this.parseTransitions(rawData['transitions'], labels, places, arcs);
+
+            const allNodes = [...places, ...transitions];
+            this.setPosition(allNodes, rawData['layout']);
 
             return new Diagram(places, transitions, arcs);
         } catch (e) {
@@ -45,13 +47,32 @@ export class ParserService {
         });
     }
 
-    private parseTransitions(transitionIds: string[] | undefined, labels: Record<string, string>): DiagramTransition[] {
+    private parseTransitions(
+        transitionIds: string[] | undefined,
+        labels: Record<string, string>,
+        places: DiagramPlace[],
+        arcs: DiagramArc[],
+    ): DiagramTransition[] {
         if (!transitionIds || !Array.isArray(transitionIds)) {
             return [];
         }
+
         return transitionIds.map((id) => {
             const label = labels[id] || id;
-            return new DiagramTransition(id, label);
+
+            const inputArcs = arcs.filter((arc) => arc.target === id);
+            const outputArcs = arcs.filter((arc) => arc.source === id);
+
+            const inputPlaces =
+                inputArcs
+                    .map((arc) => places.find((place) => place.id === arc.source))
+                    .filter((place): place is DiagramPlace => place !== undefined) || [];
+            const outputPlaces =
+                outputArcs
+                    .map((arc) => places.find((place) => place.id === arc.target))
+                    .filter((place): place is DiagramPlace => place !== undefined) || [];
+
+            return new DiagramTransition(id, label, inputPlaces, outputPlaces, inputArcs, outputArcs);
         });
     }
 

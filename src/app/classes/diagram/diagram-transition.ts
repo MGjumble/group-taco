@@ -1,11 +1,28 @@
+import { DiagramArc } from './diagram-arc';
 import { DiagramNode, SHAPE } from './diagram-node';
+import { DiagramPlace } from './diagram-place';
 
 export class DiagramTransition extends DiagramNode {
     private readonly _label: string;
+    private readonly _inputPlaces: DiagramPlace[];
+    private readonly _outputPlaces: DiagramPlace[];
+    private readonly _inputArcs: DiagramArc[];
+    private readonly _outputArcs: DiagramArc[];
 
-    constructor(id: string, label: string) {
+    constructor(
+        id: string,
+        label: string,
+        inputPlaces: DiagramPlace[],
+        outputPlaces: DiagramPlace[],
+        inputArcs: DiagramArc[],
+        outputArcs: DiagramArc[],
+    ) {
         super(id);
         this._label = label || id;
+        this._inputPlaces = inputPlaces;
+        this._outputPlaces = outputPlaces;
+        this._inputArcs = inputArcs;
+        this._outputArcs = outputArcs;
     }
 
     get label(): string {
@@ -18,5 +35,26 @@ export class DiagramTransition extends DiagramNode {
 
     override get displayLabel(): string {
         return this._label;
+    }
+
+    private isActivated(): boolean {
+        return this._inputPlaces.every((place, index) => place.tokenCount >= this._inputArcs[index].weight);
+    }
+
+    private fire(): void {
+        this._inputArcs.forEach((arc, i) => {
+            const place = this._inputPlaces[i];
+            place.tokens = place.tokenCount - arc.weight;
+        });
+        this._outputArcs.forEach((arc, i) => {
+            const place = this._outputPlaces[i];
+            place.tokens = place.tokenCount + arc.weight;
+        });
+    }
+
+    public processClick(): boolean {
+        const isActivated = this.isActivated();
+        if (isActivated) this.fire();
+        return isActivated;
     }
 }

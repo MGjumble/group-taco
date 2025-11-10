@@ -1,36 +1,23 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, effect, inject, output } from '@angular/core';
 import { DisplayComponent } from '../../display/display.component';
-import { ParserService } from '../../../services/parser.service';
-import { DisplayService } from '../../../services/display.service';
 import { ClearNetButtonComponent } from '../../clear-net-button/clear-net-button.component';
+import { TabStateService } from '../../../services/tab-state.service';
+import { Tab } from '../../../classes/tabs';
+import { UploadComponent } from '../../upload/upload.component';
 
 @Component({
     selector: 'app-reachability-graph',
     standalone: true,
-    imports: [DisplayComponent, ClearNetButtonComponent],
+    imports: [DisplayComponent, ClearNetButtonComponent, UploadComponent],
     templateUrl: './reachability-graph.component.html',
     styleUrl: './reachability-graph.component.css',
 })
 export class ReachabilityGraphComponent {
     readonly clearAll = output<void>();
-    readonly fileContent = output<string>();
+    private _tabStateService = inject(TabStateService);
 
-    private _parserService = inject(ParserService);
-    private _displayService = inject(DisplayService);
-
-    public processSourceChange(newSource: string) {
-        console.log('ReachabilityGraphComponent: Processing file content', newSource);
-
-        // Emit the file content so it can be propagated up to the app component
-        this.fileContent.emit(newSource);
-
-        const result = this._parserService.parse(newSource);
-        if (result !== undefined) {
-            this._displayService.display(result);
-            console.log('ReachabilityGraphComponent: Diagram displayed', result);
-        } else {
-            console.log('ReachabilityGraphComponent: Failed to parse content');
-        }
+    constructor() {
+        this.initializeTabEffect();
     }
 
     public onNetCleared() {
@@ -40,5 +27,16 @@ export class ReachabilityGraphComponent {
     public onClearAll() {
         this.clearAll.emit();
         console.log('ReachabilityGraphComponent: Clear all event emitted');
+    }
+
+    private initializeTabEffect() {
+        effect(() => {
+            const currentTab = this._tabStateService.currentTab();
+            if (currentTab === Tab.REACHABILITY_GRAPH) {
+                //TODO: call some method that calculates the reachability graph automatically when switching to the tab
+                // by using a reachabilityGraphService or something similar
+                console.log('ReachabilityGraphComponent: Switched to Reachability Graph tab');
+            }
+        });
     }
 }

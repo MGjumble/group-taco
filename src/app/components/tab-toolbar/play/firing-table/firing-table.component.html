@@ -1,0 +1,18 @@
+<table>
+    <thead>
+        <tr>
+            <th>Firing Sequence</th>
+            <th>Transition Count</th>
+            <th>End Marking</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (entry of firingEntries(); track entry.id) {
+            <tr>
+                <td>{{ entry.firingSequence }}</td>
+                <td>{{ entry.transitionCount }}</td>
+                <td>{{ entry.endMarking }}</td>
+            </tr>
+        }
+    </tbody>
+</table>

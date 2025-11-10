@@ -31,6 +31,14 @@ export class Diagram implements DisplayableGraph {
         return [...this._places, ...this._transitions];
     }
 
+    get marking(): Record<string, number> {
+        const marking: Record<string, number> = {};
+        this._places.forEach((place) => {
+            marking[place.id] = place.tokenCount;
+        });
+        return marking;
+    }
+
     getNodes(): DisplayableNode[] {
         return this.allNodes;
     }

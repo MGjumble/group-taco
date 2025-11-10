@@ -1,36 +1,48 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, effect, inject, output } from '@angular/core';
 import { DisplayComponent } from '../../display/display.component';
-import { ParserService } from '../../../services/parser.service';
 import { DisplayService } from '../../../services/display.service';
+import { PlayService } from '../../../services/play.service';
 import { ClearNetButtonComponent } from '../../clear-net-button/clear-net-button.component';
+import { FiringTableComponent } from './firing-table/firing-table.component';
+import { Tab } from '../../../classes/tabs';
+import { TabStateService } from '../../../services/tab-state.service';
+import { SourcePetriNetService } from '../../../services/source-petri-net.service';
+import { UploadComponent } from '../../upload/upload.component';
 
 @Component({
     selector: 'app-play',
     standalone: true,
-    imports: [DisplayComponent, ClearNetButtonComponent],
+    imports: [DisplayComponent, ClearNetButtonComponent, FiringTableComponent, UploadComponent],
     templateUrl: './play.component.html',
     styleUrl: './play.component.css',
 })
 export class PlayComponent {
     readonly clearAll = output<void>();
-    readonly fileContent = output<string>();
-
-    private _parserService = inject(ParserService);
+    private _tabStateService = inject(TabStateService);
+    private _sourceNetService = inject(SourcePetriNetService);
     private _displayService = inject(DisplayService);
+    private _playService = inject(PlayService);
 
-    public processSourceChange(newSource: string) {
-        console.log('PlayComponent: Processing file content', newSource);
+    firingEntries = this._playService.firingEntries;
 
-        // Emit the file content so it can be propagated up to the app component
-        this.fileContent.emit(newSource);
+    constructor() {
+        this.initializeTabEffect();
+    }
 
-        const result = this._parserService.parse(newSource);
-        if (result !== undefined) {
-            this._displayService.display(result);
-            console.log('PlayComponent: Diagram displayed', result);
-        } else {
-            console.log('PlayComponent: Failed to parse content');
-        }
+    private initializeTabEffect() {
+        effect(() => {
+            const currentTab = this._tabStateService.currentTab();
+            if (currentTab === Tab.PLAY) {
+                console.log('PlayComponent: Switched to Play tab');
+                const sourceNet = this._sourceNetService.getCurrentSourceNet();
+
+                if (sourceNet) {
+                    this._displayService.display(sourceNet);
+                } else {
+                    this._displayService.clear();
+                }
+            }
+        });
     }
 
     public onNetCleared() {

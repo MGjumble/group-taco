@@ -1,40 +1,48 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, effect, inject, output } from '@angular/core';
 import { DisplayComponent } from '../../display/display.component';
-import { ParserService } from '../../../services/parser.service';
 import { DisplayService } from '../../../services/display.service';
 import { ClearNetButtonComponent } from '../../clear-net-button/clear-net-button.component';
+import { UploadComponent } from '../../upload/upload.component';
+import { Tab } from '../../../classes/tabs';
+import { TabStateService } from '../../../services/tab-state.service';
+import { SourcePetriNetService } from '../../../services/source-petri-net.service';
 
 @Component({
     selector: 'app-draw',
     standalone: true,
-    imports: [DisplayComponent, ClearNetButtonComponent],
+    imports: [DisplayComponent, ClearNetButtonComponent, UploadComponent],
     templateUrl: './draw.component.html',
     styleUrl: './draw.component.css',
 })
 export class DrawComponent {
     readonly clearAll = output<void>();
-    readonly fileContent = output<string>();
-
-    private _parserService = inject(ParserService);
+    private _tabStateService = inject(TabStateService);
+    private _sourceNetService = inject(SourcePetriNetService);
     private _displayService = inject(DisplayService);
 
-    public processSourceChange(newSource: string) {
-        console.log('DrawComponent: Processing file content', newSource);
+    constructor() {
+        this.initializeTabEffect();
+    }
 
-        // Emit the file content so it can be propagated up to the app component
-        this.fileContent.emit(newSource);
+    private initializeTabEffect() {
+        effect(() => {
+            const currentTab = this._tabStateService.currentTab();
+            if (currentTab === Tab.DRAW) {
+                console.log('DrawComponent: Switched to Draw tab');
+                const sourceNet = this._sourceNetService.getCurrentSourceNet();
 
-        const result = this._parserService.parse(newSource);
-        if (result !== undefined) {
-            this._displayService.display(result);
-            console.log('DrawComponent: Diagram displayed', result);
-        } else {
-            console.log('DrawComponent: Failed to parse content');
-        }
+                if (sourceNet) {
+                    this._displayService.display(sourceNet);
+                } else {
+                    this._displayService.clear();
+                }
+            }
+        });
     }
 
     public onNetCleared() {
         console.log('DrawComponent: Net cleared from button');
+        this._displayService.clear();
     }
 
     public onClearAll() {
