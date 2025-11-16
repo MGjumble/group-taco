@@ -13,7 +13,7 @@ export class FiringTableComponent {
 
     formatMarking(marking: Record<string, number>): string {
         return Object.entries(marking)
-            .map(([key, value]) => `${key}: ${value}`)
+            .map(([key, value]) => `${key}:${value}`)
             .join(', ');
     }
 }
