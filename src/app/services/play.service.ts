@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { FiringEntry } from '../classes/firing-entry';
 import { ToasterNotificationService } from './toaster-notification.service';
+import { DiagramTransition } from '../classes/diagram/diagram-transition';
 
 @Injectable({ providedIn: 'root' })
 export class PlayService {
@@ -12,14 +13,17 @@ export class PlayService {
     firingEntries = signal<FiringEntry[]>([{ id: 1, firingSequence: '', transitionCount: 0, endMarking: '' }]);
     private _notificationService = inject(ToasterNotificationService);
 
-    processTransitionClick(label: string, isActivated: boolean): void {
-        if (isActivated) this.addTransitionToFiringSequence(label);
+    processTransitionClick(node: DiagramTransition): void {
+        if (node.isActivated()) {
+            node.fire();
+            this.addTransitionToFiringSequence(node.label);
+        }
         else
             this._notificationService.showWarning(
                 'Transition not activated',
-                `The transition ${label} is not activated and cannot be fired.`,
+                `The transition ${node.label} is not activated and cannot be fired.`,
             );
-    }
+        }
 
     addTransitionToFiringSequence(label: string): void {
         this.firingEntries.update((entries) => {
