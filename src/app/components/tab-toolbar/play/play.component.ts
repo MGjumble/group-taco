@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, output, signal } from '@angular/core';
+import { Component, effect, inject, output } from '@angular/core';
 import { DisplayComponent } from '../../display/display.component';
 import { DisplayService } from '../../../services/display.service';
 import { PlayService } from '../../../services/play.service';
@@ -8,7 +8,7 @@ import { Tab } from '../../../classes/tabs';
 import { TabStateService } from '../../../services/tab-state.service';
 import { SourcePetriNetService } from '../../../services/source-petri-net.service';
 import { UploadComponent } from '../../upload/upload.component';
-import { Diagram } from 'src/app/classes/diagram/diagram';
+import { Diagram } from '../../../classes/diagram/diagram';
 import { Subscription } from 'rxjs';
 
 @Component({
