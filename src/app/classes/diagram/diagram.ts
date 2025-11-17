@@ -9,14 +9,16 @@ export class Diagram implements DisplayableGraph {
     private readonly _places: DiagramPlace[];
     private readonly _transitions: DiagramTransition[];
     private readonly _arcs: DiagramArc[];
+    private readonly _startMarking: Record<string, number>;
 
     private _markingChanged$ = new BehaviorSubject<Record<string, number>>({});
-    public marking$ = this._markingChanged$.asObservable();
+    public currentMarking$ = this._markingChanged$.asObservable();
 
     constructor(places: DiagramPlace[] = [], transitions: DiagramTransition[] = [], arcs: DiagramArc[] = []) {
         this._places = places;
         this._transitions = transitions;
         this._arcs = arcs;
+        this._startMarking = this.marking;
         this.updateMarking();
     }
 
@@ -42,6 +44,10 @@ export class Diagram implements DisplayableGraph {
             marking[place.id] = place.tokenCount;
         });
         return marking;
+    }
+
+    get startMarking(): Record<string, number> {
+        return this._startMarking;
     }
 
     updateMarking(): void {

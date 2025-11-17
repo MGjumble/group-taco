@@ -38,9 +38,9 @@ export class PlayComponent {
     ngOnInit(): void {
         this._sub = this._displayService.diagram$.subscribe((diagram) => {
             if (diagram && diagram instanceof Diagram) {
-                this._playService.startMarking = diagram.marking;
+                this._playService.startMarking = diagram.startMarking;
 
-                this._markingSub = diagram.marking$.subscribe((marking) => {
+                this._markingSub = diagram.currentMarking$.subscribe((marking) => {
                     this._playService.currentMarking = marking;
                 });
             }
