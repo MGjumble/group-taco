@@ -9,7 +9,7 @@ import { TabStateService } from '../../../services/tab-state.service';
 import { SourcePetriNetService } from '../../../services/source-petri-net.service';
 import { UploadComponent } from '../../upload/upload.component';
 import { Diagram } from '../../../classes/diagram/diagram';
-import { Subscription } from 'rxjs';
+import { filter, Subscription, switchMap, tap } from 'rxjs';
 
 @Component({
     selector: 'app-play',
@@ -22,7 +22,6 @@ export class PlayComponent {
     readonly clearAll = output<void>();
 
     private _sub?: Subscription;
-    private _markingSub?: Subscription;
 
     private _tabStateService = inject(TabStateService);
     private _sourceNetService = inject(SourcePetriNetService);
@@ -36,20 +35,21 @@ export class PlayComponent {
     }
 
     ngOnInit(): void {
-        this._sub = this._displayService.diagram$.subscribe((diagram) => {
-            if (diagram && diagram instanceof Diagram) {
-                this._playService.startMarking = diagram.startMarking;
-
-                this._markingSub = diagram.currentMarking$.subscribe((marking) => {
-                    this._playService.currentMarking = marking;
-                });
-            }
-        });
+        this._sub = this._displayService.diagram$
+            .pipe(
+                filter((diagram) => !!diagram && diagram instanceof Diagram),
+                tap((diagram: Diagram) => {
+                    this._playService.startMarking = diagram.startMarking;
+                }),
+                switchMap((diagram: Diagram) => diagram.currentMarking$),
+            )
+            .subscribe((marking) => {
+                this._playService.currentMarking = marking;
+            });
     }
 
     ngOnDestroy(): void {
         this._sub?.unsubscribe();
-        this._markingSub?.unsubscribe();
     }
 
     private initializeTabEffect() {
