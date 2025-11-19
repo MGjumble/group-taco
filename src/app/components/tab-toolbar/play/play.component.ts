@@ -1,20 +1,18 @@
-import { Component, effect, inject, OnDestroy, OnInit, output } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, output } from '@angular/core';
 import { DisplayComponent } from '../../display/display.component';
 import { DisplayService } from '../../../services/display.service';
 import { PlayService } from '../../../services/play.service';
 import { ClearNetButtonComponent } from '../../clear-net-button/clear-net-button.component';
 import { FiringTableComponent } from './firing-table/firing-table.component';
-import { Tab } from '../../../classes/tabs';
-import { TabStateService } from '../../../services/tab-state.service';
-import { SourcePetriNetService } from '../../../services/source-petri-net.service';
-import { UploadComponent } from '../../upload/upload.component';
 import { Diagram } from '../../../classes/diagram/diagram';
 import { filter, Subscription, switchMap, tap } from 'rxjs';
+import { UploadComponent } from '../upload/upload.component';
+import { SaveComponent } from '../save/save.component';
 
 @Component({
     selector: 'app-play',
     standalone: true,
-    imports: [DisplayComponent, ClearNetButtonComponent, FiringTableComponent, UploadComponent],
+    imports: [DisplayComponent, ClearNetButtonComponent, FiringTableComponent, UploadComponent, SaveComponent],
     templateUrl: './play.component.html',
     styleUrl: './play.component.css',
 })
@@ -23,8 +21,6 @@ export class PlayComponent implements OnInit, OnDestroy {
 
     private _sub?: Subscription;
 
-    private _tabStateService = inject(TabStateService);
-    private _sourceNetService = inject(SourcePetriNetService);
     private _displayService = inject(DisplayService);
     private _playService = inject(PlayService);
 
