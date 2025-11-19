@@ -1,4 +1,4 @@
-import { Component, effect, inject, output } from '@angular/core';
+import { Component, effect, inject, OnDestroy, OnInit, output } from '@angular/core';
 import { DisplayComponent } from '../../display/display.component';
 import { DisplayService } from '../../../services/display.service';
 import { PlayService } from '../../../services/play.service';
@@ -18,7 +18,7 @@ import { filter, Subscription, switchMap, tap } from 'rxjs';
     templateUrl: './play.component.html',
     styleUrl: './play.component.css',
 })
-export class PlayComponent {
+export class PlayComponent implements OnInit, OnDestroy {
     readonly clearAll = output<void>();
 
     private _sub?: Subscription;
@@ -30,15 +30,15 @@ export class PlayComponent {
 
     firingEntries = this._playService.firingEntries;
 
-    constructor() {
-        this.initializeTabEffect();
-    }
-
+    /**
+     * Subscribes to loading of new diagrams to marking updates of the current diagram.
+     */
     ngOnInit(): void {
         this._sub = this._displayService.diagram$
             .pipe(
                 filter((diagram) => !!diagram && diagram instanceof Diagram),
                 tap((diagram: Diagram) => {
+                    this._playService.resetFiringEntries();
                     this._playService.startMarking = diagram.startMarking;
                 }),
                 switchMap((diagram: Diagram) => diagram.currentMarking$),
@@ -50,22 +50,6 @@ export class PlayComponent {
 
     ngOnDestroy(): void {
         this._sub?.unsubscribe();
-    }
-
-    private initializeTabEffect() {
-        effect(() => {
-            const currentTab = this._tabStateService.currentTab();
-            if (currentTab === Tab.PLAY) {
-                console.log('PlayComponent: Switched to Play tab');
-                const sourceNet = this._sourceNetService.getCurrentSourceNet();
-
-                if (sourceNet) {
-                    this._displayService.display(sourceNet);
-                } else {
-                    this._displayService.clear();
-                }
-            }
-        });
     }
 
     public onNetCleared() {
