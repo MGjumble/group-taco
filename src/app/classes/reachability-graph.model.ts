@@ -1,6 +1,7 @@
 import { DisplayableGraph, DisplayableNode, DisplayableEdge } from './displayable-graph.interface';
 import { SHAPE } from './diagram/diagram-node';
 import { Coords } from './json-petri-net';
+import { Signal } from '@angular/core';
 // ---------------------------------------------- THIS FILE CAN BE REMOVED BEFORE MERGING ----------------------------------------------
 
 /**
@@ -18,8 +19,8 @@ class StateNode implements DisplayableNode {
         return `[${this.id}]`;
     }
     // eslint-disable-next-line @typescript-eslint/class-literal-property-style
-    get tokenCount(): number {
-        return 0;
+    get tokenCount(): Signal<number> {
+        return this.tokenCount;
     }
 
     constructor(id: string, x: number, y: number) {
