@@ -30,8 +30,6 @@ export class ExampleFileComponent {
     }
 
     addFileLink(e: DragEvent) {
-        console.log('drag start', e);
-
         e.dataTransfer!.effectAllowed = 'link';
         e.dataTransfer!.setData(ExampleFileComponent.META_DATA_CODE, this.link());
     }

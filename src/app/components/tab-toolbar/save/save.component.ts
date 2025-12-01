@@ -12,7 +12,7 @@ import { PetriNetSavingService } from '../../../services/petri-net-saving.servic
 export class SaveComponent {
     private _petriNetSavingService = inject(PetriNetSavingService);
 
-    protected onSave() {
-        this._petriNetSavingService.savePetriNet();
+    protected onSave(format: 'json' | 'pnml') {
+        this._petriNetSavingService.savePetriNet(format);
     }
 }
