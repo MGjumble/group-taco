@@ -7,6 +7,8 @@ export class ModeService {
     private toasterService = inject(ToasterNotificationService);
     private modeSignal = signal<AppMode>(AppMode.LEARN);
 
+    readonly currentMode = this.modeSignal.asReadonly();
+
     readonly isExamMode = computed(() => this.modeSignal() == AppMode.EXAM);
 
     toggleMode(): void {
