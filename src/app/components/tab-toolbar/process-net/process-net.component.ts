@@ -3,11 +3,18 @@ import { ProcessNetDisplayComponent } from './process-net-display/process-net-di
 import { ProcessNetDrawDisplayComponent } from './process-net-draw-display/process-net-draw-display';
 import { ClearNetButtonComponent } from '../../clear-net-button/clear-net-button.component';
 import { UploadComponent } from '../upload/upload.component';
+import { ModeToggleComponent } from '../mode-toggle/mode-toggle.component';
 
 @Component({
     selector: 'app-process-net',
     standalone: true,
-    imports: [ProcessNetDisplayComponent, ProcessNetDrawDisplayComponent, ClearNetButtonComponent, UploadComponent],
+    imports: [
+        ProcessNetDisplayComponent,
+        ProcessNetDrawDisplayComponent,
+        ClearNetButtonComponent,
+        UploadComponent,
+        ModeToggleComponent,
+    ],
     templateUrl: './process-net.component.html',
     styleUrl: './process-net.component.css',
 })

@@ -8,11 +8,19 @@ import { Diagram } from '../../../classes/diagram/diagram';
 import { filter, Subscription, switchMap, tap } from 'rxjs';
 import { UploadComponent } from '../upload/upload.component';
 import { SaveComponent } from '../save/save.component';
+import { ModeToggleComponent } from '../mode-toggle/mode-toggle.component';
 
 @Component({
     selector: 'app-play',
     standalone: true,
-    imports: [DisplayComponent, ClearNetButtonComponent, FiringTableComponent, UploadComponent, SaveComponent],
+    imports: [
+        DisplayComponent,
+        ClearNetButtonComponent,
+        FiringTableComponent,
+        UploadComponent,
+        SaveComponent,
+        ModeToggleComponent,
+    ],
     templateUrl: './play.component.html',
     styleUrl: './play.component.css',
 })

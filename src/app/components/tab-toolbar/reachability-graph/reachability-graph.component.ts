@@ -4,11 +4,12 @@ import { ClearNetButtonComponent } from '../../clear-net-button/clear-net-button
 import { TabStateService } from '../../../services/tab-state.service';
 import { Tab } from '../../../classes/tabs';
 import { UploadComponent } from '../upload/upload.component';
+import { ModeToggleComponent } from '../mode-toggle/mode-toggle.component';
 
 @Component({
     selector: 'app-reachability-graph',
     standalone: true,
-    imports: [DisplayComponent, ClearNetButtonComponent, UploadComponent],
+    imports: [DisplayComponent, ClearNetButtonComponent, UploadComponent, ModeToggleComponent],
     templateUrl: './reachability-graph.component.html',
     styleUrl: './reachability-graph.component.css',
 })
