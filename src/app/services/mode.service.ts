@@ -32,10 +32,19 @@ export class ModeService {
     private toasterService = inject(ToasterNotificationService);
     private modeSignal = signal<AppMode>(AppMode.LEARN);
 
-    readonly currentMode = this.modeSignal.asReadonly();
+    /**
+     * Exposes the current application mode as a read-only signal.
+     */
+    readonly currentMode = this._modeSignal.asReadonly();
 
-    readonly isExamMode = computed(() => this.modeSignal() == AppMode.EXAM);
+    /**
+     * Computed signal that indicates whether the application is in EXAM mode.
+     */
+    readonly isExamMode = computed(() => this._modeSignal() === AppMode.EXAM);
 
+    /**
+     * Toggles the application mode between LEARN and EXAM.
+     */
     toggleMode(): void {
         this.modeSignal.update((current) => (current === AppMode.LEARN ? AppMode.EXAM : AppMode.LEARN));
         this.toasterService.showInfo('Modus gewechselt', `Du befindest dich jetzt im ${this.modeSignal()}.`);
