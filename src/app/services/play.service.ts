@@ -12,6 +12,7 @@ export class PlayService {
     private _notificationService = inject(ToasterNotificationService);
     private _sourceNetService = inject(SourcePetriNetService);
     private _tabStateService = inject(TabStateService);
+    //inject reach service
 
     private _startMarking: Record<string, number> = {};
     private _currentMarking = signal<Record<string, number>>(this._startMarking);
@@ -44,6 +45,8 @@ export class PlayService {
             diagram.updateMarking();
             this._sourceNetService.updateEditedNet(diagram);
             this._addTransitionToFiringSequence(node.label);
+//also update reachability graph model? --> dem reach service übergeben, nach Sortierung, service entfernt placebezeichner und sortiert nur nummern
+
         } else
             this._notificationService.showWarning(
                 'Transition not activated',

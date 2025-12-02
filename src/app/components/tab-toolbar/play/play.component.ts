@@ -21,6 +21,9 @@ export class PlayComponent implements OnInit, OnDestroy {
 
     private _displayService = inject(DisplayService);
     private _playService = inject(PlayService);
+// reach.service inject?
+
+
 
     firingEntries = this._playService.firingEntries;
 

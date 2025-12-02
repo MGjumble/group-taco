@@ -2,7 +2,7 @@ import { DisplayableGraph, DisplayableNode, DisplayableEdge } from './displayabl
 import { SHAPE } from './diagram/diagram-node';
 import { Coords } from './json-petri-net';
 import { Signal } from '@angular/core';
-// ---------------------------------------------- THIS FILE CAN BE REMOVED BEFORE MERGING ----------------------------------------------
+
 
 /**
  * A node representing a state in the reachability graph.
@@ -22,6 +22,7 @@ class StateNode implements DisplayableNode {
     get tokenCount(): Signal<number> {
         return this.tokenCount;
     }
+    
 
     constructor(id: string, x: number, y: number) {
         this.id = id;
