@@ -45,9 +45,9 @@ export class ParserService {
             const pnmlObject = parser.parse(text) as Pnml;
             const net = pnmlObject.pnml?.net;
 
-            const arcs: DiagramArc[] = this.parsePnmlArcs(net?.arc);
-            const places: DiagramPlace[] = this.parsePnmlPlaces(net?.place);
-            const transitions: DiagramTransition[] = this.parsePnmlTransitions(net?.transition, arcs, places);
+            const arcs: DiagramArc[] = this.parsePnmlArcs(net?.arc ?? []);
+            const places: DiagramPlace[] = this.parsePnmlPlaces(net?.place ?? []);
+            const transitions: DiagramTransition[] = this.parsePnmlTransitions(net?.transition ?? [], arcs, places);
 
             return new Diagram(places, transitions, arcs);
         } catch (e) {
@@ -192,7 +192,7 @@ export class ParserService {
             const id = arc['@_id'];
             const source = arc['@_source'];
             const target = arc['@_target'];
-            const weight = arc.inscription.text ? Number(arc.inscription.text) : 1;
+            const weight = arc.inscription && arc.inscription.text ? Number(arc.inscription.text) : 1;
             const position = arc.graphics.position;
             let bendPoints: Coords[] = [];
             if (position) {

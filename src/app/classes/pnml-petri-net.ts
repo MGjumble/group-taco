@@ -18,14 +18,14 @@ export interface PnmlPlace {
         position: PnmlPosition;
     };
     initialMarking?: {
-        text: string | number;
+        text?: string | number;
     };
 }
 
 export interface PnmlTransition {
     '@_id': string;
     name?: {
-        text: string;
+        text?: string;
     };
     graphics: {
         position: PnmlPosition;
@@ -37,10 +37,10 @@ export interface PnmlArc {
     '@_source': string;
     '@_target': string;
     inscription: {
-        text: number;
+        text?: number;
     };
     graphics: {
-        position?: PnmlPosition[];
+        position?: PnmlPosition[] | PnmlPosition;
     };
 }
 
