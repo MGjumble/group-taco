@@ -6,6 +6,7 @@ import { Diagram } from '../classes/diagram/diagram';
 import { SourcePetriNetService } from './source-petri-net.service';
 import { TabStateService } from './tab-state.service';
 import { Tab } from '../classes/tabs';
+import { ReachabilityGraphService } from '../reachability-graph.service';
 
 @Injectable({ providedIn: 'root' })
 export class PlayService {
@@ -13,6 +14,7 @@ export class PlayService {
     private _sourceNetService = inject(SourcePetriNetService);
     private _tabStateService = inject(TabStateService);
     //inject reach service
+    private _reachabilityGraphService = inject(ReachabilityGraphService);
 
     private _startMarking: Record<string, number> = {};
     private _currentMarking = signal<Record<string, number>>(this._startMarking);
@@ -46,6 +48,7 @@ export class PlayService {
             this._sourceNetService.updateEditedNet(diagram);
             this._addTransitionToFiringSequence(node.label);
 //also update reachability graph model? --> dem reach service übergeben, nach Sortierung, service entfernt placebezeichner und sortiert nur nummern
+            this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(); 
 
         } else
             this._notificationService.showWarning(
