@@ -17,8 +17,8 @@ export class ReachabilityGraphService {
   private firedMarking = FiringEntry
 //bekommt firing entry und macht dann eine nodeID daraus und übergibt an reachability graph als stateNode+//woher x und y?
 
-get marking
-only take numbers from record of Sting and number, display as label and add to model (Id)
+// get marking
+// only take numbers from record of Sting and number, display as label and add to model (Id)
 
 
 
@@ -29,6 +29,13 @@ only take numbers from record of Sting and number, display as label and add to m
      */
 convertFiringEntryLabelToReachabilityGraphID(firingEntryLabel: String){
 
+
+
+  // formatMarking(marking: Record<string, number>): string {
+  //       return Object.entries(marking)
+  //           .map(([key, value]) => `${key}:${value}`)
+  //           .join(', ');
+  //   }
 //use only Label or use complete FirngEntry?
 
 }

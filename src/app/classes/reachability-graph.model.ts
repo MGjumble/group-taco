@@ -2,6 +2,7 @@ import { DisplayableGraph, DisplayableNode, DisplayableEdge } from './displayabl
 import { SHAPE } from './diagram/diagram-node';
 import { Coords } from './json-petri-net';
 import { Signal } from '@angular/core';
+import { ReachabilityGraphService } from '../reachability-graph.service';
 
 
 /**
