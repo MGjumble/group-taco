@@ -2,11 +2,8 @@ import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
 // import { DisplayComponent } from '../../display/display.component';
 import { ReachabilityGraphDisplayComponent } from './reachability-graph-display/reachability-graph-display.component';
 import { ReachabilityGraphDrawDisplayComponent } from './reachability-graph-draw-display/reachability-graph-draw-display.component';
-import { ClearNetButtonComponent } from '../../clear-net-button/clear-net-button.component';
 import { TabStateService } from '../../../services/tab-state.service';
 import { Tab } from '../../../classes/tabs';
-import { UploadComponent } from '../upload/upload.component';
-import { ModeToggleComponent } from '../mode-toggle/mode-toggle.component';
 <<<<<<< HEAD
 import { ReachabilityGraphService } from 'src/app/reachability-graph.service';
 import { PlayService } from 'src/app/services/play.service';
@@ -21,10 +18,7 @@ import { DisplayService } from 'src/app/services/display.service';
     imports: [
         ReachabilityGraphDisplayComponent,
         ReachabilityGraphDrawDisplayComponent,
-        ClearNetButtonComponent,
-        UploadComponent,
-        ModeToggleComponent,
-    ],
+            ],
 =======
     imports: [DisplayComponent, ClearNetButtonComponent, UploadComponent, ModeToggleComponent],
 >>>>>>> a8e96f8 ([FPWGT-29] Add Service/Component for Switching between Learn and Exam mode)

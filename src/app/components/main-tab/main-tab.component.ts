@@ -7,6 +7,10 @@ import { ReachabilityGraphComponent } from '../tab-toolbar/reachability-graph/re
 import { ProcessNetComponent } from '../tab-toolbar/process-net/process-net.component';
 import { Tab } from '../../classes/tabs';
 import { TabStateService } from '../../services/tab-state.service';
+import { SaveComponent } from '../tab-toolbar/save/save.component';
+import { UploadComponent } from '../tab-toolbar/upload/upload.component';
+import { ClearNetButtonComponent } from '../clear-net-button/clear-net-button.component';
+import { ModeToggleComponent } from '../tab-toolbar/mode-toggle/mode-toggle.component';
 
 @Component({
     selector: 'app-main-tab',
@@ -18,6 +22,10 @@ import { TabStateService } from '../../services/tab-state.service';
         PlayComponent,
         ReachabilityGraphComponent,
         ProcessNetComponent,
+        SaveComponent,
+        UploadComponent,
+        ClearNetButtonComponent,
+        ModeToggleComponent,
     ],
     templateUrl: './main-tab.component.html',
     styleUrl: './main-tab.component.css',

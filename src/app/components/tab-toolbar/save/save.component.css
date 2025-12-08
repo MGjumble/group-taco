@@ -1,0 +1,11 @@
+.icon-json {
+    color: #fbc02d !important;
+}
+
+.icon-pnml {
+    color: #1976d2 !important;
+}
+
+button span strong {
+    font-weight: 500;
+}

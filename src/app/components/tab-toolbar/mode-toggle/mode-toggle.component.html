@@ -1,4 +1,8 @@
-<button mat-raised-button [color]="modeColor()" (click)="toggleMode()" class="mode-toggle-button">
+<button
+    mat-icon-button
+    [matTooltip]="modeText()"
+    [color]="modeColor()"
+    (click)="toggleMode()"
+    class="mode-toggle-button">
     <mat-icon>{{ modeIcon() }}</mat-icon>
-    {{ modeText() }}
 </button>

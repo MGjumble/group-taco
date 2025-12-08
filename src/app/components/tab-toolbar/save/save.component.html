@@ -1,14 +1,12 @@
-<button mat-raised-button color="primary" [matMenuTriggerFor]="saveMenu">
+<button mat-icon-button matTooltip="Speichern unter..." [matMenuTriggerFor]="saveMenu" color="primary">
     <mat-icon>save_alt</mat-icon>
-    Save Petri Net
 </button>
 <mat-menu #saveMenu="matMenu">
     <button mat-menu-item (click)="onSave('json')">
-        <mat-icon>code</mat-icon>
-        Save as JSON
+        <mat-icon class="icon-json">data_object</mat-icon>
+        <span>Save as <strong>JSON</strong></span>
     </button>
     <button mat-menu-item (click)="onSave('pnml')">
-        <mat-icon>description</mat-icon>
-        Save as PNML
+        <mat-icon class="icon-pnml">account_tree</mat-icon> <span>Save as <strong>PNML</strong></span>
     </button>
 </mat-menu>
