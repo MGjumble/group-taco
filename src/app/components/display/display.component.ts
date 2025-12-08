@@ -18,6 +18,7 @@ import { PanningService } from '../../services/panning.service';
     standalone: true,
     templateUrl: './display.component.html',
     imports: [SvgNodeComponent, SvgArcComponent],
+    providers: [PanningService],
     styleUrls: ['./display.component.css'],
 })
 export class DisplayComponent implements OnInit, OnDestroy {
