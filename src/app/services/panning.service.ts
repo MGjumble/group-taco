@@ -1,11 +1,10 @@
 import { computed, ElementRef, Injectable, signal } from '@angular/core';
 import { DisplayableGraph } from '../classes/displayable-graph.interface';
 
-@Injectable({
-    providedIn: 'root',
-})
+@Injectable()
 export class PanningService {
-    private _viewBoxValues = signal({ minX: 200, minY: -50, width: 900, height: 450 });
+    INITIAL_VIEWBOX = { minX: 200, minY: -50, width: 900, height: 450 };
+    private _viewBoxValues = signal(this.INITIAL_VIEWBOX);
     private _isPanning = false;
     private _panStartPoint = { x: 0, y: 0 };
 
@@ -71,6 +70,7 @@ export class PanningService {
      */
     public endPan(drawingArea: ElementRef<SVGGraphicsElement>): void {
         this._isPanning = false;
+        console.log('endPan', drawingArea);
         drawingArea.nativeElement.style.cursor = 'default';
     }
 }
