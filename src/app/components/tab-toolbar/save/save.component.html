@@ -1,4 +1,14 @@
-<button mat-raised-button color="primary" (click)="onSave()">
+<button mat-raised-button color="primary" [matMenuTriggerFor]="saveMenu">
     <mat-icon>save_alt</mat-icon>
     Save Petri Net
 </button>
+<mat-menu #saveMenu="matMenu">
+    <button mat-menu-item (click)="onSave('json')">
+        <mat-icon>code</mat-icon>
+        Save as JSON
+    </button>
+    <button mat-menu-item (click)="onSave('pnml')">
+        <mat-icon>description</mat-icon>
+        Save as PNML
+    </button>
+</mat-menu>

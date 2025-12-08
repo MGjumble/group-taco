@@ -10,25 +10,32 @@ export class PetriNetSavingService {
     private _notificationService = inject(ToasterNotificationService);
     private _serializationService = inject(SerializationService);
 
-    private readonly FILE_NAME = 'petri-net.json';
+    private readonly DEFAULT_FILE_NAME = 'petri-net';
 
     /**
-     * Saves the current Petri net by triggering a download of the source text as a JSON file.
+     * Saves the current Petri net by triggering a download of the source text as a file.
      * If no Petri net is present, a warning notification is shown.
      */
-    public savePetriNet(): void {
+    public savePetriNet(format: 'json' | 'pnml' = 'json'): void {
         const isDirty = this._sourcePetriNetService.isCurrentNetDirty();
         let textContent: string;
         let diagramToSave: Diagram | null;
+        const fileName = `${this.DEFAULT_FILE_NAME}.${format}`;
 
         if (isDirty) {
             diagramToSave = this._sourcePetriNetService.getCurrentSourceNet();
             if (!diagramToSave) return;
 
-            textContent = this._serializationService.serialize(diagramToSave);
+            textContent = this._serializationService.serialize(diagramToSave, format);
             this._sourcePetriNetService.setClean(textContent, diagramToSave);
         } else {
-            textContent = this._sourcePetriNetService.getSourceText();
+            const sourceText = this._sourcePetriNetService.getSourceText();
+            const diagram = this._sourcePetriNetService.getCurrentSourceNet();
+            if (diagram && this.detectFormat(sourceText) !== format) {
+                textContent = this._serializationService.serialize(diagram, format);
+            } else {
+                textContent = sourceText;
+            }
         }
 
         if (!textContent) {
@@ -38,11 +45,20 @@ export class PetriNetSavingService {
             );
             return;
         }
-        this.triggerDownload(textContent, this.FILE_NAME);
+        this.triggerDownload(textContent, fileName);
+    }
+
+    private detectFormat(text: string): 'json' | 'pnml' {
+        const trimmedText = text.trim();
+        if (trimmedText.startsWith('<?xml') || trimmedText.startsWith('<pnml')) {
+            return 'pnml';
+        }
+        return 'json';
     }
 
     private triggerDownload(content: string, fileName: string): void {
-        const blob = new Blob([content], { type: 'application/json' });
+        const fileType = fileName.endsWith('.pnml') ? 'application/xml' : 'application/json';
+        const blob = new Blob([content], { type: fileType });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.style.display = 'none';

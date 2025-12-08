@@ -1,4 +1,3 @@
-import { DiagramNode } from './diagram-node';
 import { DiagramArc } from './diagram-arc';
 import { DiagramPlace } from './diagram-place';
 import { DiagramTransition } from './diagram-transition';
@@ -26,7 +25,7 @@ export class Diagram implements DisplayableGraph {
         this.updateMarking();
     }
 
-    get places(): DiagramNode[] {
+    get places(): DiagramPlace[] {
         return this._places;
     }
 
