@@ -59,15 +59,6 @@ export function validateProcessNet(
     const errorsFromPlaces = validatePlaceInputs(net, elements, connectionsByTarget, placeLabelById);
     errors.push(...errorsFromPlaces);
 
-    const errorsFromWeights = validateTransitionWeights(
-        net,
-        elements,
-        connectionsBySource,
-        connectionsByTarget,
-        placeLabelById,
-    );
-    errors.push(...errorsFromWeights);
-
     const errorsFromProducerLimit = validateProducerUniqueness(elements, connections, elementMap);
     errors.push(...errorsFromProducerLimit);
 
@@ -223,64 +214,6 @@ function validatePlaceInputs(
                     `❌ Stelle ${place.label} besitzt keinen eingehenden Bogen, obwohl sie kein Startplatz in diesem Prozessnetz ist.`,
                 );
             }
-        });
-
-    return errors;
-}
-
-function validateTransitionWeights(
-    net: PetriNet,
-    elements: ProcessElement[],
-    connectionsBySource: Record<string, ProcessConnection[]>,
-    connectionsByTarget: Record<string, ProcessConnection[]>,
-    placeLabelById: Map<string, string>,
-): string[] {
-    const errors: string[] = [];
-    const labelToTransition = new Map<string, string>(Object.entries(net.labels).map(([t, label]) => [label, t]));
-
-    const countPlacesByConnection = (conns: ProcessConnection[], direction: 'in' | 'out') => {
-        const counts: Record<string, number> = {};
-        conns.forEach((conn) => {
-            const placeId = direction === 'in' ? conn.from : conn.to;
-            const placeLabel = placeLabelById.get(placeId);
-            if (!placeLabel) return;
-            const weight = conn.weight ?? 1;
-            counts[placeLabel] = (counts[placeLabel] || 0) + weight;
-        });
-        return counts;
-    };
-
-    elements
-        .filter((el) => el.type === 'Transition')
-        .forEach((transition) => {
-            const originalTransitionId = labelToTransition.get(transition.label);
-            if (!originalTransitionId) {
-                errors.push(`❌ Transition ${transition.label} hat keine Entsprechung im Petrinetz.`);
-                return;
-            }
-
-            const incoming = connectionsByTarget[transition.id] || [];
-            const outgoing = connectionsBySource[transition.id] || [];
-            const incomingCounts = countPlacesByConnection(incoming, 'in');
-            const outgoingCounts = countPlacesByConnection(outgoing, 'out');
-
-            Object.entries(net.arcs).forEach(([key, weight]) => {
-                const [source, target] = key.split(',');
-                if (target === originalTransitionId && net.places.includes(source)) {
-                    if ((incomingCounts[source] || 0) < weight) {
-                        errors.push(
-                            `❌ Transition ${transition.label} benötigt mindestens ${weight} Kante(n) von ${source}.`,
-                        );
-                    }
-                }
-                if (source === originalTransitionId && net.places.includes(target)) {
-                    if ((outgoingCounts[target] || 0) < weight) {
-                        errors.push(
-                            `❌ Transition ${transition.label} benötigt mindestens ${weight} Kante(n) nach ${target}.`,
-                        );
-                    }
-                }
-            });
         });
 
     return errors;
