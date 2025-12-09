@@ -630,7 +630,7 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
         const markedPlaces = nodes.filter((node) => node.shape === SHAPE.CIRCLE && node.tokenCount() > 0);
         if (markedPlaces.length === 0) {
             this.toaster.showInfo('Startposition', 'Keine markierten Places gefunden.', {
-                duration: 3000,
+                duration: 0,
                 toastPosition: TOAST_POSITIONS.TOP_CENTER,
             });
             return;
@@ -641,7 +641,7 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
         );
         if (tokenInstances.length === 0) {
             this.toaster.showInfo('Startposition', 'Keine markierten Places gefunden.', {
-                duration: 3000,
+                duration: 0,
                 toastPosition: TOAST_POSITIONS.TOP_CENTER,
             });
             return;
@@ -670,7 +670,7 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
 
         this.drawnElements.set(newElements);
         this.toaster.showSuccess('Startposition', `${newElements.length} Startplätze angelegt.`, {
-            duration: 3000,
+            duration: 0,
             toastPosition: TOAST_POSITIONS.TOP_CENTER,
         });
     }
