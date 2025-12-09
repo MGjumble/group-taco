@@ -56,7 +56,7 @@ export function validateProcessNet(
     const errorsFromStructure = validateTransitionsForStructure(net, elements, connections, elementMap);
     errors.push(...errorsFromStructure);
 
-    const errorsFromPlaces = validatePlaceInputs(net, elements, connectionsByTarget, placeLabelById);
+    const errorsFromPlaces = validatePlaceInputs(net, elements, connectionsByTarget);
     errors.push(...errorsFromPlaces);
 
     const errorsFromProducerLimit = validateProducerUniqueness(elements, connections, elementMap);
@@ -200,7 +200,6 @@ function validatePlaceInputs(
     net: PetriNet,
     elements: ProcessElement[],
     connectionsByTarget: Record<string, ProcessConnection[]>,
-    placeLabelById: Map<string, string>,
 ): string[] {
     const errors: string[] = [];
 
