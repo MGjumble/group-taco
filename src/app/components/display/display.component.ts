@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { DisplayService } from '../../services/display.service';
 import { Subscription } from 'rxjs';
 import { ExampleFileComponent } from '../example-file/example-file.component';
@@ -11,24 +11,28 @@ import { DisplayableGraph, DisplayableNode } from '../../classes/displayable-gra
 import { DiagramTransition } from '../../classes/diagram/diagram-transition';
 import { PlayService } from '../../services/play.service';
 import { Diagram } from '../../classes/diagram/diagram';
+import { PanningService } from '../../services/panning.service';
 
 @Component({
     selector: 'app-display',
     standalone: true,
     templateUrl: './display.component.html',
     imports: [SvgNodeComponent, SvgArcComponent],
+    providers: [PanningService],
     styleUrls: ['./display.component.css'],
 })
 export class DisplayComponent implements OnInit, OnDestroy {
-    readonly diagram = signal<DisplayableGraph | undefined>(undefined);
+    @ViewChild('drawingArea') drawingArea!: ElementRef<SVGGraphicsElement>;
 
     private _sub?: Subscription;
-
     private _displayService = inject(DisplayService);
+    private _panningService = inject(PanningService);
     private _tabStateService = inject(TabStateService);
     private _loaderService = inject(PetriNetLoaderService);
     private _playService = inject(PlayService);
 
+    readonly viewBox = this._panningService.viewBoxAsString;
+    readonly diagram = signal<DisplayableGraph | undefined>(undefined);
     readonly isDrawingEnabled = computed(() => this._tabStateService.currentTab() === Tab.DRAW);
     readonly isPlayingEnabled = computed(
         () =>
@@ -40,7 +44,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this._sub = this._displayService.diagram$.subscribe((diagram) => {
-            console.log('new diagram');
             this.diagram.set(diagram);
         });
     }
@@ -72,5 +75,17 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
     public prevent(e: DragEvent) {
         e.preventDefault();
+    }
+
+    public startPan(event: MouseEvent): void {
+        this._panningService.startPan(event, this.diagram(), this.drawingArea);
+    }
+
+    public pan(event: MouseEvent): void {
+        this._panningService.pan(event, this.drawingArea);
+    }
+
+    public endPan(): void {
+        this._panningService.endPan(this.drawingArea);
     }
 }

@@ -11,6 +11,7 @@ import {
     validateProcessNet,
 } from '../../../../services/validation.service';
 import { ToasterNotificationService } from '../../../../services/toaster-notification.service';
+import { PanningService } from '../../../../services/panning.service';
 import { TOAST_POSITIONS } from '../../../../classes/toast';
 
 interface DrawnElement {
@@ -45,6 +46,7 @@ declare global {
     standalone: true,
     imports: [SvgNodeComponent],
     templateUrl: './process-net-draw-display.html',
+    providers: [PanningService],
     styleUrls: ['./process-net-draw-display.css'],
 })
 export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy {
