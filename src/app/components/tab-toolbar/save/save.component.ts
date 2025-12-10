@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { PetriNetSavingService } from '../../../services/petri-net-saving.service';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-save',
-    imports: [MatIcon, MatButton, MatMenu, MatMenuItem, MatMenuTrigger],
+    imports: [MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, MatIconButton, MatTooltip],
     templateUrl: './save.component.html',
     styleUrl: './save.component.css',
 })

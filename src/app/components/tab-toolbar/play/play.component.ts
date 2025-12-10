@@ -2,25 +2,14 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DisplayComponent } from '../../display/display.component';
 import { DisplayService } from '../../../services/display.service';
 import { PlayService } from '../../../services/play.service';
-import { ClearNetButtonComponent } from '../../clear-net-button/clear-net-button.component';
 import { FiringTableComponent } from './firing-table/firing-table.component';
 import { Diagram } from '../../../classes/diagram/diagram';
 import { filter, Subscription, switchMap, tap } from 'rxjs';
-import { UploadComponent } from '../upload/upload.component';
-import { SaveComponent } from '../save/save.component';
-import { ModeToggleComponent } from '../mode-toggle/mode-toggle.component';
 
 @Component({
     selector: 'app-play',
     standalone: true,
-    imports: [
-        DisplayComponent,
-        ClearNetButtonComponent,
-        FiringTableComponent,
-        UploadComponent,
-        SaveComponent,
-        ModeToggleComponent,
-    ],
+    imports: [DisplayComponent, FiringTableComponent],
     templateUrl: './play.component.html',
     styleUrl: './play.component.css',
 })

@@ -1,33 +1,42 @@
-<mat-tab-group [selectedIndex]="selectedIndex" (selectedTabChange)="onTabChange($event)">
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">edit</mat-icon>
-            Draw
-        </ng-template>
-        <app-draw class="tab-component"></app-draw>
-    </mat-tab>
+<div class="editor-container">
+    <mat-tab-group class="flex-tab-group" [selectedIndex]="selectedIndex" (selectedTabChange)="onTabChange($event)">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">edit</mat-icon>
+                Draw
+            </ng-template>
+            <app-draw class="tab-component"></app-draw>
+        </mat-tab>
 
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">play_arrow</mat-icon>
-            Play
-        </ng-template>
-        <app-play></app-play>
-    </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">play_arrow</mat-icon>
+                Play
+            </ng-template>
+            <app-play></app-play>
+        </mat-tab>
 
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">graph_3</mat-icon>
-            Reachability Graph
-        </ng-template>
-        <app-reachability-graph></app-reachability-graph>
-    </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">account_tree</mat-icon>
+                Reachability Graph
+            </ng-template>
+            <app-reachability-graph></app-reachability-graph>
+        </mat-tab>
 
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">flowchart</mat-icon>
-            Process Net
-        </ng-template>
-        <app-process-net></app-process-net>
-    </mat-tab>
-</mat-tab-group>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">timeline</mat-icon>
+                Process Net
+            </ng-template>
+            <app-process-net></app-process-net>
+        </mat-tab>
+    </mat-tab-group>
+    <div class="action-sidebar">
+        <app-upload></app-upload>
+        <app-save></app-save>
+        <app-clear-net-button></app-clear-net-button>
+        <div class="divider-horizontal"></div>
+        <app-mode-toggle aria-label="Modus umschalten"></app-mode-toggle>
+    </div>
+</div>

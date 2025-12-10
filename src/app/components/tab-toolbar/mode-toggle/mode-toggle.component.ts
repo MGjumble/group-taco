@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { ModeService } from '../../../services/mode.service';
 import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIconButton } from '@angular/material/button';
 
 @Component({
     selector: 'app-mode-toggle',
-    imports: [MatIcon, MatButton],
+    imports: [MatIcon, MatTooltip, MatIconButton],
     templateUrl: './mode-toggle.component.html',
     styleUrl: './mode-toggle.component.css',
     standalone: true,
