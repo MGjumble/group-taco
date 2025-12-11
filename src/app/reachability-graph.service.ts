@@ -15,6 +15,7 @@ import { Tab } from '../classes/tabs';
 export class ReachabilityGraphService {
     private _playService = inject(PlayService);
     private firedMarking = FiringEntry;
+    
     //bekommt firing entry und macht dann eine nodeID daraus und übergibt an reachability graph als stateNode+//woher x und y?
 
     // get marking
@@ -27,9 +28,10 @@ export class ReachabilityGraphService {
      * @param firingEntryLabel The label of the fired transition.
      */
 convertFiringEntryLabelToReachabilityGraphID(firingEntry: FiringEntry){
-firingEntry.endMarking.
+// firingEntry.endMarking.
 
-reachabilityLabel = Object.entries(firingEntry.endMarking).map(([key, value]) => {
+let reachabilityLabel: string = Object.entries(firingEntry.endMarking).map(([key, value]) => `${value}`)
+             .join(' ');
 
 
 // return new DiagramPlace(id, initialTokens);
@@ -43,13 +45,13 @@ reachabilityLabel = Object.entries(firingEntry.endMarking).map(([key, value]) =>
 //nextStateNode
 
 
-})
+// })
 
-  // formatMarking(marking: Record<string, number>): string {
-  //       return Object.entries(marking)
-  //           .map(([key, value]) => `${key}:${value}`)
-  //           .join(', ');
-  //   }
+//   formatMarking(marking: Record<string, number>): string {
+//         return Object.entries(marking)
+//             .map(([key, value]) => `${key}:${value}`)
+//             .join(', ');
+//     }
 //use only Label or use complete FirngEntry?
 
 }
