@@ -16,6 +16,9 @@ export class ReachabilityGraphService {
     private _playService = inject(PlayService);
     private firedMarking = FiringEntry;
     
+
+    //beim Initialisieren direkt den ersten Knoten anlegen
+    //erst danach vom Firing übernehmen
     //bekommt firing entry und macht dann eine nodeID daraus und übergibt an reachability graph als stateNode+//woher x und y?
 
     // get marking
@@ -29,10 +32,10 @@ export class ReachabilityGraphService {
      */
 convertFiringEntryLabelToReachabilityGraphID(firingEntry: FiringEntry){
 // firingEntry.endMarking.
-
+//Fallunterscheidung zwischen erstem Aufruf und dann Aufruf nach Schalten / Firing
 let reachabilityLabel: string = Object.entries(firingEntry.endMarking).map(([key, value]) => `${value}`)
              .join(' ');
-
+console.log(reachabilityLabel);
 
 // return new DiagramPlace(id, initialTokens);
 
