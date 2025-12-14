@@ -13,7 +13,6 @@ export class PlayService {
     private _notificationService = inject(ToasterNotificationService);
     private _sourceNetService = inject(SourcePetriNetService);
     private _tabStateService = inject(TabStateService);
-    //inject reach service
     private _reachabilityGraphService = inject(ReachabilityGraphService);
 
     private _startMarking: Record<string, number> = {};
@@ -38,6 +37,7 @@ export class PlayService {
     /**
      * Fires a transition if it is activated, updates the diagram
      * and records the firing in the firing sequence.
+     * Also updates the ReachabilityGraph via the ReachabilityGraphService.
      * @param diagram The diagram containing the transition.
      * @param node The transition node to be fired.
      */
@@ -47,13 +47,6 @@ export class PlayService {
             diagram.updateMarking();
             this._sourceNetService.updateEditedNet(diagram);
             this._addTransitionToFiringSequence(node.label);
-//also update reachability graph model? --> dem reach service übergeben, nach Sortierung, service entfernt placebezeichner und sortiert nur nummern
-            this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(this.firingEntries); 
-            //node übergeben bzw ganzes Diagram und DiagramTransition an RGService
-            //Node als StateNode behandeln und Label
-            //KOMPLETTES KEY VALUE PAIR , damit gerechnet und später zurückgegeben werden kann
-            //place und number of tokens
-
         } else
             this._notificationService.showWarning(
                 'Transition not activated',
@@ -75,6 +68,7 @@ export class PlayService {
             let lastEntry = entries[entries.length - 1];
             if (lastEntry) {
                 lastEntry = this._updateFiringEntry(lastEntry, label);
+                this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(lastEntry);
                 return [...entries];
             }
             const newEntry: FiringEntry = {
@@ -84,6 +78,7 @@ export class PlayService {
                 startMarking: this._startMarking,
                 endMarking: this._currentMarking(),
             };
+            this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(newEntry);
             return [...entries, newEntry];
         });
     }

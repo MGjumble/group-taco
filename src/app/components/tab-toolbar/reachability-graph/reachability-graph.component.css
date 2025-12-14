@@ -43,7 +43,6 @@
 }
 /* inhrited layout from process net */
 
-
 reachability-graph-layout {
     display: flex;
     flex-direction: row;

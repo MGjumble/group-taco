@@ -29,10 +29,12 @@ class StateNode implements DisplayableNode {
         return this.tokenCount;
     }
 
-    constructor(id: string, x: number, y: number) {
+    constructor(id: string, x: number, y: number, label: string, marking: Record<string, Number>) {
         this.id = id;
         this.x = x;
         this.y = y;
+        this.label = label;
+        this.rGMarking = marking;
     }
 }
 
