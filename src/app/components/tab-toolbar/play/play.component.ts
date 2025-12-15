@@ -36,6 +36,12 @@ export class PlayComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this._sub = this._displayService.diagram$
             .pipe(
+                tap((diagram) => {
+                    if (!diagram) {
+                        this._playService.startMarking = {};
+                        this._playService.currentMarking = {};
+                    }
+                }),
                 filter((diagram) => !!diagram && diagram instanceof Diagram),
                 tap((diagram: Diagram) => {
                     this._playService.resetFiringEntries();
@@ -53,14 +59,15 @@ export class PlayComponent implements OnInit, OnDestroy {
     }
 
     onNewEntry(): void {
-        this._playService.startNewFiringSequence();
         this._displayService.diagram$
             .pipe(
-                take(1), // Nimm nur den aktuellen Wert
+                take(1),
                 filter((diagram) => !!diagram && diagram instanceof Diagram),
+                tap((diagram) => {
+                    this._playService.startNewFiringSequence();
+                    diagram.resetMarking();
+                })
             )
-            .subscribe((diagram) => {
-                diagram.resetMarking();
-            });
+            .subscribe();
     }
 }
