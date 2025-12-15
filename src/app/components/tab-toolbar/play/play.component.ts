@@ -66,7 +66,7 @@ export class PlayComponent implements OnInit, OnDestroy {
                 tap((diagram) => {
                     this._playService.startNewFiringSequence();
                     diagram.resetMarking();
-                })
+                }),
             )
             .subscribe();
     }

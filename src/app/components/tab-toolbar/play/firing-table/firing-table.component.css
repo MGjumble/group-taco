@@ -47,5 +47,5 @@
 .delete-entry-button:hover,
 .delete-all-entries-button:hover {
     background-color: rgba(211, 47, 47, 0.1);
-    border-radius: 4px; 
+    border-radius: 4px;
 }
