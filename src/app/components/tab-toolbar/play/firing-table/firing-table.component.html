@@ -1,11 +1,11 @@
-<table>
+<table class="firing-table">
     <thead>
         <tr>
-            <th>Firing Sequence</th>
-            <th>Transition Count</th>
-            <th>Start Marking</th>
-            <th>End Marking</th>
-            <th>
+            <th class="firing-sequence-th">Firing Sequence</th>
+            <th class="transition-count-th">Transition Count</th>
+            <th class="start-marking-th">Start Marking</th>
+            <th class="end-marking-th">End Marking</th>
+            <th class="delete-button-th">
                 <button mat-icon-button color="warn" (click)="onDeleteAllEntries()" class="delete-all-entries-button">
                     <mat-icon>delete_sweep</mat-icon>
                 </button>
@@ -15,11 +15,11 @@
     <tbody>
         @for (entry of firingEntries; track entry.id) {
             <tr>
-                <td>{{ entry.firingSequence }}</td>
-                <td>{{ entry.transitionCount }}</td>
-                <td>{{ formatMarking(entry.startMarking) }}</td>
-                <td>{{ formatMarking(entry.endMarking) }}</td>
-                <td>
+                <td class="firing-sequence-td">{{ entry.firingSequence }}</td>
+                <td class="transition-count-td">{{ entry.transitionCount }}</td>
+                <td class="start-marking-td">{{ formatMarking(entry.startMarking) }}</td>
+                <td class="end-marking-td">{{ formatMarking(entry.endMarking) }}</td>
+                <td class="delete-button-td">
                     @if (entry.isClosed) {
                         <button
                             mat-icon-button

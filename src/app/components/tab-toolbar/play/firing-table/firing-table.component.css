@@ -1,20 +1,51 @@
-table {
+.firing-table {
+    table-layout: auto;
     border-collapse: collapse;
     width: 100%;
 }
 
-table th,
-td {
-    height: 30px;
-    border: 1px solid;
-    padding: 2px 5px 2px 5px;
+.firing-table th,
+.firing-table td {
+    height: 40px;
+    border: 1px solid grey;
+    padding: 1px 5px 1px 5px;
     text-align: left;
+}
+
+.firing-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.firing-sequence-th {
+    width: 23%;
+}
+
+.transition-count-th {
+    width: 7%;
+}
+
+.start-marking-th {
+    width: 35%;
+}
+
+.end-marking-th {
+    width: 35%;
+}
+
+.action-column-th {
+    width: auto;
 }
 
 .delete-entry-button,
 .delete-all-entries-button {
     height: 24px;
     width: 24px;
-    line-height: 24px;
     padding: 0;
+}
+
+.delete-entry-button:hover,
+.delete-all-entries-button:hover {
+    background-color: rgba(211, 47, 47, 0.1);
+    border-radius: 4px; 
 }
