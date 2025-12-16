@@ -41,7 +41,7 @@ export class StateNode implements DisplayableNode {
 /**
  * An edge representing a transition firing in the reachability graph.
  */
-class FiringEdge implements DisplayableEdge {
+export class FiringEdge implements DisplayableEdge {
     id: string;
     source: string;
     target: string;
