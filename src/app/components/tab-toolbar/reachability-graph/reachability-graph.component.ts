@@ -11,11 +11,8 @@ import { DisplayService } from 'src/app/services/display.service';
 @Component({
     selector: 'app-reachability-graph',
     standalone: true,
-    imports: [
-        ReachabilityGraphDisplayComponent,
-        ReachabilityGraphDrawDisplayComponent,
-            ],
-    
+    imports: [ReachabilityGraphDisplayComponent, ReachabilityGraphDrawDisplayComponent],
+
     templateUrl: './reachability-graph.component.html',
     styleUrl: './reachability-graph.component.css',
 })

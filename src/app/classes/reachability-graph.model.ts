@@ -7,7 +7,7 @@ import { ReachabilityGraphService } from '../reachability-graph.service';
 /**
  * A node representing a state in the reachability graph.
  */
-class StateNode implements DisplayableNode {
+export class StateNode implements DisplayableNode {
     id: string;
     x = 0;
     y = 0;
