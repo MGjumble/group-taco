@@ -30,9 +30,6 @@ export class ReachabilityGraphService {
         this._currentMarkingRG.set(marking);
     }
 
-
-    
-
     //bekommt firing entry und macht dann eine nodeID daraus und übergibt an reachability graph als stateNode+//woher x und y?
 
     // get marking
@@ -72,8 +69,6 @@ export class ReachabilityGraphService {
             this._reachabilityGraph.nodes.push(initialStateNode);
 
             console.log(reachabilityLabel);
-
-
         } else if (this._modeService.currentMode() === AppMode.EXAM) {
             //nur im Hintergrund vergleichen, User gibt NodeLabel, also Marking, selbst ein und bekommt Feedback
         }
