@@ -11,8 +11,8 @@ import {
     validateProcessNet,
 } from '../../../../services/validation.service';
 import { ToasterNotificationService } from '../../../../services/toaster-notification.service';
-import { TOAST_POSITIONS } from '../../../../classes/toast';
 import { PanningService } from '../../../../services/panning.service';
+import { TOAST_POSITIONS } from '../../../../classes/toast';
 
 interface DrawnElement {
     node: DiagramNode;
