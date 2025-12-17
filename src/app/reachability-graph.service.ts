@@ -22,10 +22,10 @@ export class ReachabilityGraphService {
     private _startMarkingRG: Record<string, number> = {};
     private _currentMarkingRG = signal<Record<string, number>>(this._startMarkingRG);
     //TODO: Later on, implement better algorithm for placement of StateNodes
-    private xCounter: number= 2;
-    private yCounter: number= 2;
+    private xCounter: number = 2;
+    private yCounter: number = 2;
     //Counter for StateNodeIDs
-    private idCounter: number= 1;
+    private idCounter: number = 1;
 
     set startMarkingRG(marking: Record<string, number>) {
         this._startMarkingRG = marking;
@@ -105,35 +105,29 @@ export class ReachabilityGraphService {
             .map(([key, value]) => `${value}`)
             .join(' ');
 
-        let currentRgId: string = 'RG'+this.idCounter;
-            //x und y Startwert konstant festlegen
-            let currentX: number = this.xCounter*100;
-            let currentY: number = this.yCounter*100;
-            //neuen StateNode erzeugen
-            let currentStateNode = new StateNode(
-                currentRgId,
-                currentX,
-                currentY,
-                currentReachabilityLabel,
-                this.startMarkingRG,
-            );
+        let currentRgId: string = 'RG' + this.idCounter;
+        //x und y Startwert konstant festlegen
+        let currentX: number = this.xCounter * 100;
+        let currentY: number = this.yCounter * 100;
+        //neuen StateNode erzeugen
+        let currentStateNode = new StateNode(
+            currentRgId,
+            currentX,
+            currentY,
+            currentReachabilityLabel,
+            this.startMarkingRG,
+        );
 
-            this._reachabilityGraph.update((graph) => {
-                const newGraph = new ReachabilityGraph();
-                newGraph.nodes = [...graph.nodes, currentStateNode];
-                newGraph.edges = [...graph.edges];
-                return newGraph;
-            });
-            //increment counters
-            this.idCounter++;
-            this.xCounter++;
-            this.yCounter++;
-
-
-
-
-
-
+        this._reachabilityGraph.update((graph) => {
+            const newGraph = new ReachabilityGraph();
+            newGraph.nodes = [...graph.nodes, currentStateNode];
+            newGraph.edges = [...graph.edges];
+            return newGraph;
+        });
+        //increment counters
+        this.idCounter++;
+        this.xCounter++;
+        this.yCounter++;
 
         console.log(currentReachabilityLabel);
 
