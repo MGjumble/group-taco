@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, WritableSignal, Signal } from '@angular/core';
 import { FiringEntry } from './classes/firing-entry';
-import { ReachabilityGraph } from './classes/reachability-graph.model';
+import { FiringEdge, ReachabilityGraph } from './classes/reachability-graph.model';
 import { StateNode } from './classes/reachability-graph.model';
 import { ModeService } from './services/mode.service';
 import { AppMode } from './classes/app-mode';
@@ -22,10 +22,12 @@ export class ReachabilityGraphService {
     private _startMarkingRG: Record<string, number> = {};
     private _currentMarkingRG = signal<Record<string, number>>(this._startMarkingRG);
     //TODO: Later on, implement better algorithm for placement of StateNodes
-    private xCounter: number= 2;
-    private yCounter: number= 2;
+    private xCounter: number = 2;
+    private yCounter: number = 2;
     //Counter for StateNodeIDs
-    private idCounter: number= 1;
+    private idCounter: number = 1;
+    //Counter für Kanten im EG
+    private rgEdgeCounter: number = 1;
 
     set startMarkingRG(marking: Record<string, number>) {
         this._startMarkingRG = marking;
@@ -101,39 +103,48 @@ export class ReachabilityGraphService {
     convertFiringEntryLabelToReachabilityGraphID(firingEntry: FiringEntry) {
         //Fallunterscheidung zwischen erstem Aufruf und dann Aufruf nach Schalten / Firing --> ueber unterschiedliche Methoden geloest
         let _markingRG = this._sourceNetService.getCurrentSourceNet()?.currentMarking$ || {};
+        //Vorherigen Zustand für Arc speichern
+        let previousReachabilityLabel: string = Object.entries(firingEntry.startMarking)
+            .map(([key, value]) => `${value}`)
+            .join(' ');
+        //Zustand nach Schalten
         let currentReachabilityLabel: string = Object.entries(firingEntry.endMarking)
             .map(([key, value]) => `${value}`)
             .join(' ');
 
-        let currentRgId: string = 'RG'+this.idCounter;
-            //x und y Startwert konstant festlegen
-            let currentX: number = this.xCounter*100;
-            let currentY: number = this.yCounter*100;
-            //neuen StateNode erzeugen
-            let currentStateNode = new StateNode(
-                currentRgId,
-                currentX,
-                currentY,
-                currentReachabilityLabel,
-                this.startMarkingRG,
-            );
+        let currentRgId: string = 'RG' + this.idCounter;
+        //x und y Startwert konstant festlegen
+        let currentX: number = this.xCounter * 100;
+        let currentY: number = this.yCounter * 100;
+        //neuen StateNode erzeugen
+        let currentStateNode = new StateNode(
+            currentRgId,
+            currentX,
+            currentY,
+            currentReachabilityLabel,
+            this.startMarkingRG,
+        );
 
-            this._reachabilityGraph.update((graph) => {
-                const newGraph = new ReachabilityGraph();
-                newGraph.nodes = [...graph.nodes, currentStateNode];
-                newGraph.edges = [...graph.edges];
-                return newGraph;
-            });
-            //increment counters
-            this.idCounter++;
-            this.xCounter++;
-            this.yCounter++;
+        let currentRgEdgeId: string = 'Edge' + this.rgEdgeCounter;
+        let currentRgEdgeLabel: string = 'E' + this.rgEdgeCounter;
+        let currentFiringEdge = new FiringEdge(
+            currentRgEdgeId,
+            previousReachabilityLabel,
+            currentReachabilityLabel,
+            currentRgEdgeLabel,
+        );
 
-
-
-
-
-
+        this._reachabilityGraph.update((graph) => {
+            const newGraph = new ReachabilityGraph();
+            newGraph.nodes = [...graph.nodes, currentStateNode];
+            newGraph.edges = [...graph.edges, currentFiringEdge];
+            return newGraph;
+        });
+        //increment counters
+        this.idCounter++;
+        this.xCounter++;
+        this.yCounter++;
+        this.rgEdgeCounter++;
 
         console.log(currentReachabilityLabel);
 
