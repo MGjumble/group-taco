@@ -19,7 +19,7 @@ export class SpringEmbedderService {
 
     /**
      * Calculates the layout of the current source Petri net using the spring embedder algorithm.
-     * based on Peter Eades idea from "A heuristic for graph drawing" (1984).
+     * Based on Peter Eades idea from "A heuristic for graph drawing" (1984).
      */
     public async calculateLayout(): Promise<void> {
         const diagram = this._sourceNetService.getCurrentSourceNet();
@@ -64,9 +64,9 @@ export class SpringEmbedderService {
 
             nodes.forEach((other: DiagramNode) => {
                 if (node.id === other.id) return;
-                const electricalForceMagnitude = this._calculateElectricalForces(node, other);
-                force.x -= electricalForceMagnitude.x;
-                force.y -= electricalForceMagnitude.y;
+                const electricalForce = this._calculateElectricalForces(node, other);
+                force.x -= electricalForce.x;
+                force.y -= electricalForce.y;
             });
 
             node.x += force.x;
@@ -81,9 +81,9 @@ export class SpringEmbedderService {
     /**
      * Calculates the Euclidean distance between two diagram nodes.
      * @param nodeA
-     *                  the first diagram node
+     *              the first diagram node
      * @param nodeB
-     *                  the second diagram node
+     *               the second diagram node
      * @return the distance between the two nodes
      */
     private _calculateDistance(nodeA: DiagramNode, nodeB: DiagramNode): number {
