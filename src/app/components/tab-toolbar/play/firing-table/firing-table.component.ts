@@ -7,7 +7,7 @@ import { PlayService } from '../../../../services/play.service';
 import { FiringEntry } from '../../../../classes/firing-entry';
 import { DisplayService } from '../../../../services/display.service';
 import { filter, take } from 'rxjs';
-import { Diagram } from 'src/app/classes/diagram/diagram';
+import { Diagram } from '../../../../classes/diagram/diagram';
 
 @Component({
     selector: 'app-firing-table',
