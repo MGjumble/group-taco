@@ -15,7 +15,7 @@ export class LayoutButtonComponent {
 
     calculateLayout() {
         this._springEmbedderService.calculateLayout().catch((error) => {
-            console.log(error);
+            console.error(error);
         });
     }
 }
