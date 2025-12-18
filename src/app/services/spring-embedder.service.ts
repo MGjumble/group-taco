@@ -48,6 +48,7 @@ export class SpringEmbedderService {
             }
             await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         }
+        this._sourceNetService.updateEditedNet(diagram);
     }
 
     private _calculateNewPosition(nodes: DiagramNode[], neighborMap: Map<string, DiagramNode[]>): number {
