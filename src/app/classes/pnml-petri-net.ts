@@ -24,6 +24,9 @@ export interface PnmlPtnet {
 
 export interface PnmlPlace {
     '@_id': string;
+    name?: {
+        text?: string;
+    };
     graphics: {
         position: PnmlPosition;
     };

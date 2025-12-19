@@ -79,7 +79,7 @@ export class ParserService {
 
             const marking = rawData.marking || {};
             const labels = rawData.labels || {};
-            const places = this.parsePlaces(rawData.places, marking);
+            const places = this.parsePlaces(rawData.places, marking, labels);
             const arcs = this.parseArcs(rawData.arcs, rawData.layout);
             const transitions = this.parseTransitions(rawData.transitions, labels, places, arcs);
 
@@ -93,13 +93,18 @@ export class ParserService {
         }
     }
 
-    private parsePlaces(placeIds: string[] | undefined, marking: Record<string, number>): DiagramPlace[] {
+    private parsePlaces(
+        placeIds: string[] | undefined,
+        marking: Record<string, number>,
+        labels: Record<string, string>,
+    ): DiagramPlace[] {
         if (!placeIds || !Array.isArray(placeIds)) {
             return [];
         }
         return placeIds.map((id) => {
             const initialTokens = marking[id] || 0;
-            return new DiagramPlace(id, initialTokens);
+            const label = labels[id] || id;
+            return new DiagramPlace(id, initialTokens, label);
         });
     }
 
@@ -224,7 +229,8 @@ export class ParserService {
         return places.map((place) => {
             const id = place['@_id'];
             const initialMarking = place.initialMarking ? Number(place.initialMarking.text) : 0;
-            const diagramPlace = new DiagramPlace(id, initialMarking);
+            const label = place.name?.text || id;
+            const diagramPlace = new DiagramPlace(id, initialMarking, label);
             diagramPlace.x = Number(place.graphics.position['@_x']);
             diagramPlace.y = Number(place.graphics.position['@_y']);
             return diagramPlace;

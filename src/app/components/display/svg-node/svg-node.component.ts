@@ -14,8 +14,17 @@ import { DiagramPlace } from '../../../classes/diagram/diagram-place';
 })
 export class SvgNodeComponent {
     readonly RADIUS = 25;
-    readonly RECT_WIDTH = 50;
     readonly RECT_HEIGHT = 30;
+    readonly CHAR_WIDTH = 8;
+    readonly MAX_CHARS = 15;
+
+    readonly rectWidth = computed(() => {
+        const label = this.displayLabel();
+        if (!label) {
+            return 50;
+        }
+        return Math.max(50, label.length * this.CHAR_WIDTH + 10);
+    });
 
     readonly diagramNode = input<DisplayableNode>();
     private _playService = inject(PlayService);
@@ -80,8 +89,15 @@ export class SvgNodeComponent {
 
     placeTemplate = viewChild('place', { read: TemplateRef });
 
+    /**
+     * Truncated display label for the node, adding ellipsis if it exceeds MAX_CHARS.
+     */
     readonly displayLabel = computed(() => {
-        return this.diagramNode()?.displayLabel || '';
+        const label = this.diagramNode()?.displayLabel || '';
+        if (label.length > this.MAX_CHARS) {
+            return label.substring(0, this.MAX_CHARS) + '...';
+        }
+        return label;
     });
 
     readonly innerLabel = computed(() => {
@@ -142,7 +158,7 @@ export class SvgNodeComponent {
 
     readonly rectX = computed(() => {
         const node = this.diagramNode();
-        return node ? node.x - this.RECT_WIDTH / 2 : 0;
+        return node ? node.x - this.rectWidth() / 2 : 0;
     });
 
     readonly rectY = computed(() => {
