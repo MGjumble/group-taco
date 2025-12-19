@@ -1,9 +1,12 @@
 import { computed, ElementRef, Injectable, signal } from '@angular/core';
 import { DisplayableGraph } from '../classes/displayable-graph.interface';
 import { ViewBox, viewBoxValues } from '../components/display/display.constants';
+import { ViewBox, viewBoxValues } from '../components/display/display.constants';
 
 @Injectable()
 export class PanningService {
+    INITIAL_VIEWBOX: ViewBox = viewBoxValues;
+    private readonly ZOOM_INTENSITY = 0.1;
     INITIAL_VIEWBOX: ViewBox = viewBoxValues;
     private readonly ZOOM_INTENSITY = 0.1;
     private _viewBoxValues = signal(this.INITIAL_VIEWBOX);
@@ -64,6 +67,13 @@ export class PanningService {
                 minY: v.minY - dy,
             }),
         );
+        this._viewBoxValues.update(
+            (v: ViewBox): ViewBox => ({
+                ...v,
+                minX: v.minX - dx,
+                minY: v.minY - dy,
+            }),
+        );
         this._panStartPoint = { x: event.clientX, y: event.clientY };
     }
 
@@ -83,15 +93,8 @@ export class PanningService {
      *        the wheel event triggering the zoom
      * @param drawingArea
      *       reference to the SVG drawing area
-     * @param diagram
-     *       the current diagram being displayed
      */
-    public zoom(
-        event: WheelEvent,
-        drawingArea: ElementRef<SVGGraphicsElement>,
-        diagram: DisplayableGraph | undefined,
-    ): void {
-        if (!diagram) return;
+    public zoom(event: WheelEvent, drawingArea: ElementRef<SVGGraphicsElement>): void {
         event.preventDefault();
 
         const svg = drawingArea.nativeElement;
