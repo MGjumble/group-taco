@@ -7,12 +7,13 @@ import { Coords, JsonPetriNet } from '../classes/json-petri-net';
 import { DiagramPlace } from '../classes/diagram/diagram-place';
 import { DiagramTransition } from '../classes/diagram/diagram-transition';
 import { XMLParser } from 'fast-xml-parser';
-import { Pnml, PnmlArc, PnmlPlace, PnmlTransition } from '../classes/pnml-petri-net';
+import { Pnml, PnmlArc, PnmlNetContent, PnmlPlace, PnmlPtnet, PnmlTransition } from '../classes/pnml-petri-net';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ParserService {
+    private readonly PNML_PTNET_TYPE = 'http://www.pnml.org/version-2009/grammar/ptnet';
     /**
      * Parses the given text into a Diagram object.
      * Supports PNML (XML format) and JSON format.
@@ -43,11 +44,22 @@ export class ParserService {
                 isArray: (tagName) => alwaysArray.includes(tagName),
             });
             const pnmlObject = parser.parse(text) as Pnml;
-            const net = pnmlObject.pnml?.net;
 
-            const arcs: DiagramArc[] = this.parsePnmlArcs(net?.arc ?? []);
-            const places: DiagramPlace[] = this.parsePnmlPlaces(net?.place ?? []);
-            const transitions: DiagramTransition[] = this.parsePnmlTransitions(net?.transition ?? [], arcs, places);
+            const net = pnmlObject.pnml.net;
+            let netContent: PnmlNetContent | undefined;
+            if (net?.['@_type'] === this.PNML_PTNET_TYPE) {
+                netContent = (net as PnmlPtnet).page;
+            } else {
+                netContent = net as PnmlNetContent;
+            }
+
+            const arcs: DiagramArc[] = this.parsePnmlArcs(netContent?.arc ?? []);
+            const places: DiagramPlace[] = this.parsePnmlPlaces(netContent?.place ?? []);
+            const transitions: DiagramTransition[] = this.parsePnmlTransitions(
+                netContent?.transition ?? [],
+                arcs,
+                places,
+            );
 
             return new Diagram(places, transitions, arcs);
         } catch (e) {
