@@ -14,8 +14,13 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class SaveComponent {
     private _petriNetSavingService = inject(PetriNetSavingService);
+    private _displayService = inject(DisplayService);
 
     protected onSave(format: 'json' | 'pnml') {
         this._petriNetSavingService.savePetriNet(format);
+    }
+
+    protected onImageSave(format: 'png' | 'jpeg') {
+        this._displayService.triggerDownload(format);
     }
 }
