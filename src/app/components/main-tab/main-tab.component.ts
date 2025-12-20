@@ -11,6 +11,7 @@ import { SaveComponent } from '../tab-toolbar/save/save.component';
 import { UploadComponent } from '../tab-toolbar/upload/upload.component';
 import { ClearNetButtonComponent } from '../clear-net-button/clear-net-button.component';
 import { ModeToggleComponent } from '../tab-toolbar/mode-toggle/mode-toggle.component';
+import { LayoutButtonComponent } from '../layout-button/layout-button.component';
 
 @Component({
     selector: 'app-main-tab',
@@ -26,6 +27,7 @@ import { ModeToggleComponent } from '../tab-toolbar/mode-toggle/mode-toggle.comp
         UploadComponent,
         ClearNetButtonComponent,
         ModeToggleComponent,
+        LayoutButtonComponent,
     ],
     templateUrl: './main-tab.component.html',
     styleUrl: './main-tab.component.css',
