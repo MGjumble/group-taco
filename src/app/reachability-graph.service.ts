@@ -13,149 +13,160 @@ import { subscribeOn } from 'rxjs';
 // import { Tab } from '../classes/tabs';
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class ReachabilityGraphService {
-    private _reachabilityGraph: WritableSignal<ReachabilityGraph> = signal(new ReachabilityGraph());
-    private _modeService: ModeService = inject(ModeService);
-    private _sourceNetService = inject(SourcePetriNetService);
-    private _startMarkingRG: Record<string, number> = {};
-    private _currentMarkingRG = signal<Record<string, number>>(this._startMarkingRG);
-    //TODO: Later on, implement better algorithm for placement of StateNodes
-    private xCounter: number = 2;
-    private yCounter: number = 2;
-    //Counter for StateNodeIDs
-    private idCounter: number = 1;
-    //Counter für Kanten im EG
-    private rgEdgeCounter: number = 1;
+  private _reachabilityGraph: WritableSignal<ReachabilityGraph> = signal(new ReachabilityGraph());
+  private _modeService: ModeService = inject(ModeService);
+  private _sourceNetService = inject(SourcePetriNetService);
+  private _startMarkingRG: Record<string, number> = {};
+  private _currentMarkingRG = signal<Record<string, number>>(this._startMarkingRG);
+  //TODO: Later on, implement better algorithm for placement of StateNodes
+  private xCounter: number = 2;
+  private yCounter: number = 2;
+  //Counter for StateNodeIDs
+  private idCounter: number = 1;
+  //Counter für Kanten im EG
+  private rgEdgeCounter: number = 1;
+  //Changed for Arc recognition; StateNodes to be cmpared by ID, not by label
+  private initialRgId: string = 'RG' + this.idCounter;
+  private currentSourceRgId: string = this.initialRgId;
+  private currentTargetRgId: string = '';
 
-    set startMarkingRG(marking: Record<string, number>) {
-        this._startMarkingRG = marking;
+  set startMarkingRG(marking: Record<string, number>) {
+    this._startMarkingRG = marking;
+  }
+
+  set currentMarkingRG(marking: Record<string, number>) {
+    this._currentMarkingRG.set(marking);
+  }
+
+  get reachabilityGraphSignal(): Signal<ReachabilityGraph> {
+    return this._reachabilityGraph.asReadonly();
+  }
+
+  //bekommt firing entry und macht dann eine nodeID daraus und übergibt an reachability graph als stateNode+//woher x und y?
+
+  // get marking
+  // only take numbers from record of Sting and number, display as label and add to model (Id)
+
+  //also update reachability graph model? --> dem reach service übergeben, nach Sortierung, service entfernt placebezeichner und sortiert nur nummern
+
+  //node übergeben bzw ganzes Diagram und DiagramTransition an RGService
+  //Node als StateNode behandeln und Label
+  //KOMPLETTES KEY VALUE PAIR , damit gerechnet und später zurückgegeben werden kann
+  //place und number of tokens
+
+  /**
+   * Method to initialize first StateNode of Reachability Graph
+   * Extracts marking from reachability-graph-display
+   * beim Initialisieren direkt den ersten Knoten anlegen
+   *
+   */
+  initializeReachabilityGraphFirstStateNode() {
+    if (this._modeService.currentMode() === AppMode.LEARN) {
+      //AUTOMATISCH StateNode erzeugen
+      //Current marking auslesen
+      this._startMarkingRG = this._sourceNetService.getCurrentSourceNet()?.startMarking || {};
+      let initialReachabilityLabel: string = Object.values(this._startMarkingRG).join(' ');
+      //let initialRgId: string = 'RG00';
+      //x und y Startwert konstant festlegen
+      let initialX: number = 100;
+      let initialY: number = 100;
+      //neuen StateNode erzeugen
+      let initialStateNode = new StateNode(
+        this.initialRgId,
+        initialX,
+        initialY,
+        initialReachabilityLabel,
+        this.startMarkingRG
+      );
+
+      this._reachabilityGraph.update((graph) => {
+        const newGraph = new ReachabilityGraph();
+        newGraph.nodes = [...graph.nodes, initialStateNode];
+        newGraph.edges = [...graph.edges];
+        return newGraph;
+      });
+
+      console.log(initialReachabilityLabel);
+    } else if (this._modeService.currentMode() === AppMode.EXAM) {
+      //nur im Hintergrund vergleichen, User gibt NodeLabel, also Marking, selbst ein und bekommt Feedback
     }
+  }
 
-    set currentMarkingRG(marking: Record<string, number>) {
-        this._currentMarkingRG.set(marking);
-    }
+  /**
+   * Gets firing entry label (Place names and tokens) from play service
+   * Converts to RG ID (only displays token numbers sorted ascending by place id (alphanumerical))
+   * Erstellt einzelnes state-Objekt
+   * erst danach vom Firing übernehmen
+   * @param firingEntryLabel The label of the fired transition.
+   */
 
-    get reachabilityGraphSignal(): Signal<ReachabilityGraph> {
-        return this._reachabilityGraph.asReadonly();
-    }
+  //WIRKLICH VON HIER NEHMEN - ODER AUS DEM RG-Model mit Subscrbe, wenn sich das Netz ändert? - Was ist "sauberer"?
+  convertFiringEntryLabelToReachabilityGraphID(firingEntry: FiringEntry) {
+    //Fallunterscheidung zwischen erstem Aufruf und dann Aufruf nach Schalten / Firing --> ueber unterschiedliche Methoden geloest
+    let _markingRG = this._sourceNetService.getCurrentSourceNet()?.currentMarking$ || {};
+    //Vorherigen Zustand für Arc speichern
+    let previousReachabilityLabel: string = Object.entries(firingEntry.startMarking)
+      .map(([key, value]) => `${value}`)
+      .join(' ');
 
-    //bekommt firing entry und macht dann eine nodeID daraus und übergibt an reachability graph als stateNode+//woher x und y?
+    //Zustand nach Schalten / Target für Arcs
+    let currentReachabilityLabel: string = Object.entries(firingEntry.endMarking)
+      .map(([key, value]) => `${value}`)
+      .join(' ');
 
-    // get marking
-    // only take numbers from record of Sting and number, display as label and add to model (Id)
+    let currentRgId: string = 'RG' + this.idCounter;
+    this.currentTargetRgId = currentRgId;
+    //x und y Startwert konstant festlegen
+    let currentX: number = this.xCounter * 100;
+    let currentY: number = this.yCounter * 100;
+    //neuen StateNode erzeugen
+    let currentStateNode = new StateNode(
+      currentRgId,
+      currentX,
+      currentY,
+      currentReachabilityLabel,
+      this.startMarkingRG
+    );
 
-    //also update reachability graph model? --> dem reach service übergeben, nach Sortierung, service entfernt placebezeichner und sortiert nur nummern
+    let currentRgEdgeId: string = 'Edge' + this.rgEdgeCounter;
+    let currentRgEdgeLabel: string = 'E' + this.rgEdgeCounter;
+    let currentFiringEdge = new FiringEdge(
+      currentRgEdgeId,
+      this.currentSourceRgId,
+      this.currentTargetRgId,
+      currentRgEdgeLabel
+    );
 
-    //node übergeben bzw ganzes Diagram und DiagramTransition an RGService
-    //Node als StateNode behandeln und Label
-    //KOMPLETTES KEY VALUE PAIR , damit gerechnet und später zurückgegeben werden kann
-    //place und number of tokens
+    this._reachabilityGraph.update((graph) => {
+      const newGraph = new ReachabilityGraph();
+      newGraph.nodes = [...graph.nodes, currentStateNode];
+      newGraph.edges = [...graph.edges, currentFiringEdge];
+      return newGraph;
+    });
+    //increment counters
+    this.idCounter++;
+    this.xCounter++;
+    this.yCounter++;
+    this.rgEdgeCounter++;
 
-    /**
-     * Method to initialize first StateNode of Reachability Graph
-     * Extracts marking from reachability-graph-display
-     * beim Initialisieren direkt den ersten Knoten anlegen
-     *
-     */
-    initializeReachabilityGraphFirstStateNode() {
-        if (this._modeService.currentMode() === AppMode.LEARN) {
-            //AUTOMATISCH StateNode erzeugen
-            //Current marking auslesen
-            this._startMarkingRG = this._sourceNetService.getCurrentSourceNet()?.startMarking || {};
-            let initialReachabilityLabel: string = Object.values(this._startMarkingRG).join(' ');
-            let initialRgId: string = 'RG00';
-            //x und y Startwert konstant festlegen
-            let initialX: number = 100;
-            let initialY: number = 100;
-            //neuen StateNode erzeugen
-            let initialStateNode = new StateNode(
-                initialRgId,
-                initialX,
-                initialY,
-                initialReachabilityLabel,
-                this.startMarkingRG,
-            );
+    //change target to new source for arcs
+    this.currentSourceRgId = this.currentTargetRgId;
+    //delete "old" target
+    this.currentTargetRgId = '';
 
-            this._reachabilityGraph.update((graph) => {
-                const newGraph = new ReachabilityGraph();
-                newGraph.nodes = [...graph.nodes, initialStateNode];
-                newGraph.edges = [...graph.edges];
-                return newGraph;
-            });
+    console.log(currentReachabilityLabel);
 
-            console.log(initialReachabilityLabel);
-        } else if (this._modeService.currentMode() === AppMode.EXAM) {
-            //nur im Hintergrund vergleichen, User gibt NodeLabel, also Marking, selbst ein und bekommt Feedback
-        }
-    }
-
-    /**
-     * Gets firing entry label (Place names and tokens) from play service
-     * Converts to RG ID (only displays token numbers sorted ascending by place id (alphanumerical))
-     * Erstellt einzelnes state-Objekt
-     * erst danach vom Firing übernehmen
-     * @param firingEntryLabel The label of the fired transition.
-     */
-
-    //WIRKLICH VON HIER NEHMEN - ODER AUS DEM RG-Model mit Subscrbe, wenn sich das Netz ändert? - Was ist "sauberer"?
-    convertFiringEntryLabelToReachabilityGraphID(firingEntry: FiringEntry) {
-        //Fallunterscheidung zwischen erstem Aufruf und dann Aufruf nach Schalten / Firing --> ueber unterschiedliche Methoden geloest
-        let _markingRG = this._sourceNetService.getCurrentSourceNet()?.currentMarking$ || {};
-        //Vorherigen Zustand für Arc speichern
-        let previousReachabilityLabel: string = Object.entries(firingEntry.startMarking)
-            .map(([key, value]) => `${value}`)
-            .join(' ');
-        //Zustand nach Schalten
-        let currentReachabilityLabel: string = Object.entries(firingEntry.endMarking)
-            .map(([key, value]) => `${value}`)
-            .join(' ');
-
-        let currentRgId: string = 'RG' + this.idCounter;
-        //x und y Startwert konstant festlegen
-        let currentX: number = this.xCounter * 100;
-        let currentY: number = this.yCounter * 100;
-        //neuen StateNode erzeugen
-        let currentStateNode = new StateNode(
-            currentRgId,
-            currentX,
-            currentY,
-            currentReachabilityLabel,
-            this.startMarkingRG,
-        );
-
-        let currentRgEdgeId: string = 'Edge' + this.rgEdgeCounter;
-        let currentRgEdgeLabel: string = 'E' + this.rgEdgeCounter;
-        let currentFiringEdge = new FiringEdge(
-            currentRgEdgeId,
-            previousReachabilityLabel,
-            currentReachabilityLabel,
-            currentRgEdgeLabel,
-        );
-
-        this._reachabilityGraph.update((graph) => {
-            const newGraph = new ReachabilityGraph();
-            newGraph.nodes = [...graph.nodes, currentStateNode];
-            newGraph.edges = [...graph.edges, currentFiringEdge];
-            return newGraph;
-        });
-        //increment counters
-        this.idCounter++;
-        this.xCounter++;
-        this.yCounter++;
-        this.rgEdgeCounter++;
-
-        console.log(currentReachabilityLabel);
-
-        //HIER X UND Y EINFACH JE +100 FÜR DEN ANFANG
-        //später dann aus Algorithmus ziehen (Spring Embedder oder Sugiyama, für alle Tabs gleich)
-        // return new DiagramPlace(id, initialTokens);
-        //new State Node
-        //add StateNode zu Liste/ fullRG
-        //nextStateNode
-        //use only Label or use complete FirngEntry?
-    }
-    //Methode public ALLE state nodes zurückgeben
-    //Methode 2 public ALLE edges zurückgeben
+    //HIER X UND Y EINFACH JE +100 FÜR DEN ANFANG
+    //später dann aus Algorithmus ziehen (Spring Embedder oder Sugiyama, für alle Tabs gleich)
+    // return new DiagramPlace(id, initialTokens);
+    //new State Node
+    //add StateNode zu Liste/ fullRG
+    //nextStateNode
+    //use only Label or use complete FirngEntry?
+  }
+  //Methode public ALLE state nodes zurückgeben
+  //Methode 2 public ALLE edges zurückgeben
 }
