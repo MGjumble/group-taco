@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { DisplayableGraph } from '../classes/displayable-graph.interface';
 
 @Injectable({
@@ -7,6 +7,8 @@ import { DisplayableGraph } from '../classes/displayable-graph.interface';
 })
 export class DisplayService implements OnDestroy {
     private _diagram$: BehaviorSubject<DisplayableGraph | undefined>;
+    private _downloadRequestSource = new Subject<'png' | 'jpeg'>();
+    public downloadRequest$ = this._downloadRequestSource.asObservable();
 
     constructor() {
         this._diagram$ = new BehaviorSubject<DisplayableGraph | undefined>(undefined);
@@ -30,5 +32,9 @@ export class DisplayService implements OnDestroy {
 
     public clear() {
         this._diagram$.next(undefined);
+    }
+
+    public triggerDownload(format: 'png' | 'jpeg') {
+        this._downloadRequestSource.next(format);
     }
 }
