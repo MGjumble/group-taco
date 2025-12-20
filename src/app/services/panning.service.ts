@@ -70,7 +70,6 @@ export class PanningService {
      */
     public endPan(drawingArea: ElementRef<SVGGraphicsElement>): void {
         this._isPanning = false;
-        console.log('endPan', drawingArea);
         drawingArea.nativeElement.style.cursor = 'default';
     }
 }
