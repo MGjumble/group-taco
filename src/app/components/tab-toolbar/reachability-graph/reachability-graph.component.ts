@@ -12,7 +12,6 @@ import { Tab } from '../../../classes/tabs';
 })
 export class ReachabilityGraphComponent {
     private _tabStateService = inject(TabStateService);
-    private _playService = inject(PlayService);
 
     constructor() {
         this.initializeTabEffect();
