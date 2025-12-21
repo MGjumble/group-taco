@@ -4,7 +4,7 @@ import { DisplayService } from '../../../services/display.service';
 import { PlayService } from '../../../services/play.service';
 import { FiringTableComponent } from './firing-table/firing-table.component';
 import { Diagram } from '../../../classes/diagram/diagram';
-import { filter, Subscription, switchMap, tap } from 'rxjs';
+import { filter, Subscription, switchMap, take, tap } from 'rxjs';
 
 @Component({
     selector: 'app-play',
