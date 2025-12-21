@@ -30,7 +30,7 @@ export class FiringTableComponent {
         this._playService.resetFiringEntries();
         this._displayService.diagram$
             .pipe(
-                take(1), // Nimm nur den aktuellen Wert
+                take(1),
                 filter((diagram) => !!diagram && diagram instanceof Diagram),
             )
             .subscribe((diagram) => {
