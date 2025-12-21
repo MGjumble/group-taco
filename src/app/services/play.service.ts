@@ -16,7 +16,7 @@ export class PlayService {
     private _startMarking: Record<string, number> = {};
     private _currentMarking = signal<Record<string, number>>(this._startMarking);
     private _lastMarking: Record<string, number> | undefined = undefined;
-    private _idCounter: number = 0;
+    private _idCounter = 0;
 
     firingEntries = signal<FiringEntry[]>([]);
 
