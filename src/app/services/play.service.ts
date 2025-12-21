@@ -33,7 +33,7 @@ export class PlayService {
      * @param diagram
      *          The diagram to recover the marking for.
      */
-    recoverMarking(diagram: Diagram): void {
+    recoverLastMarking(diagram: Diagram): void {
         if (this._lastMarking) diagram.marking = this._lastMarking;
     }
 
