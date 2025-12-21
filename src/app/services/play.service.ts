@@ -147,7 +147,7 @@ export class PlayService {
      */
     private _closeLastFiringEntry(): void {
         this.firingEntries.update((entries) => {
-            let lastEntry = entries[entries.length - 1];
+            const lastEntry = entries[entries.length - 1];
             if (lastEntry && !lastEntry.isClosed) lastEntry.isClosed = true;
             return entries;
         });
