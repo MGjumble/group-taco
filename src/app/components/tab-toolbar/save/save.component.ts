@@ -6,6 +6,9 @@ import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { DisplayService } from '../../../services/display.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { TabStateService } from '../../../services/tab-state.service';
+import { Tab } from '../../../classes/tabs';
 
 @Component({
     selector: 'app-save',
