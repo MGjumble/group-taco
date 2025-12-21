@@ -4,6 +4,7 @@
     matTooltip="Petri Netz zurücksetzen"
     color="warn"
     (click)="clearNet()"
-    class="clear-button">
+    class="clear-button"
+    [disabled]="isDisabled()">
     <mat-icon>delete_outline</mat-icon>
 </button>

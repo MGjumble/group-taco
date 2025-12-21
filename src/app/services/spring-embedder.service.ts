@@ -3,12 +3,14 @@ import { DiagramNode } from '../classes/diagram/diagram-node';
 import { SourcePetriNetService } from './source-petri-net.service';
 import { DiagramArc } from '../classes/diagram/diagram-arc';
 import { Coords } from '../classes/json-petri-net';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
     providedIn: 'root',
 })
 export class SpringEmbedderService {
     private _sourceNetService = inject(SourcePetriNetService);
+    public isOptimalLayoutCalculated = toSignal(this._sourceNetService.optimalLayoutCalculated$);
 
     private readonly LENGTH_CONSTANT = 150;
     private readonly STIFFNESS_CONSTANT = 0.2;
@@ -44,6 +46,7 @@ export class SpringEmbedderService {
 
         for (let i = 0; i < this.MAX_ITERATIONS; i++) {
             if (this._calculateNewPosition(nodes, neighborMap) < this.MIN_MOVEMENT) {
+                this._sourceNetService.optimalLayoutCalculated();
                 break;
             }
             await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));

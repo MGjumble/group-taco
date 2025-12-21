@@ -1,3 +1,8 @@
-<button mat-icon-button color="primary" matTooltip="Spring Embedder Layout" (click)="calculateLayout()">
+<button
+    mat-icon-button
+    color="primary"
+    matTooltip="Spring Embedder Layout"
+    (click)="calculateLayout()"
+    [disabled]="isDisabled()">
     <mat-icon>mediation</mat-icon>
 </button>

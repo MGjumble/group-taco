@@ -3,7 +3,8 @@
     aria-label="Speichern unter..."
     matTooltip="Speichern unter..."
     [matMenuTriggerFor]="saveMenu"
-    color="primary">
+    color="primary"
+    [disabled]="isDisabled()">
     <mat-icon>save_alt</mat-icon>
 </button>
 <mat-menu #saveMenu="matMenu">
@@ -15,11 +16,11 @@
         <mat-icon class="icon-pnml">account_tree</mat-icon>
         <span>Save as <strong>PNML</strong></span>
     </button>
-    <button mat-menu-item (click)="onImageSave('png')">
+    <button mat-menu-item (click)="onImageSave('png')" [disabled]="isImageExportDisabled()">
         <mat-icon class="icon-png">image</mat-icon>
         <span>Save as <strong>Image (PNG)</strong></span>
     </button>
-    <button mat-menu-item (click)="onImageSave('jpeg')">
+    <button mat-menu-item (click)="onImageSave('jpeg')" [disabled]="isImageExportDisabled()">
         <mat-icon class="icon-jpeg">broken_image</mat-icon>
         <span>Save as <strong>Image (JPEG)</strong></span>
     </button>
