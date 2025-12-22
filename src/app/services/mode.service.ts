@@ -22,9 +22,8 @@ export class ModeService {
      */
     toggleMode(): void {
         this._modeSignal.update((current) => (current === AppMode.LEARN ? AppMode.EXAM : AppMode.LEARN));
-        this._toasterService.showInfo(
-            'TOASTER.HEADER.MODE_SWITCHED',
-            this.isExamMode() ? 'TOASTER.BODY.MODE_SWITCHED_EXAM' : 'TOASTER.BODY.MODE_SWITCHED_LEARN',
-        );
+        this._toasterService.showInfo('TOASTER.HEADER.MODE_SWITCHED', 'TOASTER.BODY.MODE_SWITCHED', {
+            messageParams: { mode: this._modeSignal() },
+        });
     }
 }

@@ -8,15 +8,5 @@
     </button>
     <button mat-menu-item (click)="onSave('pnml')">
         <mat-icon class="icon-pnml">account_tree</mat-icon> <span>{{ 'SAVE_AS_PNML' | translate }}</span>
-        <mat-icon class="icon-pnml">account_tree</mat-icon>
-        <span>Save as <strong>PNML</strong></span>
-    </button>
-    <button mat-menu-item (click)="onImageSave('png')" [disabled]="isImageExportDisabled()">
-        <mat-icon class="icon-png">image</mat-icon>
-        <span>{{ 'SAVE_AS_PNG' | translate }}</span>
-    </button>
-    <button mat-menu-item (click)="onImageSave('jpeg')" [disabled]="isImageExportDisabled()">
-        <mat-icon class="icon-jpeg">broken_image</mat-icon>
-        <span>{{ 'SAVE_AS_JPEG' | translate }}</span>
     </button>
 </mat-menu>
