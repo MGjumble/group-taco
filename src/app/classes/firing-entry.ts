@@ -2,7 +2,7 @@
  * Representing a transition firing sequence in the petri net.
  */
 export class FiringEntry {
-    private _delimiters = /\s+|,|;/;
+    private _delimiters = /\s+|,|;|, |; |,/;
 
     constructor(
         public id: number,
