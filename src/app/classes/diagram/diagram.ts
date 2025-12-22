@@ -52,6 +52,17 @@ export class Diagram implements DisplayableGraph {
         return marking;
     }
 
+    /**
+     * Sets the marking of the diagram based on the provided mapping from place IDs to token counts.
+     * @param marking
+     *          The new marking to be set.
+     */
+    set marking(marking: Record<string, number>) {
+        this._places.forEach((place) => {
+            place.tokens = marking[place.id] || 0;
+        });
+    }
+
     get startMarking(): Record<string, number> {
         return this._startMarking;
     }
