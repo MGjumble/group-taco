@@ -17,20 +17,20 @@ export class PlayValidationService {
      * Validates a firing entry input based on the diagram and the keyboard event.
      * @param diagram
      *          The diagram on which the firing entry is to be validated.
-     * @param firingEntry
+     * @param entry
      *          The firing entry to be validated.
      * @param event
      *          The keyboard event that triggered the validation.
      * @returns
      */
-    validateInput(diagram: Diagram | undefined, firingEntry: FiringEntry, event: KeyboardEvent): void {
+    validateInput(diagram: Diagram | undefined, entry: FiringEntry, event: KeyboardEvent): void {
         if (!diagram || event.key === ' ' || event.key === ',' || event.key === ';') return;
         if (event.key.length === 1 || event.key === 'Backspace' || event.key === 'Delete') {
-            firingEntry.transitionCount = firingEntry.labels.length;
+            entry.transitionCount = entry.labels.length;
             const possibleTransitions: string[] = diagram.transitions.map((t) => t.label || t.id) || [];
-            const hasOnlyValidTransitions = this._hasOnlyValidTransitions(possibleTransitions, firingEntry.labels);
+            const hasOnlyValidTransitions = this._hasOnlyValidTransitions(possibleTransitions, entry.labels);
             // TODO: provide user feedback if invalid transitions are present
-            if (hasOnlyValidTransitions) this._isValidFiringEntry(diagram, firingEntry);
+            if (hasOnlyValidTransitions) this._isValidFiringEntry(diagram, entry);
         }
     }
 
@@ -56,13 +56,13 @@ export class PlayValidationService {
      * Checks whether a firing entry is valid for a given diagram.
      * @param diagram
      *          The diagram on which the firing entry is to be validated.
-     * @param firingEntry
+     * @param entry
      *          The firing entry to be validated.
      * @returns true if the firing entry is valid, false otherwise.
      */
-    private _isValidFiringEntry(diagram: Diagram, firingEntry: FiringEntry): boolean {
-        const endMarking: string = firingEntry.formattedEndMarking;
-        this._playService.playSequence(diagram, firingEntry, 0);
-        return endMarking === firingEntry.formattedEndMarking;
+    private _isValidFiringEntry(diagram: Diagram, entry: FiringEntry): boolean {
+        const endMarking: string = entry.formattedEndMarking;
+        this._playService.playSequence(diagram, entry, 0);
+        return endMarking === entry.formattedEndMarking;
     }
 }

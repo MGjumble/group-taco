@@ -25,8 +25,11 @@ export class FiringTableComponent implements OnInit, OnDestroy {
     private _playService = inject(PlayService);
     private _playValidationService = inject(PlayValidationService);
 
+    private readonly TRANSITION_TIME_CONSTANT: number = 1000;
+    private _lastFiringSequence: string = '';
     private _diagram: Diagram | undefined;
     @Input() firingEntries: FiringEntry[] = [];
+
 
     ngOnInit(): void {
         this._sub = this._displayService.diagram$.subscribe((diagram) => {
@@ -38,10 +41,12 @@ export class FiringTableComponent implements OnInit, OnDestroy {
         this._sub?.unsubscribe();
     }
 
-    onKeyUp(firingEntry: FiringEntry, event: KeyboardEvent): void {
+    onKeyUp(entry: FiringEntry, event: KeyboardEvent): void {
+        if (entry.firingSequence.trim() === this._lastFiringSequence.trim()) return;
+        this._lastFiringSequence = entry.firingSequence;
         if (event.key === 'Enter') this.onNewEntry();
         // TODO: Make validation dependent on current mode (e.g., exam mode)
-        else this._playValidationService.validateInput(this._diagram, firingEntry, event);
+        else this._playValidationService.validateInput(this._diagram, entry, event);
     }
 
     onDeleteEntry(id: number): void {
@@ -62,6 +67,10 @@ export class FiringTableComponent implements OnInit, OnDestroy {
 
     onNewEntry(): void {
         if (this._diagram) this._playService.startNewFiringSequence(this._diagram);
+    }
+
+    onPlaySequence(entry: FiringEntry): void {
+        if (this._diagram) this._playService.playSequence(this._diagram, entry, this.TRANSITION_TIME_CONSTANT);
     }
 
     incrementStartMarking(entry: FiringEntry, placeId: string): void {

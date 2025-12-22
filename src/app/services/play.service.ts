@@ -50,21 +50,24 @@ export class PlayService {
      * Plays a firing sequence on a diagram.
      * @param diagram
      *          The diagram on which the firing sequence is played.
-     * @param firingEntry
+     * @param entry
      *          The firing entry containing the sequence to be played.
      * @param transitionTime
      *          The time period between firing each transition in milliseconds.
      */
-    playSequence(diagram: Diagram, firingEntry: FiringEntry, transitionTime: number): void {
-        diagram.marking = { ...firingEntry.startMarking };
-        console.log('Playing sequence:', firingEntry.firingSequence);
-        for (const label of firingEntry.labels) {
+    playSequence(diagram: Diagram, entry: FiringEntry, transitionTime: number): void {
+        diagram.marking = { ...entry.startMarking };
+        console.log('Playing sequence:', entry.firingSequence);
+        for (let i = 0; i < entry.labels.length; i++) {
+            const label = entry.labels[i];
             const node: DiagramTransition | undefined = diagram.getTransitionByLabel(label);
-            if (node)
+            
+            if (node) {
                 setTimeout(() => {
                     this.processTransitionClick(diagram, node, true);
-                    firingEntry.endMarking = diagram.marking;
-                }, transitionTime);
+                    entry.endMarking = diagram.marking;
+                }, transitionTime * i);
+            }
         }
     }
 
