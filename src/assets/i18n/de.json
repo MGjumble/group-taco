@@ -40,7 +40,8 @@
         "BODY": {
             "NO_NET_TO_SAVE": "Es ist kein Petri-Netz zum Speichern vorhanden.",
             "TRANSITION_NOT_ACTIVATED": "Die Transition {{label}} ist nicht aktiviert und kann nicht geschaltet werden.",
-            "MODE_SWITCHED": "Du befindest dich jetzt im {{mode}}.",
+            "MODE_SWITCHED_EXAM": "Du befindest dich jetzt im Prüfungsmodus.",
+            "MODE_SWITCHED_LEARN": "Du befindest dich jetzt im Lernmodus.",
             "FILE_EMPTY_OR_UNREADABLE": "Die ausgewählte Datei ist leer oder konnte nicht gelesen werden.",
             "DOWNLOAD_FAILED": "Datei unter {{url}} konnte nicht geladen werden.{{details}}",
             "EMPTY_RESPONSE": "Vom Server unter {{url}} wurden keine Inhalte geliefert.",

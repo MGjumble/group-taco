@@ -40,7 +40,8 @@
         "BODY": {
             "NO_NET_TO_SAVE": "There is no Petri net to save.",
             "TRANSITION_NOT_ACTIVATED": "The transition {{label}} is not activated and cannot be fired.",
-            "MODE_SWITCHED": "You are now in {{mode}}.",
+            "MODE_SWITCHED_EXAM": "You are now in exam mode.",
+            "MODE_SWITCHED_LEARN": "You are now in learning mode.",
             "FILE_EMPTY_OR_UNREADABLE": "The selected file is empty or could not be read.",
             "DOWNLOAD_FAILED": "File at {{url}} could not be loaded.{{details}}",
             "EMPTY_RESPONSE": "No content was returned from the server at {{url}}.",

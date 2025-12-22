@@ -18,8 +18,13 @@ export enum Language {
 export class LanguageButtonComponent {
     private _translationService = inject(TranslateService);
 
-    protected currentLanguage: Language =
-        this._translationService.getBrowserLang() === Language.DE ? Language.DE : Language.EN;
+    protected currentLanguage: Language;
+
+    constructor() {
+        const browserLang = this._translationService.getBrowserLang();
+        this.currentLanguage = browserLang === Language.DE ? Language.DE : Language.EN;
+        this._translationService.use(this.currentLanguage);
+    }
 
     protected switchLanguage() {
         this.currentLanguage = this.currentLanguage === Language.DE ? Language.EN : Language.DE;
