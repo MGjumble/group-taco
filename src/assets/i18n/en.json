@@ -16,6 +16,8 @@
     "SAVE_AS": "Save as...",
     "SAVE_AS_JSON": "Save as JSON",
     "SAVE_AS_PNML": "Save as PNML",
+    "SAVE_AS_PNG": "Save as Image (PNG)",
+    "SAVE_AS_JPEG": "Save as Image (JPEG)",
     "UPLOAD_NET": "Upload Net",
     "HEADER_SUBTITLE": "Fachpraktikum Programmiersysteme WiSe25/26 by Marie G., Florian M., Ben L., Oliver S. and Alexander K.",
     "TACO_COUNT": "Number of tacos: {{count}}!",

@@ -13,10 +13,10 @@
     </button>
     <button mat-menu-item (click)="onImageSave('png')" [disabled]="isImageExportDisabled()">
         <mat-icon class="icon-png">image</mat-icon>
-        <span>Save as <strong>Image (PNG)</strong></span>
+        <span>{{ 'SAVE_AS_PNG' | translate }}</span>
     </button>
     <button mat-menu-item (click)="onImageSave('jpeg')" [disabled]="isImageExportDisabled()">
         <mat-icon class="icon-jpeg">broken_image</mat-icon>
-        <span>Save as <strong>Image (JPEG)</strong></span>
+        <span>{{ 'SAVE_AS_JPEG' | translate }}</span>
     </button>
 </mat-menu>

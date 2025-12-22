@@ -16,6 +16,8 @@
     "SAVE_AS": "Speichern unter...",
     "SAVE_AS_JSON": "Speichern als JSON",
     "SAVE_AS_PNML": "Speichern als PNML",
+    "SAVE_AS_PNG": "Speichern als Bild (PNG)",
+    "SAVE_AS_JPEG": "Speichern als Bild (JPEG)",
     "UPLOAD_NET": "Netz hochladen",
     "HEADER_SUBTITLE": "Fachpraktikum Programmiersysteme WiSe25/26 von Marie G., Florian M., Ben L., Oliver S. und Alexander K.",
     "TACO_COUNT": "Anzahl der Tacos: {{count}}!",
