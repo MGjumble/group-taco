@@ -4,10 +4,11 @@ import { PetriNetSavingService } from '../../../services/petri-net-saving.servic
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-save',
-    imports: [MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, MatIconButton, MatTooltip],
+    imports: [MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, MatIconButton, MatTooltip, TranslateModule],
     templateUrl: './save.component.html',
     styleUrl: './save.component.css',
 })

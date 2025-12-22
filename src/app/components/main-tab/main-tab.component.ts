@@ -12,6 +12,8 @@ import { UploadComponent } from '../tab-toolbar/upload/upload.component';
 import { ClearNetButtonComponent } from '../clear-net-button/clear-net-button.component';
 import { ModeToggleComponent } from '../tab-toolbar/mode-toggle/mode-toggle.component';
 import { LayoutButtonComponent } from '../layout-button/layout-button.component';
+import { LanguageButtonComponent } from '../language-button/language-button.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-main-tab',
@@ -28,6 +30,8 @@ import { LayoutButtonComponent } from '../layout-button/layout-button.component'
         ClearNetButtonComponent,
         ModeToggleComponent,
         LayoutButtonComponent,
+        LanguageButtonComponent,
+        TranslateModule,
     ],
     templateUrl: './main-tab.component.html',
     styleUrl: './main-tab.component.css',

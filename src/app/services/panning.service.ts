@@ -83,8 +83,15 @@ export class PanningService {
      *        the wheel event triggering the zoom
      * @param drawingArea
      *       reference to the SVG drawing area
+     * @param diagram
+     *       the current diagram being displayed
      */
-    public zoom(event: WheelEvent, drawingArea: ElementRef<SVGGraphicsElement>): void {
+    public zoom(
+        event: WheelEvent,
+        drawingArea: ElementRef<SVGGraphicsElement>,
+        diagram: DisplayableGraph | undefined,
+    ): void {
+        if (!diagram) return;
         event.preventDefault();
 
         const svg = drawingArea.nativeElement;

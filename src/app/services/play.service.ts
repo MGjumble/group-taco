@@ -49,8 +49,9 @@ export class PlayService {
             this._addTransitionToFiringSequence(node.label);
         } else
             this._notificationService.showWarning(
-                'Transition not activated',
-                `The transition ${node.label} is not activated and cannot be fired.`,
+                'TOASTER.HEADER.TRANSITION_NOT_ACTIVATED',
+                'TOASTER.BODY.TRANSITION_NOT_ACTIVATED',
+                { messageParams: { label: node.label } },
             );
     }
 

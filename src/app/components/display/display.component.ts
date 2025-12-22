@@ -91,6 +91,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
     }
 
     public onWheel(event: WheelEvent): void {
-        this._panningService.zoom(event, this.drawingArea);
+        this._panningService.zoom(event, this.drawingArea, this.diagram());
     }
 }

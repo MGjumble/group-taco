@@ -1,17 +1,12 @@
-<button
-    mat-icon-button
-    aria-label="Speichern unter..."
-    matTooltip="Speichern unter..."
-    [matMenuTriggerFor]="saveMenu"
-    color="primary">
+<button mat-icon-button [matTooltip]="'SAVE_AS' | translate" [matMenuTriggerFor]="saveMenu" color="primary">
     <mat-icon>save_alt</mat-icon>
 </button>
 <mat-menu #saveMenu="matMenu">
     <button mat-menu-item (click)="onSave('json')">
         <mat-icon class="icon-json">data_object</mat-icon>
-        <span>Save as <strong>JSON</strong></span>
+        <span>{{ 'SAVE_AS_JSON' | translate }}</span>
     </button>
     <button mat-menu-item (click)="onSave('pnml')">
-        <mat-icon class="icon-pnml">account_tree</mat-icon> <span>Save as <strong>PNML</strong></span>
+        <mat-icon class="icon-pnml">account_tree</mat-icon> <span>{{ 'SAVE_AS_PNML' | translate }}</span>
     </button>
 </mat-menu>
