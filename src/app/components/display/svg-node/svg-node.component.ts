@@ -35,7 +35,7 @@ export class SvgNodeComponent {
     readonly isTransitionAndActive = computed(() => {
         const node = this.diagramNode();
         if (node instanceof DiagramTransition) {
-            return this._playService.isTransitionAndActivated(node);
+            return this._playService.canBeFired(node);
         }
         return false;
     });
