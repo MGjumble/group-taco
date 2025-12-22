@@ -72,22 +72,19 @@
         }
     </svg>
     <div class="toolbar">
-        <h3>Zeichenbereich</h3>
-        <button class="clear-btn" (click)="clearDrawing()">Zeichnung löschen</button>
-        <button class="validate-btn" (click)="onValidate()">Prozessnetz validieren</button>
+        <h3>{{ 'PROCESS_NET.DRAWING_AREA_HEADER' | translate }}</h3>
+        <button class="clear-btn" (click)="clearDrawing()">{{ 'PROCESS_NET.BUTTON_CLEAR_DRAWING' | translate }}</button>
+        <button class="validate-btn" (click)="onValidate()">{{ 'PROCESS_NET.BUTTON_VALIDATE_NET' | translate }}</button>
         <button class="start-position-btn" (click)="onCreateStartPosition()">
-            Startposition setzten(löscht das bisherige)
+            {{ 'PROCESS_NET.BUTTON_SET_START_POSITION' | translate }}
         </button>
     </div>
     <div class="instructions">
-        <p>Ziehen Sie Elemente aus dem linken Anzeigebereich hierher, um Ihr Prozessnetz zu erstellen.</p>
-        <p>Mit Linksklick Elemente ziehen, um sie zu bewegen.</p>
-        <p>Mit Mittelklick einen Place oder eine Transition löschen (Verbindungen werden automatisch entfernt).</p>
-        <p>
-            Rechtsklick auf einen Place oder eine Transition, um ihn als Quelle zu wählen; anschließend Rechtsklick auf
-            den gegen gesetzten Typ, um eine gerichtete Verbindung zum zweiten Element zu erstellen.
-        </p>
-        <p>Mittelklick auf eine Verbindung, um sie zu löschen.</p>
-        <p>Validieren, um eine Toast‑Nachricht mit dem Ergebnis zu sehen.</p>
+        <p>{{ 'PROCESS_NET.INSTRUCTION_DRAG_DROP' | translate }}</p>
+        <p>{{ 'PROCESS_NET.INSTRUCTION_LEFT_CLICK_MOVE' | translate }}</p>
+        <p>{{ 'PROCESS_NET.INSTRUCTION_MIDDLE_CLICK_DELETE' | translate }}</p>
+        <p>{{ 'PROCESS_NET.INSTRUCTION_RIGHT_CLICK_CONNECT' | translate }}</p>
+        <p>{{ 'PROCESS_NET.INSTRUCTION_MIDDLE_CLICK_DELETE_CONN' | translate }}</p>
+        <p>{{ 'PROCESS_NET.INSTRUCTION_VALIDATE_TOAST' | translate }}</p>
     </div>
 </div>
