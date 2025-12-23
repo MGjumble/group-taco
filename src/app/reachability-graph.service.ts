@@ -83,12 +83,12 @@ export class ReachabilityGraphService {
       this._reachabilityGraph.update((graph) => {
         const newGraph = new ReachabilityGraph();
         newGraph.nodes = [...graph.nodes, initialStateNode];
-        // newGraph.edges = [...graph.edges];
+        newGraph.edges = [...graph.edges];
         return newGraph;
       });
-      //increment counters
       
       console.log('initialReachabilityLabel'+initialReachabilityLabel);
+      //increment counters
       this.idCounter++;
 
 
