@@ -1,3 +1,9 @@
-<button mat-icon-button [matTooltip]="'CLEAR_NET' | translate" color="warn" (click)="clearNet()" class="clear-button">
+<button
+    mat-icon-button
+    [matTooltip]="'CLEAR_NET' | translate"
+    color="warn"
+    (click)="clearNet()"
+    class="clear-button"
+    [disabled]="isDisabled()">
     <mat-icon>delete_outline</mat-icon>
 </button>

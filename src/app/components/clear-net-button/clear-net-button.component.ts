@@ -5,6 +5,7 @@ import { SourcePetriNetService } from '../../services/source-petri-net.service';
 import { DisplayService } from '../../services/display.service';
 import { PlayService } from '../../services/play.service';
 import { MatTooltip } from '@angular/material/tooltip';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({

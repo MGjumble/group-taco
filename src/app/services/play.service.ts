@@ -50,9 +50,10 @@ export class PlayService {
     /**
      * Fires a transition if it is activated, updates the diagram
      * and records the firing in the firing sequence.
-     * Also updates the ReachabilityGraph via the ReachabilityGraphService.
-     * @param diagram The diagram containing the transition.
-     * @param node The transition node to be fired.
+     * @param diagram
+     *          The diagram containing the transition.
+     * @param node
+     *          The transition node to be fired.
      */
     processTransitionClick(diagram: Diagram, node: DiagramTransition): void {
         if (node.isActivated()) {
@@ -69,8 +70,45 @@ export class PlayService {
             );
     }
 
-    isTransitionAndActivated(node: DiagramTransition): boolean {
-        return this._tabStateService.currentTab() === Tab.PLAY && node.isActivated();
+    /**
+     * Checks if a transition can be fired in the current tab and state.
+     * @param node
+     *          The transition to be checked
+     * @returns true if the transition can be fired
+     */
+    canBeFired(node: DiagramTransition): boolean {
+        return (
+            (this._tabStateService.currentTab() === Tab.PLAY ||
+                this._tabStateService.currentTab() === Tab.REACHABILITY_GRAPH) &&
+            node.isActivated()
+        );
+    }
+
+    /**
+     * Starts a new, empty firing sequence.
+     * @param diagram
+     *          The diagram for which the firing sequence is started.
+     */
+    startNewFiringSequence(diagram: Diagram): void {
+        diagram.resetMarking();
+        this._lastMarking = diagram.marking;
+        this._closeLastFiringEntry();
+        this.firingEntries.update((entries) => {
+            entries.push(this._getEmptyFiringEntry());
+            return entries;
+        });
+        setTimeout(() => {
+            document.getElementById('firing-sequence-input')?.focus();
+        }, 0);
+    }
+
+    /**
+     * Deletes a firing entry from the firing sequence table.
+     * @param id
+     *          The ID of the firing entry that is to be deleted
+     */
+    deleteFiringEntry(id: number): void {
+        this.firingEntries.update((entries) => entries.filter((entry) => entry.id !== id));
     }
 
     /**
@@ -82,20 +120,13 @@ export class PlayService {
     private _addTransitionToFiringSequence(label: string): void {
         this.firingEntries.update((entries) => {
             let lastEntry = entries[entries.length - 1];
-            if (lastEntry) {
-                lastEntry = this._updateFiringEntry(lastEntry, label);
+            if (!lastEntry) {
+                lastEntry = this._getEmptyFiringEntry();
                 this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(lastEntry);
-                return [...entries];
+                entries.push(lastEntry);
             }
-            const newEntry: FiringEntry = {
-                id: 0,
-                firingSequence: label,
-                transitionCount: 1,
-                startMarking: this._startMarking,
-                endMarking: this._currentMarking(),
-            };
-            this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(newEntry);
-            return [...entries, newEntry];
+            lastEntry = this._updateFiringEntry(lastEntry, label);
+            return entries;
         });
     }
 

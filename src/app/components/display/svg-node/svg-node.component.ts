@@ -87,8 +87,6 @@ export class SvgNodeComponent {
         return this.diagramNode()?.shape === SHAPE.CIRCLE;
     });
 
-    placeTemplate = viewChild('place', { read: TemplateRef });
-
     /**
      * Truncated display label for the node, adding ellipsis if it exceeds MAX_CHARS.
      */

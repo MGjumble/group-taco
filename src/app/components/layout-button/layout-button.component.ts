@@ -4,6 +4,8 @@ import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { SpringEmbedderService } from '../../services/spring-embedder.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { DisplayService } from '../../services/display.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-layout-button',

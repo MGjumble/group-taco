@@ -6,11 +6,14 @@ import { MatIcon } from '@angular/material/icon';
 import { PlayService } from '../../../../services/play.service';
 import { FiringEntry } from '../../../../classes/firing-entry';
 import { TranslateModule } from '@ngx-translate/core';
+import { DisplayService } from '../../../../services/display.service';
+import { filter, take } from 'rxjs';
+import { Diagram } from '../../../../classes/diagram/diagram';
 
 @Component({
     selector: 'app-firing-table',
     standalone: true,
-    imports: [TranslateModule],
+    imports: [CommonModule, FormsModule, MatIconButton, MatIcon, TranslateModule],
     templateUrl: './firing-table.component.html',
     styleUrl: './firing-table.component.css',
 })

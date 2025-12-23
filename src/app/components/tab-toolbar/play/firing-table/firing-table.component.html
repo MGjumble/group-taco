@@ -1,10 +1,15 @@
 <table class="firing-table">
     <thead>
         <tr>
-            <th>{{ 'FIRING_SEQUENCE' | translate }}</th>
-            <th>{{ 'TRANSITION_COUNT' | translate }}</th>
-            <th>{{ 'START_MARKING' | translate }}</th>
-            <th>{{ 'END_MARKING' | translate }}</th>
+            <th class="firing-sequence-th">{{ 'FIRING_SEQUENCE' | translate }}</th>
+            <th class="transition-count-th">{{ 'TRANSITION_COUNT' | translate }}</th>
+            <th class="start-marking-th">{{ 'START_MARKING' | translate }}</th>
+            <th class="end-marking-th">{{ 'END_MARKING' | translate }}</th>
+            <th class="delete-button-th">
+                <button mat-icon-button color="warn" (click)="onDeleteAllEntries()" class="delete-all-entries-button">
+                    <mat-icon>delete_sweep</mat-icon>
+                </button>
+            </th>
         </tr>
     </thead>
     <tbody>
