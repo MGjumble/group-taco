@@ -1,12 +1,9 @@
 import { computed, ElementRef, Injectable, signal } from '@angular/core';
 import { DisplayableGraph } from '../classes/displayable-graph.interface';
 import { ViewBox, viewBoxValues } from '../components/display/display.constants';
-import { ViewBox, viewBoxValues } from '../components/display/display.constants';
 
 @Injectable()
 export class PanningService {
-    INITIAL_VIEWBOX: ViewBox = viewBoxValues;
-    private readonly ZOOM_INTENSITY = 0.1;
     INITIAL_VIEWBOX: ViewBox = viewBoxValues;
     private readonly ZOOM_INTENSITY = 0.1;
     private _viewBoxValues = signal(this.INITIAL_VIEWBOX);

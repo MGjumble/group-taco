@@ -8,13 +8,11 @@ import { DiagramPlace } from '../classes/diagram/diagram-place';
 import { DiagramTransition } from '../classes/diagram/diagram-transition';
 import { XMLParser } from 'fast-xml-parser';
 import { Pnml, PnmlArc, PnmlNetContent, PnmlPlace, PnmlPtnet, PnmlTransition } from '../classes/pnml-petri-net';
-import { Pnml, PnmlArc, PnmlNetContent, PnmlPlace, PnmlPtnet, PnmlTransition } from '../classes/pnml-petri-net';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ParserService {
-    private readonly PNML_PTNET_TYPE = 'http://www.pnml.org/version-2009/grammar/ptnet';
     private readonly PNML_PTNET_TYPE = 'http://www.pnml.org/version-2009/grammar/ptnet';
     /**
      * Parses the given text into a Diagram object.
@@ -62,13 +60,7 @@ export class ParserService {
                 arcs,
                 places,
             );
-            const arcs: DiagramArc[] = this.parsePnmlArcs(netContent?.arc ?? []);
-            const places: DiagramPlace[] = this.parsePnmlPlaces(netContent?.place ?? []);
-            const transitions: DiagramTransition[] = this.parsePnmlTransitions(
-                netContent?.transition ?? [],
-                arcs,
-                places,
-            );
+            
 
             return new Diagram(places, transitions, arcs);
         } catch (e) {
