@@ -19,11 +19,11 @@
                 <polygon points="0 0, 10 3.5, 0 7" fill="black" />
             </marker>
         </defs>
-        @for (edge of reachabilityGraphdiagram()?.getEdges(); track edge.id) {
-            <g appSvgArc [diagramArc]="edge" [nodes]="reachabilityGraphdiagram()?.getNodes() || []" />
+        @for (edge of reachabilityGraphdiagram().getEdges(); track edge.id) {
+            <g appSvgArc [diagramArc]="edge" [nodes]="reachabilityGraphdiagram().getNodes() || []" />
         }
 
-        @for (node of reachabilityGraphdiagram()?.getNodes(); track node.id) {
+        @for (node of reachabilityGraphdiagram().getNodes(); track node.id) {
             <g appSvgNode [diagramNode]="node" />
         }
     </svg>

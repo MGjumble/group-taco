@@ -143,6 +143,8 @@ export class PlayService {
         entry.firingSequence += ` ${label}`;
         entry.transitionCount += 1;
         entry.endMarking = this._currentMarking();
+        this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(entry);
+
         return entry;
     }
 
