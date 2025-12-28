@@ -106,7 +106,7 @@ export class ReachabilityGraphService {
 
     //WIRKLICH VON HIER NEHMEN - ODER AUS DEM RG-Model mit Subscrbe, wenn sich das Netz ändert? - Was ist "sauberer"?
     //Fallunterscheidung zwischen erstem Aufruf und dann Aufruf nach Schalten / Firing --> ueber unterschiedliche Methoden geloest
-    convertFiringEntryLabelToReachabilityGraphID(firingEntry: FiringEntry) {
+    convertFiringEntryLabelToReachabilityGraphID(firingEntry: FiringEntry, label:string) {
         const _markingRG = this._sourceNetService.getCurrentSourceNet()?.currentMarking$ || {};
         //Vorherigen Zustand für Arc speichern
         const previousReachabilityLabel: string = Object.entries(firingEntry.startMarking)
@@ -141,7 +141,7 @@ export class ReachabilityGraphService {
 
         const currentRgEdgeId: string = 'Edge' + this.rgEdgeCounter;
         //TODO Change to label showing only last transition
-        const currentRgEdgeLabel: string = firingEntry.firingSequence;
+        const currentRgEdgeLabel: string = label;
 
         
         //get FiringSequence and save as path for RG
