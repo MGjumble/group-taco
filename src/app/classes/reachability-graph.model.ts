@@ -46,12 +46,14 @@ export class FiringEdge implements DisplayableEdge {
     target: string;
     displayLabel: string;
     bendPoints: Coords[] = [];
+    rgFiringSequencePath: string;
 
-    constructor(id: string, source: string, target: string, transitionLabel: string) {
+    constructor(id: string, source: string, target: string, transitionLabel: string, firedSequence: string) {
         this.id = id;
         this.source = source;
         this.target = target;
         this.displayLabel = transitionLabel;
+        this.rgFiringSequencePath=firedSequence;
     }
 }
 

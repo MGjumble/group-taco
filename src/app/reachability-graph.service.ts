@@ -140,12 +140,19 @@ export class ReachabilityGraphService {
         );
 
         const currentRgEdgeId: string = 'Edge' + this.rgEdgeCounter;
+        //TODO Change to label showing only last transition
         const currentRgEdgeLabel: string = firingEntry.firingSequence;
+
+        
+        //get FiringSequence and save as path for RG
+        const currentRgEdgeFiringPath: string = firingEntry.firingSequence;
+
         const currentFiringEdge = new FiringEdge(
             currentRgEdgeId,
             this.currentSourceRgId,
             this.currentTargetRgId,
             currentRgEdgeLabel,
+            currentRgEdgeFiringPath,
         );
 
         this._reachabilityGraph.update((graph) => {
