@@ -122,9 +122,9 @@ export class PlayService {
             let lastEntry = entries[entries.length - 1];
             if (!lastEntry) {
                 lastEntry = this._getEmptyFiringEntry();
-                this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(lastEntry, label);
                 entries.push(lastEntry);
             }
+            this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(lastEntry, label);
             lastEntry = this._updateFiringEntry(lastEntry, label);
             return entries;
         });
@@ -143,7 +143,7 @@ export class PlayService {
         entry.firingSequence += ` ${label}`;
         entry.transitionCount += 1;
         entry.endMarking = this._currentMarking();
-        this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(entry,label);
+        // this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(entry,label);
 
         return entry;
     }

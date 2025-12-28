@@ -37,7 +37,9 @@ export class ReachabilityGraphComponent {
         });
     }
 
-    // ngOnInit(): void {}
+    ngOnInit(): void {
+        this.initializeTabEffect;
+    }
 
     // ngOnDestroy(): void {}
     //         this._sub = this._displayService.diagram$
