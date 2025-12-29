@@ -21,7 +21,7 @@ export class ReachabilityGraphService {
     private _startMarkingRG: Record<string, number> = {};
     private _currentMarkingRG = signal<Record<string, number>>(this._startMarkingRG);
     // private _rgTabStateService = inject(TabStateService);
-    
+
     //TODO: Later on, implement better algorithm for placement of StateNodes
     private xCounter = 2;
     private yCounter = 2;
@@ -46,18 +46,6 @@ export class ReachabilityGraphService {
         return this._reachabilityGraph.asReadonly();
     }
 
-    //bekommt firing entry und macht dann eine nodeID daraus und übergibt an reachability graph als stateNode+//woher x und y?
-
-    // get marking
-    // only take numbers from record of Sting and number, display as label and add to model (Id)
-
-    //also update reachability graph model? --> dem reach service übergeben, nach Sortierung, service entfernt placebezeichner und sortiert nur nummern
-
-    //node übergeben bzw ganzes Diagram und DiagramTransition an RGService
-    //Node als StateNode behandeln und Label
-    //KOMPLETTES KEY VALUE PAIR , damit gerechnet und später zurückgegeben werden kann
-    //place und number of tokens
-
     /**
      * Method to initialize first StateNode of Reachability Graph
      * Extracts marking from reachability-graph-display
@@ -71,7 +59,6 @@ export class ReachabilityGraphService {
             //Current marking auslesen
             this._startMarkingRG = this._sourceNetService.getCurrentSourceNet()?.startMarking || {};
             const initialReachabilityLabel: string = Object.values(this._startMarkingRG).join(' ');
-            //let initialRgId: string = 'RG00';
             //x und y Startwert konstant festlegen
             const initialX = 100;
             const initialY = 100;
@@ -107,9 +94,7 @@ export class ReachabilityGraphService {
      * @param firingEntryLabel The label of the fired transition.
      */
 
-    //WIRKLICH VON HIER NEHMEN - ODER AUS DEM RG-Model mit Subscrbe, wenn sich das Netz ändert? - Was ist "sauberer"?
-    //Fallunterscheidung zwischen erstem Aufruf und dann Aufruf nach Schalten / Firing --> ueber unterschiedliche Methoden geloest
-    convertFiringEntryLabelToReachabilityGraphID(firingEntry: FiringEntry, label:string) {
+    convertFiringEntryLabelToReachabilityGraphID(firingEntry: FiringEntry, label: string) {
         const _markingRG = this._sourceNetService.getCurrentSourceNet()?.currentMarking$ || {};
         //Vorherigen Zustand für Arc speichern
         const previousReachabilityLabel: string = Object.entries(firingEntry.startMarking)
@@ -122,7 +107,7 @@ export class ReachabilityGraphService {
             .join(' ');
 
         //IDs werden verglichen bei Source und Target
-        //ANPASSEN UND SCHAUEN, WIE ES KLAPPT
+        //TO-DO: ANPASSEN UND SCHAUEN, WIE ES KLAPPT
 
         const currentRgId: string = 'RG' + this.idCounter;
         console.log('currentRGID' + currentRgId);
@@ -143,10 +128,7 @@ export class ReachabilityGraphService {
         );
 
         const currentRgEdgeId: string = 'Edge' + this.rgEdgeCounter;
-        //TODO Change to label showing only last transition
         const currentRgEdgeLabel: string = label;
-
-        
         //get FiringSequence and save as path for RG
         const currentRgEdgeFiringPath: string = firingEntry.firingSequence;
 
@@ -179,14 +161,6 @@ export class ReachabilityGraphService {
         this.currentTargetRgId = '';
 
         console.log(currentReachabilityLabel);
-
-        //HIER X UND Y EINFACH JE +100 FÜR DEN ANFANG
-        //später dann aus Algorithmus ziehen (Spring Embedder oder Sugiyama, für alle Tabs gleich)
-        // return new DiagramPlace(id, initialTokens);
-        //new State Node
-        //add StateNode zu Liste/ fullRG
-        //nextStateNode
-        //use only Label or use complete FirngEntry?
     }
     //Methode public ALLE state nodes zurückgeben
     //Methode 2 public ALLE edges zurückgeben

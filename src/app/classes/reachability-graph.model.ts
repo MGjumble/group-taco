@@ -53,7 +53,7 @@ export class FiringEdge implements DisplayableEdge {
         this.source = source;
         this.target = target;
         this.displayLabel = transitionLabel;
-        this.rgFiringSequencePath=firedSequence;
+        this.rgFiringSequencePath = firedSequence;
     }
 }
 

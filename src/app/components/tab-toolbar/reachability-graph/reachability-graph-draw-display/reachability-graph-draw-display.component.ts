@@ -24,5 +24,4 @@ export class ReachabilityGraphDrawDisplayComponent extends DisplayComponent {
     readonly rgEdges = signal<FiringEdge[]>([]);
     // override readonly isReachabilityGraphEnabled = computed(() => this._rgTabStateService.currentTab() === Tab.REACHABILITY_GRAPH);
     // private _rgTabStateService = inject(TabStateService);
-    
 }
