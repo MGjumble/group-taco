@@ -64,13 +64,6 @@ export class PanningService {
                 minY: v.minY - dy,
             }),
         );
-        this._viewBoxValues.update(
-            (v: ViewBox): ViewBox => ({
-                ...v,
-                minX: v.minX - dx,
-                minY: v.minY - dy,
-            }),
-        );
         this._panStartPoint = { x: event.clientX, y: event.clientY };
     }
 

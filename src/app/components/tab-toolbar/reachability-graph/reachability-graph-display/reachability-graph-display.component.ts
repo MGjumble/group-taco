@@ -5,6 +5,9 @@ import { SvgArcComponent } from '../../../display/svg-arc/svg-arc.component';
 import { SHAPE } from '../../../../classes/diagram/diagram-node';
 import { DisplayableNode } from '../../../../classes/displayable-graph.interface';
 import { PanningService } from 'src/app/services/panning.service';
+import { ReachabilityGraphService } from 'src/app/reachability-graph.service';
+import { DisplayService } from 'src/app/services/display.service';
+import { Subscription } from 'rxjs';
 
 //Inherited from process-net-display // display-component
 
@@ -16,4 +19,5 @@ import { PanningService } from 'src/app/services/panning.service';
     templateUrl: './reachability-graph-display.component.html',
     styleUrl: './reachability-graph-display.component.css',
 })
-export class ReachabilityGraphDisplayComponent extends DisplayComponent {}
+export class ReachabilityGraphDisplayComponent extends DisplayComponent {
+}
