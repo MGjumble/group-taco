@@ -23,7 +23,13 @@
         <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
             <path d="M 50 0 L 0 0 0 50" fill="none" stroke="lightgray" stroke-width="0.5" />
         </pattern>
-        <rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#grid)" />
+        <rect
+            #gridRect
+            [attr.x]="viewBoxObj().minX"
+            [attr.y]="viewBoxObj().minY"
+            [attr.width]="viewBoxObj().width"
+            [attr.height]="viewBoxObj().height"
+            fill="url(#grid)" />
         <!-- Render connection lines behind nodes -->
         @for (line of connectionLines(); track line.id) {
         <g class="connection-group" [attr.data-connection-id]="line.id">

@@ -20,7 +20,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
     standalone: true,
     templateUrl: './display.component.html',
     imports: [SvgNodeComponent, SvgArcComponent],
-    providers: [PanningService],
     styleUrls: ['./display.component.css'],
 })
 export class DisplayComponent implements OnInit, OnDestroy {
@@ -36,6 +35,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     private _elementRef = inject(ElementRef);
 
     readonly viewBox = this._panningService.viewBoxAsString;
+    readonly viewBoxObj = this._panningService.viewBox;
     readonly diagram = toSignal(this._displayService.diagram$);
     readonly isDrawingEnabled = computed(() => this._tabStateService.currentTab() === Tab.DRAW);
     readonly isPlayingEnabled = computed(

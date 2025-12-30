@@ -1,15 +1,10 @@
-import { Injectable, inject, signal, WritableSignal, Signal } from '@angular/core';
+import { inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { FiringEntry } from './classes/firing-entry';
-import { FiringEdge, ReachabilityGraph } from './classes/reachability-graph.model';
-import { StateNode } from './classes/reachability-graph.model';
-import { SvgArcComponent } from './components/display/svg-arc/svg-arc.component';
-import { SvgNodeComponent } from './components/display/svg-node/svg-node.component';
+import { FiringEdge, ReachabilityGraph, StateNode } from './classes/reachability-graph.model';
 import { ModeService } from './services/mode.service';
 import { AppMode } from './classes/app-mode';
 import { SourcePetriNetService } from './services/source-petri-net.service';
 import { Diagram } from './classes/diagram/diagram';
-import { subscribeOn } from 'rxjs';
-import { TabStateService } from './services/tab-state.service';
 
 @Injectable({
     providedIn: 'root',
@@ -21,18 +16,9 @@ export class ReachabilityGraphService {
     private _startMarkingRG: Record<string, number> = {};
     private _currentMarkingRG = signal<Record<string, number>>(this._startMarkingRG);
     // private _rgTabStateService = inject(TabStateService);
+    private _lastProcessedDiagram: Diagram | null = null;
 
-    //TODO: Later on, implement better algorithm for placement of StateNodes
-    private xCounter = 2;
-    private yCounter = 2;
-    //Counter for StateNodeIDs
-    private idCounter = 1;
-    //Counter für Kanten im EG
-    private rgEdgeCounter = 1;
-    //Changed for Arc recognition; StateNodes to be cmpared by ID, not by label
-    private initialRgId: string = 'RG' + this.idCounter;
-    private currentSourceRgId: string = 'RG' + this.idCounter;
-    private currentTargetRgId = '';
+    private currentSourceRgId = 'RG1';
 
     set startMarkingRG(marking: Record<string, number>) {
         this._startMarkingRG = marking;
@@ -53,34 +39,45 @@ export class ReachabilityGraphService {
      *
      */
     initializeReachabilityGraphFirstStateNode() {
-        if (!this._sourceNetService.getCurrentSourceNet()) return;
+        const currentNet = this._sourceNetService.getCurrentSourceNet();
+        if (!currentNet) {
+            this._reachabilityGraph.set(new ReachabilityGraph());
+            this._lastProcessedDiagram = null;
+            return;
+        }
+
+        if (this._lastProcessedDiagram === currentNet) {
+            return;
+        }
+
+        this._lastProcessedDiagram = currentNet;
+
         if (this._modeService.currentMode() === AppMode.LEARN) {
             //AUTOMATISCH StateNode erzeugen
             //Current marking auslesen
-            this._startMarkingRG = this._sourceNetService.getCurrentSourceNet()?.startMarking || {};
+            this._startMarkingRG = currentNet.startMarking || {};
             const initialReachabilityLabel: string = Object.values(this._startMarkingRG).join(' ');
             //x und y Startwert konstant festlegen
-            const initialX = 100;
-            const initialY = 100;
+            const initialX = 300;
+            const initialY = 50;
             //neuen StateNode erzeugen
+            const initialId = 'RG1';
+            this.currentSourceRgId = initialId;
+
             const initialStateNode = new StateNode(
-                this.initialRgId,
+                initialId,
                 initialX,
                 initialY,
                 initialReachabilityLabel,
-                this.startMarkingRG,
+                this._startMarkingRG,
             );
 
-            this._reachabilityGraph.update((graph) => {
-                const newGraph = new ReachabilityGraph();
-                newGraph.nodes = [...graph.nodes, initialStateNode];
-                newGraph.edges = [...graph.edges];
-                return newGraph;
-            });
+            const newGraph = new ReachabilityGraph();
+            newGraph.nodes = [initialStateNode];
+            newGraph.edges = [];
+            this._reachabilityGraph.set(newGraph);
 
             console.log('initialReachabilityLabel' + initialReachabilityLabel);
-            //increment counters
-            this.idCounter++;
         } else if (this._modeService.currentMode() === AppMode.EXAM) {
             //nur im Hintergrund vergleichen, User gibt NodeLabel, also Marking, selbst ein und bekommt Feedback
         }
@@ -91,53 +88,41 @@ export class ReachabilityGraphService {
      * Converts to RG ID (only displays token numbers sorted ascending by place id (alphanumerical))
      * Erstellt einzelnes state-Objekt
      * erst danach vom Firing übernehmen
-     * @param firingEntryLabel The label of the fired transition.
+     * @param firingEntry The firing entry containing start and end markings.
+     * @param label The label of the fired transition.
      */
-
     convertFiringEntryLabelToReachabilityGraphID(firingEntry: FiringEntry, label: string) {
-        const _markingRG = this._sourceNetService.getCurrentSourceNet()?.currentMarking$ || {};
-        //Vorherigen Zustand für Arc speichern
-        const previousReachabilityLabel: string = Object.entries(firingEntry.startMarking)
-            .map(([key, value]) => `${value}`)
-            .join(' ');
-
         //Zustand nach Schalten / Target für Arcs
         const currentReachabilityLabel: string = Object.entries(firingEntry.endMarking)
-            .map(([key, value]) => `${value}`)
+            .map(([, value]) => `${value}`)
             .join(' ');
 
-        //IDs werden verglichen bei Source und Target
-        //TO-DO: ANPASSEN UND SCHAUEN, WIE ES KLAPPT
-
-        const currentRgId: string = 'RG' + this.idCounter;
-        console.log('currentRGID' + currentRgId);
-        console.log('currentSourceRgId' + this.currentSourceRgId);
-        this.currentTargetRgId = currentRgId;
-        console.log('currentTargetRgId' + this.currentTargetRgId);
+        const graph = this._reachabilityGraph();
+        const nextNodeIndex = graph.nodes.length + 1;
+        const currentRgId = 'RG' + nextNodeIndex;
 
         //x und y Startwert konstant festlegen
-        const currentX: number = this.xCounter * 100;
-        const currentY: number = this.yCounter * 100;
+        const currentX: number = 300 + graph.nodes.length * 100;
+        const currentY: number = 50 + graph.nodes.length * 100;
+
         //neuen StateNode erzeugen
         const currentStateNode = new StateNode(
             currentRgId,
             currentX,
             currentY,
             currentReachabilityLabel,
-            this.startMarkingRG,
+            firingEntry.endMarking,
         );
 
-        const currentRgEdgeId: string = 'Edge' + this.rgEdgeCounter;
-        const currentRgEdgeLabel: string = label;
-        //get FiringSequence and save as path for RG
-        const currentRgEdgeFiringPath: string = firingEntry.firingSequence;
+        const nextEdgeIndex = graph.edges.length + 1;
+        const currentRgEdgeId = 'Edge' + nextEdgeIndex;
 
         const currentFiringEdge = new FiringEdge(
             currentRgEdgeId,
             this.currentSourceRgId,
-            this.currentTargetRgId,
-            currentRgEdgeLabel,
-            currentRgEdgeFiringPath,
+            currentRgId,
+            label,
+            firingEntry.firingSequence,
         );
 
         this._reachabilityGraph.update((graph) => {
@@ -147,18 +132,8 @@ export class ReachabilityGraphService {
             return newGraph;
         });
 
-        console.log(this._reachabilityGraph());
-
-        //increment counters
-        this.idCounter++;
-        this.xCounter++;
-        this.yCounter++;
-        this.rgEdgeCounter++;
-
         //change target to new source for arcs
-        this.currentSourceRgId = this.currentTargetRgId;
-        //delete "old" target
-        this.currentTargetRgId = '';
+        this.currentSourceRgId = currentRgId;
 
         console.log(currentReachabilityLabel);
     }

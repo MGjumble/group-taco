@@ -60,6 +60,7 @@ export class PlayService {
             node.fire();
             diagram.updateMarking();
             this._lastMarking = diagram.marking;
+            this.currentMarking = diagram.marking;
             this._sourceNetService.updateEditedNet(diagram);
             this._addTransitionToFiringSequence(node.label);
         } else
@@ -124,8 +125,8 @@ export class PlayService {
                 lastEntry = this._getEmptyFiringEntry();
                 entries.push(lastEntry);
             }
-            this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(lastEntry, label);
             lastEntry = this._updateFiringEntry(lastEntry, label);
+            this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(lastEntry, label);
             return entries;
         });
     }
@@ -143,7 +144,6 @@ export class PlayService {
         entry.firingSequence += ` ${label}`;
         entry.transitionCount += 1;
         entry.endMarking = this._currentMarking();
-        // this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(entry,label);
 
         return entry;
     }

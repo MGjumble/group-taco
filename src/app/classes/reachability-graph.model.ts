@@ -1,15 +1,15 @@
-import { DisplayableGraph, DisplayableNode, DisplayableEdge } from './displayable-graph.interface';
+import { DisplayableEdge, DisplayableGraph, DisplayableNode } from './displayable-graph.interface';
 import { SHAPE } from './diagram/diagram-node';
 import { Coords } from './json-petri-net';
-import { signal, Signal } from '@angular/core';
+import { signal, Signal, WritableSignal } from '@angular/core';
 
 /**
  * A node representing a state in the reachability graph.
  */
 export class StateNode implements DisplayableNode {
     id: string;
-    x = 0;
-    y = 0;
+    _x: WritableSignal<number>;
+    _y: WritableSignal<number>;
     label: string;
     rGMarking: Record<string, number>;
 
@@ -30,10 +30,26 @@ export class StateNode implements DisplayableNode {
 
     constructor(id: string, x: number, y: number, label: string, marking: Record<string, number>) {
         this.id = id;
-        this.x = x;
-        this.y = y;
+        this._x = signal(x);
+        this._y = signal(y);
         this.label = label;
         this.rGMarking = marking;
+    }
+
+    get x(): number {
+        return this._x();
+    }
+
+    set x(value: number) {
+        this._x.set(value);
+    }
+
+    get y(): number {
+        return this._y();
+    }
+
+    set y(value: number) {
+        this._y.set(value);
     }
 }
 
