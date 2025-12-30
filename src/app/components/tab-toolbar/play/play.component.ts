@@ -4,7 +4,7 @@ import { DisplayService } from '../../../services/display.service';
 import { PlayService } from '../../../services/play.service';
 import { FiringTableComponent } from './firing-table/firing-table.component';
 import { Diagram } from '../../../classes/diagram/diagram';
-import { filter, Subscription, switchMap, tap } from 'rxjs';
+import { filter, Subscription, switchMap, take, tap } from 'rxjs';
 
 @Component({
     selector: 'app-play',
@@ -24,6 +24,12 @@ export class PlayComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this._sub = this._displayService.diagram$
             .pipe(
+                tap((diagram) => {
+                    if (!diagram) {
+                        this._playService.startMarking = {};
+                        this._playService.currentMarking = {};
+                    }
+                }),
                 filter((diagram) => !!diagram && diagram instanceof Diagram),
                 tap((diagram: Diagram) => {
                     this._playService.resetFiringEntries();
@@ -38,5 +44,17 @@ export class PlayComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this._sub?.unsubscribe();
+    }
+
+    onNewEntry(): void {
+        this._displayService.diagram$
+            .pipe(
+                take(1),
+                filter((diagram) => !!diagram && diagram instanceof Diagram),
+                tap((diagram) => {
+                    this._playService.startNewFiringSequence(diagram);
+                }),
+            )
+            .subscribe();
     }
 }

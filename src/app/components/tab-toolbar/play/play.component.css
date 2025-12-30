@@ -2,3 +2,9 @@
     display: flex;
     justify-content: space-between;
 }
+
+.new-entry-button {
+    padding: 4px 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}

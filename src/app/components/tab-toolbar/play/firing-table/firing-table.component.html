@@ -1,19 +1,101 @@
-<table>
+<table class="firing-table">
     <thead>
         <tr>
-            <th>Firing Sequence</th>
-            <th>Transition Count</th>
-            <th>Start Marking</th>
-            <th>End Marking</th>
+            <th class="firing-sequence-th">{{ 'FIRING_SEQUENCE' | translate }}</th>
+            <th class="transition-count-th">{{ 'TRANSITION_COUNT' | translate }}</th>
+            <th class="start-marking-th">{{ 'START_MARKING' | translate }}</th>
+            <th class="end-marking-th">{{ 'END_MARKING' | translate }}</th>
+            <th class="delete-button-th">
+                <button mat-icon-button color="warn" (click)="onDeleteAllEntries()" class="delete-all-entries-button">
+                    <mat-icon>delete_sweep</mat-icon>
+                </button>
+            </th>
         </tr>
     </thead>
     <tbody>
-        @for (entry of firingEntries(); track entry.id) {
+        @for (entry of firingEntries; track entry.id) {
             <tr>
-                <td>{{ entry.firingSequence }}</td>
-                <td>{{ entry.transitionCount }}</td>
-                <td>{{ formatMarking(entry.startMarking) }}</td>
-                <td>{{ formatMarking(entry.endMarking) }}</td>
+                <td class="firing-sequence-td">
+                    @if (!entry.isClosed) {
+                        <input type="text" [(ngModel)]="entry.firingSequence" id="firing-sequence-input" />
+                    } @else {
+                        {{ entry.firingSequence }}
+                    }
+                </td>
+                <td class="transition-count-td">
+                    @if (!entry.isClosed) {
+                        <input type="number" [(ngModel)]="entry.transitionCount" />
+                    } @else {
+                        {{ entry.transitionCount }}
+                    }
+                </td>
+                <td class="start-marking-td">
+                    @if (!entry.isClosed) {
+                        <div class="marking-container">
+                            @for (item of entry.startMarking | keyvalue; track item.key) {
+                                <div class="marking-entry">
+                                    <span>{{ item.key }}: {{ item.value }}</span>
+                                    <div class="button-container">
+                                        <button
+                                            mat-icon-button
+                                            (click)="incrementStartMarking(entry, item.key)"
+                                            class="marking-button">
+                                            <mat-icon>add</mat-icon>
+                                        </button>
+                                        <button
+                                            mat-icon-button
+                                            (click)="decrementStartMarking(entry, item.key)"
+                                            [disabled]="isDisabled(item.value)"
+                                            class="marking-button">
+                                            <mat-icon>remove</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        {{ entry.formattedStartMarking }}
+                    }
+                </td>
+                <td class="end-marking-td">
+                    @if (!entry.isClosed) {
+                        <div class="marking-container">
+                            @for (item of entry.endMarking | keyvalue; track item.key) {
+                                <div class="marking-entry">
+                                    <span>{{ item.key }}: {{ item.value }}</span>
+                                    <div class="button-container">
+                                        <button
+                                            mat-icon-button
+                                            (click)="incrementEndMarking(entry, item.key)"
+                                            class="marking-button">
+                                            <mat-icon>add</mat-icon>
+                                        </button>
+                                        <button
+                                            mat-icon-button
+                                            (click)="decrementEndMarking(entry, item.key)"
+                                            [disabled]="isDisabled(item.value)"
+                                            class="marking-button">
+                                            <mat-icon>remove</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        {{ entry.formattedEndMarking }}
+                    }
+                </td>
+                <td class="delete-button-td">
+                    @if (entry.isClosed) {
+                        <button
+                            mat-icon-button
+                            color="warn"
+                            (click)="onDeleteEntry(entry.id)"
+                            class="delete-entry-button">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    }
+                </td>
             </tr>
         }
     </tbody>
