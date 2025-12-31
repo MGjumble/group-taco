@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { filter, Subscription, take } from 'rxjs';
+import { filter, Subscription, take, tap } from 'rxjs';
 
 import { DisplayService } from '../../../../services/display.service';
 import { PlayService } from '../../../../services/play.service';
@@ -44,29 +44,40 @@ export class FiringTableComponent implements OnInit, OnDestroy {
     private _diagram: Diagram | undefined;
     @Input() firingEntries: FiringEntry[] = [];
 
-    isFindSequencesModalVisible: boolean = false;
-    demandedStartMarking: Record<string, number> = {};
-    demandedEndMarking: Record<string, number> = {};
-    demandedTransitionCount: number | undefined;
+    isFindSequencesFormVisible: boolean = false;
+    demandedStartMarking = signal<Record<string, number>>({});
+    demandedEndMarking = signal<Record<string, number>>({});
+    demandedTransitionCount = signal<number | undefined>(undefined);
     buttonColor: string = 'basic';
 
     ngOnInit(): void {
-        this._sub = this._displayService.diagram$.subscribe((diagram) => {
-            this._diagram = diagram instanceof Diagram ? diagram : undefined;
-
-            this.demandedStartMarking = diagram instanceof Diagram ? { ...diagram.startMarking } : {};
-
-            this.demandedEndMarking =
-                diagram instanceof Diagram
-                    ? Object.keys(diagram.startMarking).reduce(
-                          (acc, key) => {
-                              acc[key] = 0;
-                              return acc;
-                          },
-                          {} as { [key: string]: number },
-                      )
-                    : {};
-        });
+        this._sub = this._displayService.diagram$
+            .pipe(
+                tap((diagram) => {
+                if (!diagram) {
+                    this._diagram = undefined;
+                    this.demandedStartMarking.set({});
+                    this.demandedEndMarking.set({});
+                    this.demandedTransitionCount.set(undefined);
+                }
+                }),
+                filter((diagram): diagram is Diagram => !!diagram && diagram instanceof Diagram),
+                tap((diagram: Diagram) => {
+                    this._diagram = diagram;
+                    this.demandedStartMarking.set({ ...diagram.startMarking });
+                    this.demandedEndMarking.set(
+                        Object.keys(diagram.startMarking).reduce(
+                        (acc, key) => {
+                            acc[key] = 0;
+                            return acc;
+                        },
+                        {} as { [key: string]: number }
+                        )
+                    );
+                    this.demandedTransitionCount.set(undefined);
+                })
+            )
+            .subscribe();
     }
 
     ngOnDestroy(): void {
@@ -106,18 +117,40 @@ export class FiringTableComponent implements OnInit, OnDestroy {
     }
 
     onFindSequences(): void {
-        this.isFindSequencesModalVisible = false;
-        if (this._diagram)
+        if (this._diagram) {
+            this._diagram.marking = this.demandedStartMarking();
             this._playValidationService.findFiringSequences(
                 this._diagram,
-                this.demandedStartMarking,
-                this.demandedEndMarking,
-                this.demandedTransitionCount,
+                this.demandedStartMarking(),
+                this.demandedEndMarking(),
+                this.demandedTransitionCount(),
             );
+        }
     }
 
-    toggleFindSequencesModal(): void {
-        this.isFindSequencesModalVisible = !this.isFindSequencesModalVisible;
-        this.buttonColor = this.isFindSequencesModalVisible ? 'primary' : 'basic';
+    toggleFindSequencesForm(): void {
+        this.isFindSequencesFormVisible = !this.isFindSequencesFormVisible;
+        this.buttonColor = this.isFindSequencesFormVisible ? 'primary' : 'basic';
+    }
+    
+    updateDemandedStartMarking(key: string, event: Event): void {
+        const value = Number((event.target as HTMLInputElement).value);
+        this.demandedStartMarking.set({
+            ...this.demandedStartMarking(),
+            [key]: value,
+        });
+    }
+
+    updateDemandedEndMarking(key: string, event: Event): void {
+        const value = Number((event.target as HTMLInputElement).value);
+        this.demandedEndMarking.set({
+            ...this.demandedEndMarking(),
+            [key]: value,
+        });
+    }
+
+    updateDemandedTransitionCount(event: Event): void {
+        const value = Number((event.target as HTMLInputElement).value);
+        this.demandedTransitionCount.set(value);
     }
 }

@@ -68,6 +68,9 @@ export class PlayService {
                 }, transitionTime * i);
             }
         }
+        setTimeout(() => {
+            diagram.marking = { ...entry.startMarking };
+        }, transitionTime);
     }
 
     /**

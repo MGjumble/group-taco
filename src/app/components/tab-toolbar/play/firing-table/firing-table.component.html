@@ -55,70 +55,85 @@
     </tbody>
 </table>
 <div class="tab-toolbar-container">
-    <div class="main-button-container">
-        <button mat-raised-button id="new-entry-button" (click)="onNewEntry()">New Sequence</button>
-        <button mat-raised-button id="validate-firing-table-button">Validate Firing Table</button>
-        <button mat-raised-button id="find-sequences-button" [color]="buttonColor" (click)="toggleFindSequencesModal()">
-            Find Firing Sequences
-        </button>
+    <div class="tab-toolbar-row">
+        <div class="main-button-container">
+            <button mat-raised-button id="new-entry-button" (click)="onNewEntry()">New Sequence</button>
+            <button mat-raised-button id="validate-firing-table-button">Validate Firing Table</button>
+            <button
+                mat-raised-button
+                id="find-sequences-button"
+                [color]="buttonColor"
+                (click)="toggleFindSequencesForm()">
+                Find Firing Sequences
+            </button>
+        </div>
+
+        @if (isFindSequencesFormVisible) {
+            <form (ngSubmit)="onFindSequences()" class="find-sequences-form">
+                <div class="marking-input-container">
+                    <span class="custom-input-label">Start Marking</span>
+                    <div class="marking-entries-row">
+                        @for (item of demandedStartMarking() | keyvalue; track item.key) {
+                            <div class="marking-entry">
+                                <span>{{ item.key }}:</span>
+                                <input
+                                    matInput
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    inputmode="numeric"
+                                    pattern="[0-9]*"
+                                    [name]="'start_' + item.key"
+                                    [value]="demandedStartMarking()[item.key]"
+                                    (input)="updateDemandedStartMarking(item.key, $event)"
+                                    required />
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="marking-input-container">
+                    <span class="custom-input-label">End Marking</span>
+                    <div class="marking-entries-row">
+                        @for (item of demandedEndMarking() | keyvalue; track item.key) {
+                            <div class="marking-entry">
+                                <span>{{ item.key }}:</span>
+                                <input
+                                    matInput
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    inputmode="numeric"
+                                    pattern="[0-9]*"
+                                    [name]="'start_' + item.key"
+                                    [value]="demandedEndMarking()[item.key]"
+                                    (input)="updateDemandedEndMarking(item.key, $event)"
+                                    required />
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="transition-count-and-buttons-container">
+                    <div class="transition-count-input-container">
+                        <span class="custom-input-label transition-count-input-label">Transition Count (optional)</span>
+                        <input
+                            matInput
+                            type="number"
+                            min="0"
+                            step="1"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            name="demandedTransitionCount"
+                            [value]="demandedTransitionCount"
+                            (input)="updateDemandedTransitionCount($event)" />
+                    </div>
+                    <div class="form-button-container">
+                        <button mat-raised-button color="primary">Submit</button>
+                        <button mat-raised-button color="warn" (click)="toggleFindSequencesForm()">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        }
     </div>
-    @if (isFindSequencesModalVisible) {
-        <form (ngSubmit)="onFindSequences()" class="find-sequences-form">
-            <div class="form-input-container">
-                <div class="marking-input-container">
-                    <span>Start Marking</span>
-                    @for (item of demandedStartMarking | keyvalue; track item.key) {
-                        <div class="marking-entry">
-                            <span>{{ item.key }}: <input
-                                matInput
-                                type="number"
-                                min="0"
-                                step="1"
-                                inputmode="numeric"
-                                pattern="[0-9]*"
-                                [(ngModel)]="demandedStartMarking[item.key]"
-                                [name]="'start_' + item.key"
-                                required /></span>
-                        </div>
-                    }
-                </div>
-
-                <div class="marking-input-container">
-                    <span>End Marking</span>
-                    @for (item of demandedEndMarking | keyvalue; track item.key) {
-                        <div class="marking-entry">
-                            <span>{{ item.key }}: <input
-                                matInput
-                                type="number"
-                                min="0"
-                                step="1"
-                                inputmode="numeric"
-                                pattern="[0-9]*"
-                                [(ngModel)]="demandedEndMarking[item.key]"
-                                [name]="'start_' + item.key"
-                                required /></span>
-                        </div>
-                    }
-                </div>
-
-                <div class="transition-count-input-container">
-                    <span>Transition Count (optional)</span>
-                    <input
-                        matInput
-                        type="number"
-                        min="0"
-                        step="1"
-                        inputmode="numeric"
-                        pattern="[0-9]*"
-                        [(ngModel)]="demandedTransitionCount"
-                        name="demandedTransitionCount" />
-                </div>
-            </div>
-
-            <div class="form-button-container">
-                <button type="submit" mat-raised-button color="primary">Submit</button>
-                <button mat-raised-button color="warn" (click)="toggleFindSequencesModal()">Cancel</button>
-            </div>
-        </form>
-    }
 </div>
