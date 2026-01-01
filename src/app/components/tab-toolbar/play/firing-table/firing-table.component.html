@@ -27,11 +27,11 @@
                 </td>
                 <td class="firing-sequence-td">
                     @if (!entry.isClosed) {
-                        <input
-                            type="text"
+                        <textarea
                             [(ngModel)]="entry.firingSequence"
                             id="firing-sequence-input"
-                            (keyup)="onKeyUp(entry, $event)" />
+                            (keyup)="onKeyUp(entry, $event)">
+                        </textarea>
                     } @else {
                         {{ entry.firingSequence }}
                     }
