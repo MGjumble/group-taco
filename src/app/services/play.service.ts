@@ -158,13 +158,11 @@ export class PlayService {
 
     /**
      * Deletes a firing entry from the firing sequence table.
-     * If no ID is given, the last firing entry is deleted.
      * @param id
      *          The ID of the firing entry that is to be deleted
      */
-    deleteFiringEntry(id: number | undefined = undefined): void {
-        if (!id) this.closeLastFiringEntry();
-        this.firingEntries.update((entries) => entries.filter((entry) => entry.id !== id || this._idCounter));
+    deleteFiringEntry(id: number): void {
+        this.firingEntries.update((entries) => entries.filter((entry) => entry.id !== id));
     }
 
     addFiringEntry(
