@@ -94,11 +94,13 @@ export class PlayValidationService {
     validateInput(diagram: Diagram | undefined, entry: FiringEntry, event: KeyboardEvent): void {
         if (!diagram || event.key === ' ' || event.key === ',' || event.key === ';') return;
         if (event.key.length === 1 || event.key === 'Backspace' || event.key === 'Delete') {
+            let isValid: boolean = false;
             entry.transitionCount = entry.labels.length;
             const possibleTransitions: string[] = diagram.transitions.map((t) => t.label || t.id) || [];
-            const hasOnlyValidTransitions = this._hasOnlyValidTransitions(possibleTransitions, entry.labels);
+            const hasOnlyValidTransitions: boolean = this._hasOnlyValidTransitions(possibleTransitions, entry.labels);
             // TODO: provide user feedback if invalid transitions are present
-            if (hasOnlyValidTransitions) this._isValidFiringEntry(diagram, entry);
+            if (hasOnlyValidTransitions) isValid = this._isValidFiringEntry(diagram, entry);
+            entry.isValid = isValid;
         }
     }
 

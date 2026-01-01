@@ -65,15 +65,11 @@ export class PlayService {
 
             if (node) {
                 setTimeout(() => {
-                    this.processTransitionClick(diagram, node, true, true, displayFiring);
+                    this.processTransitionClick(diagram, node, false, true, displayFiring);
                     entry.endMarking = diagram.marking;
                 }, transitionTime * i);
             }
         }
-        // Reset diagram marking to start marking after playing the sequence
-        setTimeout(() => {
-            diagram.marking = { ...entry.startMarking };
-        }, transitionTime * entry.labels.length);
     }
 
     /**
@@ -103,8 +99,9 @@ export class PlayService {
             this._lastMarking = diagram.marking;
             if (updateSequence) {
                 this._sourceNetService.updateEditedNet(diagram);
-                this._addTransitionToFiringSequence(node.label || node.id);
+                this._updateFiringEntry(node.label);
             }
+            this._setValidStatus(true);
             return true;
         } else if (notify) {
             this._notificationService.showWarning(
@@ -113,6 +110,8 @@ export class PlayService {
                 { messageParams: { label: node.label } },
             );
         }
+        if (updateSequence) this._updateFiringEntry(node.label, false);
+        this._setValidStatus(false);
         return false;
     }
 
@@ -192,37 +191,29 @@ export class PlayService {
     }
 
     /**
-     * Updates the current firing entry when a transition is fired.
-     * If no entry exists, creates a new one.
+     * Appends the label of a fired transition to the current firing sequence
+     * and updates transition count and end marking accordingly.
      * @param label
      *          The label of the fired transition.
+     * @param updateEndMarking
+     *          Indicates whether the end marking should be updated. Is set to false in
+     *          the case of an invalid input to the firing sequence.
      */
-    private _addTransitionToFiringSequence(label: string): void {
-        this.firingEntries.update((entries) => {
-            let lastEntry = entries[entries.length - 1];
-            if (!lastEntry) {
-                lastEntry = this._getEmptyFiringEntry();
-                entries.push(lastEntry);
-            }
-            lastEntry = this._updateFiringEntry(lastEntry, label);
-            return entries;
-        });
+    private _updateFiringEntry(label: string, updateEndMarking: boolean = true): void {
+        const entry: FiringEntry = this.getLastFiringEntry();
+        entry.firingSequence += ` ${label}`;
+        entry.transitionCount += 1;
+        if (updateEndMarking) entry.endMarking = this._currentMarking();
     }
 
     /**
-     * Appends the label of a fired transition to a firing sequence
-     * and updates transition count and end marking accordingly.
-     * @param entry
-     *          The entry to be updated.
-     * @param label
-     *          The label of the fired transition.
-     * @returns The updated firing entry.
+     * Sets the isValid attribute of the current firing sequence.
+     * @param isValid
+     *          Indicates whether the current firing entry is valid.
      */
-    private _updateFiringEntry(entry: FiringEntry, label: string): FiringEntry {
-        entry.firingSequence += ` ${label}`;
-        entry.transitionCount += 1;
-        entry.endMarking = this._currentMarking();
-        return entry;
+    private _setValidStatus(isValid: boolean): void {
+        const entry: FiringEntry = this.getLastFiringEntry();
+        entry.isValid = isValid;
     }
 
     /**
