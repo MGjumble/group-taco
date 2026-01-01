@@ -9,6 +9,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { filter, Subscription, take, tap } from 'rxjs';
 
+import { ModeService } from '../../../../services/mode.service';
 import { DisplayService } from '../../../../services/display.service';
 import { PlayService } from '../../../../services/play.service';
 import { PlayValidationService } from '../../../../services/play-validation.service';
@@ -34,6 +35,7 @@ import { FiringEntry } from '../../../../classes/firing-entry';
 export class FiringTableComponent implements OnInit, OnDestroy {
     private _sub?: Subscription;
 
+    private _modeService = inject(ModeService);
     private _displayService = inject(DisplayService);
     private _playService = inject(PlayService);
     private _playValidationService = inject(PlayValidationService);
@@ -88,8 +90,7 @@ export class FiringTableComponent implements OnInit, OnDestroy {
         if (entry.firingSequence.trim() === this._lastFiringSequence.trim()) return;
         this._lastFiringSequence = entry.firingSequence;
         if (event.key === 'Enter') this.onNewEntry();
-        // TODO: Make validation dependent on current mode (e.g., exam mode)
-        else this._playValidationService.validateInput(this._diagram, entry, event);
+        else if (!this._modeService.isExamMode()) this._playValidationService.validateInput(this._diagram, entry, event);
     }
 
     onDeleteEntry(id: number): void {
@@ -113,7 +114,7 @@ export class FiringTableComponent implements OnInit, OnDestroy {
     }
 
     onPlaySequence(entry: FiringEntry): void {
-        if (this._diagram) this._playService.playSequence(this._diagram, entry, this._TRANSITION_TIME);
+        if (this._diagram) this._playService.playSequence(this._diagram, entry, this._TRANSITION_TIME, true);
     }
 
     onFindSequences(): void {

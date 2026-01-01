@@ -11,6 +11,7 @@ export class FiringEntry {
         public startMarking: Record<string, number>,
         public endMarking: Record<string, number>,
         public isClosed: boolean,
+        public isValid: boolean | undefined,
     ) {}
 
     /**

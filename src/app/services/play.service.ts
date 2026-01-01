@@ -54,8 +54,10 @@ export class PlayService {
      *          The firing entry containing the sequence to be played.
      * @param transitionTime
      *          The time period between firing each transition in milliseconds.
+     * @param displayFiring
+     *          Indicates whether the color of the firing transition should be animated while firing.
      */
-    playSequence(diagram: Diagram, entry: FiringEntry, transitionTime: number): void {
+    playSequence(diagram: Diagram, entry: FiringEntry, transitionTime: number, displayFiring: boolean): void {
         diagram.marking = { ...entry.startMarking };
         for (let i = 0; i < entry.labels.length; i++) {
             const label = entry.labels[i];
@@ -63,7 +65,7 @@ export class PlayService {
 
             if (node) {
                 setTimeout(() => {
-                    this.processTransitionClick(diagram, node, true);
+                    this.processTransitionClick(diagram, node, true, true, displayFiring);
                     entry.endMarking = diagram.marking;
                 }, transitionTime * i);
             }
@@ -81,20 +83,25 @@ export class PlayService {
      *          The diagram containing the transition.
      * @param node
      *          The transition node to be fired.
-     * @param test
-     *          Whether this is a test firing (does not update firing sequence).
+     * @param updateSequence
+     *          Whether the firing sequence should be updated when firing, false when validating a sequence.
+     * @param notify
+     *          Whether notifications (e. g., transition not activated) should be displayed.
+     * @param displayFiring
+     *          Whether the color of the firing transition should be animated while firing.
      */
     processTransitionClick(
         diagram: Diagram,
         node: DiagramTransition,
-        test: boolean = false,
-        notify: boolean = true,
+        updateSequence: boolean,
+        notify: boolean,
+        displayFiring: boolean,
     ): boolean {
         if (node.isActivated()) {
-            node.fire();
+            node.fire(displayFiring);
             diagram.updateMarking();
             this._lastMarking = diagram.marking;
-            if (!test) {
+            if (updateSequence) {
                 this._sourceNetService.updateEditedNet(diagram);
                 this._addTransitionToFiringSequence(node.label || node.id);
             }
@@ -166,6 +173,7 @@ export class PlayService {
         transitionCount: number,
         startMarking: Record<string, number>,
         endMarking: Record<string, number>,
+        isValid: boolean | undefined,
     ) {
         this.closeLastFiringEntry();
         const newEntry = new FiringEntry(
@@ -175,6 +183,7 @@ export class PlayService {
             startMarking,
             endMarking,
             true,
+            isValid,
         );
         this.firingEntries.update((entries) => {
             entries.push(newEntry);
@@ -232,7 +241,7 @@ export class PlayService {
      * @returns A firing entry with an empty sequence
      */
     private _getEmptyFiringEntry(): FiringEntry {
-        return new FiringEntry(this.getNewId(), '', 0, this._startMarking, this._startMarking, false);
+        return new FiringEntry(this.getNewId(), '', 0, this._startMarking, this._startMarking, false, undefined);
     }
 
     /**

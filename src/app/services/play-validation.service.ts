@@ -43,6 +43,7 @@ export class PlayValidationService {
                     firedTransitions.length,
                     demandedStartMarking,
                     demandedEndMarking,
+                    true
                 );
                 sequenceCount++;
             }
@@ -58,7 +59,7 @@ export class PlayValidationService {
             for (const transition of diagram.transitions) {
                 // Save old marking for the case of the current transition not firing
                 const oldMarking = { ...diagram.marking };
-                const successfullyFired = self._playService.processTransitionClick(diagram, transition, true, false);
+                const successfullyFired = self._playService.processTransitionClick(diagram, transition, false, false, false);
                 if (successfullyFired) {
                     depthFirstSearch(
                         { ...diagram.marking },
@@ -129,7 +130,7 @@ export class PlayValidationService {
      */
     private _isValidFiringEntry(diagram: Diagram, entry: FiringEntry): boolean {
         const endMarking: string = entry.formattedEndMarking;
-        this._playService.playSequence(diagram, entry, 0);
+        this._playService.playSequence(diagram, entry, 0, false);
         return endMarking === entry.formattedEndMarking;
     }
 }

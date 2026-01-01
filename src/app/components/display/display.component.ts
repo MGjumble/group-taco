@@ -80,7 +80,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     public processNodeClick(node: DisplayableNode) {
         const diagram = this.diagram();
         if (this.isPlayingEnabled() && diagram && diagram instanceof Diagram && node instanceof DiagramTransition) {
-            this._playService.processTransitionClick(diagram, node);
+            this._playService.processTransitionClick(diagram, node, true, true, true);
         }
     }
 

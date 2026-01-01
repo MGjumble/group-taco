@@ -55,8 +55,7 @@ export class DiagramTransition extends DiagramNode {
         return this._inputPlaces.every((place, index) => place.tokenCount() >= this._inputArcs[index].weight);
     }
 
-    public fire(): void {
-        this.isFiring.set(true);
+    public fire(displayFiring: boolean = true): void {
         this._inputArcs.forEach((arc, i) => {
             const place = this._inputPlaces[i];
             place.tokens = place.tokenCount() - arc.weight;
@@ -65,6 +64,9 @@ export class DiagramTransition extends DiagramNode {
             const place = this._outputPlaces[i];
             place.tokens = place.tokenCount() + arc.weight;
         });
-        setTimeout(() => this.isFiring.set(false), 300);
+        if (displayFiring) {
+            this.isFiring.set(true);
+            setTimeout(() => this.isFiring.set(false), 300);
+        }
     }
 }
