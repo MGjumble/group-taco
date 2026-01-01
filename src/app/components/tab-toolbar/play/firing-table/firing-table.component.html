@@ -57,21 +57,21 @@
 <div class="tab-toolbar-container">
     <div class="tab-toolbar-row">
         <div class="main-button-container">
-            <button mat-raised-button id="new-entry-button" (click)="onNewEntry()">New Sequence</button>
-            <button mat-raised-button id="validate-firing-table-button">Validate Firing Table</button>
+            <button mat-raised-button id="new-entry-button" (click)="onNewEntry()">{{ 'NEW_SEQUENCE' | translate }}</button>
+            <button mat-raised-button id="validate-firing-table-button">{{ 'VALIDATE_FIRING_TABLE' | translate }}</button>
             <button
                 mat-raised-button
                 id="find-sequences-button"
                 [color]="buttonColor"
                 (click)="toggleFindSequencesForm()">
-                Find Firing Sequences
+                {{ 'FIND_FIRING_SEQUENCES' | translate }}
             </button>
         </div>
 
         @if (isFindSequencesFormVisible) {
             <form (ngSubmit)="onFindSequences()" class="find-sequences-form">
                 <div class="marking-input-container">
-                    <span class="custom-input-label">Start Marking</span>
+                    <span class="custom-input-label">{{ 'START_MARKING' | translate }}</span>
                     <div class="marking-entries-row">
                         @for (item of demandedStartMarking() | keyvalue; track item.key) {
                             <div class="marking-entry">
@@ -93,7 +93,7 @@
                 </div>
 
                 <div class="marking-input-container">
-                    <span class="custom-input-label">End Marking</span>
+                    <span class="custom-input-label">{{ 'END_MARKING' | translate }}</span>
                     <div class="marking-entries-row">
                         @for (item of demandedEndMarking() | keyvalue; track item.key) {
                             <div class="marking-entry">
@@ -116,7 +116,7 @@
 
                 <div class="transition-count-and-buttons-container">
                     <div class="transition-count-input-container">
-                        <span class="custom-input-label transition-count-input-label">Transition Count (optional)</span>
+                        <span class="custom-input-label transition-count-input-label">{{ 'TRANSITION_COUNT' | translate }} (optional)</span>
                         <input
                             matInput
                             type="number"
@@ -129,8 +129,8 @@
                             (input)="updateDemandedTransitionCount($event)" />
                     </div>
                     <div class="form-button-container">
-                        <button mat-raised-button color="primary">Submit</button>
-                        <button mat-raised-button color="warn" (click)="toggleFindSequencesForm()">Cancel</button>
+                        <button mat-raised-button color="primary">{{ 'START' | translate }}</button>
+                        <button mat-raised-button color="warn" (click)="toggleFindSequencesForm()">{{ 'CANCEL' | translate }}</button>
                     </div>
                 </div>
             </form>
