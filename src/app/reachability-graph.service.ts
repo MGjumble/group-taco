@@ -150,6 +150,9 @@ export class ReachabilityGraphService {
      */
         switchPnStateToClickedState(node: StateNode) {
         console.log('ChangeStateMethod started.');
+        console.log('StateNode ID'+node.id);
+        console.log('Label'+node.label);
+        console.log('Marking + ${rGMarking[RG1]');
             //important: diagram is rRG, but switching / setMarking needs to be implemented in PN
 
         // this._playService.adjustPnMarking(node.rGMarking);
@@ -158,6 +161,7 @@ export class ReachabilityGraphService {
         //Bis hierhin klappt Aufruf
         if (oldPetriNet instanceof Diagram) {
             oldPetriNet.marking = node.rGMarking;
+            oldPetriNet.updateMarking;
             console.log('Changed PN:' + oldPetriNet);
             this._sourceNetService.updateEditedNet(oldPetriNet);
         }
