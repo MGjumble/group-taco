@@ -149,7 +149,8 @@ export class ReachabilityGraphService {
      * @param node: The clicked StateNode
      */
         switchPnStateToClickedState(node: StateNode) {
-        //important: diagram is rRG, but switching / setMarking needs to be implemented in PN
+        console.log('ChangeStateMethod started.');
+            //important: diagram is rRG, but switching / setMarking needs to be implemented in PN
 
         // this._playService.adjustPnMarking(node.rGMarking);
         let oldPetriNet = this._sourceNetService.getCurrentSourceNet;
