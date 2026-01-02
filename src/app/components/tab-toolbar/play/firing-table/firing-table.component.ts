@@ -47,9 +47,9 @@ export class FiringTableComponent implements OnInit, OnDestroy {
     @Input() firingEntries: FiringEntry[] = [];
 
     isFindSequencesFormVisible: boolean = false;
-    demandedStartMarking = signal<Record<string, number>>({});
-    demandedEndMarking = signal<Record<string, number>>({});
-    demandedTransitionCount = signal<number | undefined>(undefined);
+    requiredStartMarking = signal<Record<string, number>>({});
+    requiredEndMarking = signal<Record<string, number>>({});
+    requiredTransitionCount = signal<number | undefined>(undefined);
     buttonColor: string = 'basic';
 
     ngOnInit(): void {
@@ -58,16 +58,16 @@ export class FiringTableComponent implements OnInit, OnDestroy {
                 tap((diagram) => {
                 if (!diagram) {
                     this._diagram = undefined;
-                    this.demandedStartMarking.set({});
-                    this.demandedEndMarking.set({});
-                    this.demandedTransitionCount.set(undefined);
+                    this.requiredStartMarking.set({});
+                    this.requiredEndMarking.set({});
+                    this.requiredTransitionCount.set(undefined);
                 }
                 }),
                 filter((diagram): diagram is Diagram => !!diagram && diagram instanceof Diagram),
                 tap((diagram: Diagram) => {
                     this._diagram = diagram;
-                    this.demandedStartMarking.set({ ...diagram.startMarking });
-                    this.demandedEndMarking.set(
+                    this.requiredStartMarking.set({ ...diagram.startMarking });
+                    this.requiredEndMarking.set(
                         Object.keys(diagram.startMarking).reduce(
                         (acc, key) => {
                             acc[key] = 0;
@@ -76,7 +76,7 @@ export class FiringTableComponent implements OnInit, OnDestroy {
                         {} as { [key: string]: number }
                         )
                     );
-                    this.demandedTransitionCount.set(undefined);
+                    this.requiredTransitionCount.set(undefined);
                 })
             )
             .subscribe();
@@ -125,7 +125,7 @@ export class FiringTableComponent implements OnInit, OnDestroy {
         if (this._diagram) await this._playService.playSequence(this._diagram, entry, this._TRANSITION_TIME, true);
     }
 
-    async onValidateFiringTable(): Promise<void> {
+    async onValidateSequences(): Promise<void> {
         if (!this._diagram) return;
         for (const entry of this.firingEntries) {
             await this._playValidationService.validateInput(this._diagram, entry);
@@ -134,12 +134,12 @@ export class FiringTableComponent implements OnInit, OnDestroy {
 
     onFindSequences(): void {
         if (this._diagram) {
-            this._diagram.marking = this.demandedStartMarking();
-            this._playValidationService.findFiringSequences(
+            this._diagram.marking = this.requiredStartMarking();
+            this._playValidationService.findSequences(
                 this._diagram,
-                this.demandedStartMarking(),
-                this.demandedEndMarking(),
-                this.demandedTransitionCount(),
+                this.requiredStartMarking(),
+                this.requiredEndMarking(),
+                this.requiredTransitionCount(),
             );
         }
     }
@@ -154,24 +154,24 @@ export class FiringTableComponent implements OnInit, OnDestroy {
         tokenCount = inputValue === '' ? undefined : Number(inputValue);
     }
     
-    updateDemandedStartMarking(key: string, event: Event): void {
+    updateRequiredStartMarking(key: string, event: Event): void {
         const value = Number((event.target as HTMLInputElement).value);
-        this.demandedStartMarking.set({
-            ...this.demandedStartMarking(),
+        this.requiredStartMarking.set({
+            ...this.requiredStartMarking(),
             [key]: value,
         });
     }
 
-    updateDemandedEndMarking(key: string, event: Event): void {
+    updateRequiredEndMarking(key: string, event: Event): void {
         const value = Number((event.target as HTMLInputElement).value);
-        this.demandedEndMarking.set({
-            ...this.demandedEndMarking(),
+        this.requiredEndMarking.set({
+            ...this.requiredEndMarking(),
             [key]: value,
         });
     }
 
-    updateDemandedTransitionCount(event: Event): void {
+    updateRequiredTransitionCount(event: Event): void {
         const value = Number((event.target as HTMLInputElement).value);
-        this.demandedTransitionCount.set(value);
+        this.requiredTransitionCount.set(value);
     }
 }

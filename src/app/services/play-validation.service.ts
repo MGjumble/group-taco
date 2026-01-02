@@ -21,25 +21,25 @@ export class PlayValidationService {
      * Finds valid firing sequences in a Petri net diagram that transform the start marking to the end marking.
      * @param diagram
      *          The Petri net diagram for which firing sequences are to be found.
-     * @param demandedStartMarking
+     * @param requiredStartMarking
      *          The required start marking obtained from the form.
-     * @param demandedEndMarking
+     * @param requiredEndMarking
      *          The required end marking obtained from the form.
-     * @param demandedTransitionCount 
+     * @param requiredTransitionCount 
      *          Optional. The exact number of transitions the firing sequences should contain.
      *          If not provided, sequences with up to `_MAX_TRANSITIONS_DEFAULT` transitions are considered.
      */
-    findFiringSequences(
+    findSequences(
         diagram: Diagram,
-        demandedStartMarking: Record<string, number>,
-        demandedEndMarking: Record<string, number>,
-        demandedTransitionCount?: number,
+        requiredStartMarking: Record<string, number>,
+        requiredEndMarking: Record<string, number>,
+        requiredTransitionCount?: number,
     ): void {
         const self: PlayValidationService = this;
         let sequenceCount: number = 0;
 
         function isValidTransitionCount(currentLength: number): boolean {
-            if (demandedTransitionCount !== undefined) return currentLength === demandedTransitionCount;
+            if (requiredTransitionCount !== undefined) return currentLength === requiredTransitionCount;
             else return currentLength <= self._MAX_TRANSITIONS_DEFAULT;
         }
 
@@ -50,18 +50,18 @@ export class PlayValidationService {
         ) {
             if (sequenceCount >= self._MAX_SEQUENCES) return;
 
-            if (self._isEquivalentMarking(currentMarking, demandedEndMarking) && isValidTransitionCount(firedTransitions.length)) {
+            if (self._isEquivalentMarking(currentMarking, requiredEndMarking) && isValidTransitionCount(firedTransitions.length)) {
                 self._playService.addFiringEntry(
                     firedTransitions.join(' '),
                     firedTransitions.length,
-                    demandedStartMarking,
-                    demandedEndMarking,
+                    requiredStartMarking,
+                    requiredEndMarking,
                     true
                 );
                 sequenceCount++;
             }
 
-            if (firedTransitions.length >= (demandedTransitionCount ?? self._MAX_SEQUENCES)) return;
+            if (firedTransitions.length >= (requiredTransitionCount ?? self._MAX_SEQUENCES)) return;
 
             // Prevent cycle formation
             const markingKey = JSON.stringify(currentMarking);
@@ -83,7 +83,7 @@ export class PlayValidationService {
                 }
             }
         }
-        depthFirstSearch(demandedStartMarking, [], new Set());
+        depthFirstSearch(requiredStartMarking, [], new Set());
     }
 
     /**
