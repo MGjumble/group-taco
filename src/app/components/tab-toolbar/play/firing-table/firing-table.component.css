@@ -14,10 +14,11 @@
 .firing-table th {
     background-color: #f5f5f5;
     font-weight: bold;
+    padding: 5px;
 }
 
 .firing-sequence-th {
-    width: 23%;
+    width: 22%;
 }
 
 .transition-count-th {
@@ -36,6 +37,15 @@
     width: auto;
 }
 
+.mat-mdc-icon-button,
+.mat-mdc-button-touch-target {
+    width: 30px !important;
+    height: 30px !important;
+    top: calc(40% - 15px) !important;
+    left: calc(40% - 15px) !important;
+    transform: none !important;
+}
+
 .play-sequence-button,
 .invalid-sequence-button,
 .delete-entry-button,
@@ -43,6 +53,7 @@
     height: 24px;
     width: 24px;
     padding: 0;
+    margin: 0;
 }
 
 .play-sequence-button:hover,
@@ -119,13 +130,10 @@ input[type="number"] {
 }
 
 .tab-toolbar-container {
-    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 10px;
     padding: 10px;
-    margin-bottom: 5px;
-    background: #f5f5f5;
     border-radius: 4px;
 }
 
@@ -159,7 +167,7 @@ input[type="number"] {
 }
 
 .custom-input-label {
-    width: 15%;
+    min-width: 18ch; 
 }
 
 .transition-count-input-label {
