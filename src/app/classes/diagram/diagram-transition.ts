@@ -55,7 +55,7 @@ export class DiagramTransition extends DiagramNode {
         return this._inputPlaces.every((place, index) => place.tokenCount() >= this._inputArcs[index].weight);
     }
 
-    public fire(displayFiring: boolean = true): void {
+    public fire(displayFiring: boolean): void {
         this._inputArcs.forEach((arc, i) => {
             const place = this._inputPlaces[i];
             place.tokens = place.tokenCount() - arc.weight;

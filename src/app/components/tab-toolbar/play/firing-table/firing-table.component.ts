@@ -42,15 +42,15 @@ export class FiringTableComponent implements OnInit, OnDestroy {
 
     private readonly _TRANSITION_TIME: number = 1000;
 
-    private _lastFiringSequence: string = '';
+    private _lastFiringSequence = '';
     private _diagram: Diagram | undefined;
     @Input() firingEntries: FiringEntry[] = [];
 
-    isFindSequencesFormVisible: boolean = false;
+    isFindSequencesFormVisible = false;
     requiredStartMarking = signal<Record<string, number>>({});
     requiredEndMarking = signal<Record<string, number>>({});
     requiredTransitionCount = signal<number | undefined>(undefined);
-    buttonColor: string = 'basic';
+    buttonColor = 'basic';
 
     ngOnInit(): void {
         this._sub = this._displayService.diagram$
@@ -73,7 +73,7 @@ export class FiringTableComponent implements OnInit, OnDestroy {
                                 acc[key] = 0;
                                 return acc;
                             },
-                            {} as { [key: string]: number },
+                            {} as Record<string, number>,
                         ),
                     );
                     this.requiredTransitionCount.set(undefined);

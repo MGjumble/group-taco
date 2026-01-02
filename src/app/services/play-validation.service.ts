@@ -35,26 +35,28 @@ export class PlayValidationService {
         requiredEndMarking: Record<string, number>,
         requiredTransitionCount?: number,
     ): void {
-        const self: PlayValidationService = this;
-        let sequenceCount: number = 0;
+        let sequenceCount = 0;
 
-        function isValidTransitionCount(currentLength: number): boolean {
-            if (requiredTransitionCount !== undefined) return currentLength === requiredTransitionCount;
-            else return currentLength <= self._MAX_TRANSITIONS_DEFAULT;
-        }
+        const isValidTransitionCount = (currentLength: number): boolean => {
+            if (requiredTransitionCount !== undefined) {
+                return currentLength === requiredTransitionCount;
+            } else {
+                return currentLength <= this._MAX_TRANSITIONS_DEFAULT;
+            }
+        };
 
-        function depthFirstSearch(
+        const depthFirstSearch = (
             currentMarking: Record<string, number>,
             firedTransitions: string[],
             visited: Set<string>,
-        ) {
-            if (sequenceCount >= self._MAX_SEQUENCES) return;
+        ): void => {
+            if (sequenceCount >= this._MAX_SEQUENCES) return;
 
             if (
-                self._isEquivalentMarking(currentMarking, requiredEndMarking) &&
+                this._isEquivalentMarking(currentMarking, requiredEndMarking) &&
                 isValidTransitionCount(firedTransitions.length)
             ) {
-                self._playService.addFiringEntry(
+                this._playService.addFiringEntry(
                     firedTransitions.join(' '),
                     firedTransitions.length,
                     requiredStartMarking,
@@ -64,7 +66,7 @@ export class PlayValidationService {
                 sequenceCount++;
             }
 
-            if (firedTransitions.length >= (requiredTransitionCount ?? self._MAX_SEQUENCES)) return;
+            if (firedTransitions.length >= (requiredTransitionCount ?? this._MAX_SEQUENCES)) return;
 
             // Prevent cycle formation
             const markingKey = JSON.stringify(currentMarking);
@@ -75,7 +77,7 @@ export class PlayValidationService {
             for (const transition of diagram.transitions) {
                 // Save old marking for the case of the current transition not firing
                 const oldMarking = { ...diagram.marking };
-                const successfullyFired = self._playService.processTransitionClick(
+                const successfullyFired = this._playService.processTransitionClick(
                     diagram,
                     transition,
                     false,
@@ -91,7 +93,7 @@ export class PlayValidationService {
                     diagram.marking = { ...oldMarking };
                 }
             }
-        }
+        };
         depthFirstSearch(requiredStartMarking, [], new Set());
     }
 
@@ -104,7 +106,7 @@ export class PlayValidationService {
      * @returns A promise that returns whether the input is valid when the validation is complete.
      */
     async validateInput(diagram: Diagram, entry: FiringEntry): Promise<void> {
-        let isValid: boolean = false;
+        let isValid = false;
         entry.transitionCount = entry.labels.length;
         const hasOnlyValidTransitions: boolean = this._hasOnlyValidTransitions(diagram, entry.labels);
         // TODO: provide user feedback if invalid transitions are present

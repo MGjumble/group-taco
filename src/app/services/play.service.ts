@@ -69,13 +69,11 @@ export class PlayService {
         displayFiring: boolean,
     ): Promise<boolean> {
         this._currentFiringEntry = entry;
-        let isEntryValid: boolean = true;
+        let isEntryValid = true;
         diagram.marking = { ...entry.startMarking };
 
-        for (let i = 0; i < entry.labels.length; i++) {
+        for (const label of entry.labels) {
             await this.sleep(transitionTime);
-
-            const label = entry.labels[i];
             const node: DiagramTransition | undefined = diagram.getTransitionByLabel(label);
 
             if (node) {
@@ -124,7 +122,7 @@ export class PlayService {
             this._lastMarking = diagram.marking;
             if (updateSequence) {
                 this._sourceNetService.updateEditedNet(diagram);
-                const updateEndMarking: boolean = !this._modeService.isExamMode();
+                const updateEndMarking = !this._modeService.isExamMode();
                 this.updateFiringEntry(node.label, updateEndMarking);
             }
             this._setValidStatus(true);
@@ -225,7 +223,7 @@ export class PlayService {
      *          Indicates whether the end marking should be updated. Is set to false in
      *          the case of an invalid input to the firing sequence.
      */
-    updateFiringEntry(label: string, updateEndMarking: boolean = true): void {
+    updateFiringEntry(label: string, updateEndMarking: boolean): void {
         const entry = this._currentFiringEntry || this._getEmptyFiringEntry();
         entry.firingSequence += ` ${label}`;
         entry.transitionCount += 1;
@@ -257,7 +255,7 @@ export class PlayService {
      * @returns A firing entry with an empty sequence.
      */
     private _getEmptyFiringEntry(): FiringEntry {
-        let endMarking = { ...this._startMarking };
+        const endMarking = { ...this._startMarking };
         const newFiringEntry = new FiringEntry(
             this.getNewId(),
             '',
