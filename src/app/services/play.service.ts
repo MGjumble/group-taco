@@ -179,7 +179,7 @@ export class PlayService {
     }
 
     /**
-     *
+     * Adds a predefined firing entry to the firing table.
      * @param firingSequence
      *          The firing sequence.
      * @param transitionCount
