@@ -34,7 +34,7 @@
 
         @for (node of reachabilityGraphDiagram().getNodes(); track node.id) {
             <!-- TODO Hier Fehler finden -->
-            <g appSvgNode [diagramNode]="node" (onClick)="stateNodeClick(node.id)" />
+            <g appSvgNode [diagramNode]="node" (onClick)="stateNodeClicked(node)" />
         }
     </svg>
     <div class="toolbar">

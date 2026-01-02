@@ -146,13 +146,9 @@ export class ReachabilityGraphService {
      * Changes state of the PetriNet to the State of a ReachabilityGraph StateNode, meaning the marking is adjusted.
      * Triggered by clicking a StateNode in the RG.
      * Uses the "saved" Marking of the reachability graph model where each StateNode saves it's corresponding marking.
-     * @param diagram The current ReachabilityGraph
      * @param node: The clicked StateNode
      */
-    switchPnStateToClickedState(nodeId: string) {
-        // switchPnStateToClickedState(node: DisplayableNode) {
-        // switchPnStateToClickedState(diagram: ReachabilityGraph, node: StateNode){
-
+        switchPnStateToClickedState(node: StateNode) {
         //important: diagram is rRG, but switching / setMarking needs to be implemented in PN
 
         // this._playService.adjustPnMarking(node.rGMarking);

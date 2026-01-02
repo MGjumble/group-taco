@@ -47,7 +47,7 @@ export class SvgNodeComponent {
 
     clickNode = output<DisplayableNode>();
 
-    onClick = output<string>();
+    onClick = output<StateNode>();
 
     // clickStateNode = output<StateNode>();
 
@@ -241,5 +241,11 @@ export class SvgNodeComponent {
         const node = this.diagramNode();
         if (node) this.clickNode.emit(node);
         console.log('click');
+    }
+
+      public circleClick() {
+        const node = this.diagramNode();
+        if (node) this.clickNode.emit(node);
+        console.log('CircleClick');
     }
 }
