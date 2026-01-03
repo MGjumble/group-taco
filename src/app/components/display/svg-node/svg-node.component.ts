@@ -2,6 +2,7 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { Coords } from '../../../classes/json-petri-net';
 import { SHAPE } from '../../../classes/diagram/diagram-node';
 import { DisplayableNode } from '../../../classes/displayable-graph.interface';
+import { ModeService } from '../../../services/mode.service';
 import { PlayService } from '../../../services/play.service';
 import { DiagramTransition } from '../../../classes/diagram/diagram-transition';
 import { DiagramPlace } from '../../../classes/diagram/diagram-place';
@@ -28,7 +29,7 @@ export class SvgNodeComponent {
     });
 
     readonly diagramNode = input<DisplayableNode>();
-    // readonly diagramNode = input<DisplayableNode | StateNode>();
+    private _modeService = inject(ModeService);
     private _playService = inject(PlayService);
 
     readonly showInnerLabel = input<boolean>(false);
@@ -37,7 +38,15 @@ export class SvgNodeComponent {
     readonly isTransitionAndActive = computed(() => {
         const node = this.diagramNode();
         if (node instanceof DiagramTransition) {
-            return this._playService.canBeFired(node);
+            return this._playService.canBeFired(node) && !this._modeService.isExamMode();
+        }
+        return false;
+    });
+
+    readonly isFiring = computed(() => {
+        const node = this.diagramNode();
+        if (node instanceof DiagramTransition) {
+            return node.isFiring();
         }
         return false;
     });
@@ -54,6 +63,9 @@ export class SvgNodeComponent {
     readonly fillColor = signal('white');
 
     readonly transitionFillColor = computed(() => {
+        if (this.isFiring()) {
+            return 'lime';
+        }
         if (this.isTransitionAndActive()) {
             return 'dimgray';
         }
@@ -61,21 +73,21 @@ export class SvgNodeComponent {
     });
 
     readonly transitionStrokeColor = computed(() => {
-        if (this.isTransitionAndActive()) {
+        if (this.isFiring() || this.isTransitionAndActive()) {
             return 'darkgreen';
         }
         return 'black';
     });
 
     readonly transitionStrokeWidth = computed(() => {
-        if (this.isTransitionAndActive()) {
+        if (this.isFiring() || this.isTransitionAndActive()) {
             return 4;
         }
         return 2;
     });
 
     readonly transitionCornerRadius = computed(() => {
-        if (this.isTransitionAndActive()) {
+        if (this.isFiring() || this.isTransitionAndActive()) {
             return 5;
         }
         return 0;
