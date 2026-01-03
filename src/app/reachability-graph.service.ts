@@ -152,28 +152,28 @@ export class ReachabilityGraphService {
         console.log('ChangeStateMethod started.');
         console.log('StateNode ID' + node.id);
         console.log('Label' + node.label);
-        if(node.rGMarking){
+        if (node.rGMarking) {
             console.log('Marking' + node.rGMarking);
         }
-        
-        if (!this._sourceNetService.getCurrentSourceNet){
+
+        if (!this._sourceNetService.getCurrentSourceNet()) {
             this._notificationService.showError('TOASTER.HEADER.ERROR', 'TOASTER.BODY.NO_CURRENT_NET');
             return;
-        }
-        
-        else{
-            //TO-DO: Find better way than unknown cast for type assertion
-            let oldPetriNet = this._sourceNetService.getCurrentSourceNet as unknown as Diagram;
-            // let oldPetriNet = this._sourceNetService.getCurrentSourceNet;
-            // if(oldPetriNet instanceof Diagram){
-                console.log('Old PN nodes:  ' + oldPetriNet.allNodes + '      ' +'marking  ' + oldPetriNet.currentMarking$);
-                oldPetriNet.marking = node.rGMarking;
-                
-                oldPetriNet.updateMarking;
-                this._sourceNetService.updateEditedNet(oldPetriNet);
-                console.log('Changed PN:' + oldPetriNet.currentMarking$);
-                this._notificationService.showSuccess('TOASTER.HEADER.SUCCESS', 'TOASTER.BODY.SWITCHED_STATE_SUCCESSFULLY');
-            // }
+        } else {
+            const oldPetriNet: Diagram | null = this._sourceNetService.getCurrentSourceNet();
+            if (!oldPetriNet) {
+                return;
+            }
+
+            console.log(
+                'Old PN nodes:  ' + oldPetriNet.allNodes + '      ' + 'marking  ' + oldPetriNet.currentMarking$,
+            );
+            oldPetriNet.marking = node.rGMarking;
+
+            oldPetriNet.updateMarking();
+            this._sourceNetService.updateEditedNet(oldPetriNet);
+            console.log('Changed PN:' + oldPetriNet.currentMarking$);
+            this._notificationService.showSuccess('TOASTER.HEADER.SUCCESS', 'TOASTER.BODY.SWITCHED_STATE_SUCCESSFULLY');
         }
     }
 }

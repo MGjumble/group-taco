@@ -99,18 +99,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
         }
     }
 
-    // public stateNodeClick(id: string){
-    //     const rgDiagram = this.diagram();
-    //     console.log('StateNode clicked.');
-    //     console.log(id);
-
-    //     // if (this.isReachabilityGraphEnabled() && node ) {
-    //         if(this.isReachabilityGraphEnabled() && rgDiagram && rgDiagram instanceof ReachabilityGraph) {
-    //         console.log('StateNode clicked.')
-    //         this._reachabilityGraphService.switchPnStateToClickedState(id);
-    //     }
-    // }
-
     public prevent(e: DragEvent) {
         e.preventDefault();
     }
