@@ -164,12 +164,16 @@ export class ReachabilityGraphService {
         else{
             //TO-DO: Find better way than unknown cast for type assertion
             let oldPetriNet = this._sourceNetService.getCurrentSourceNet as unknown as Diagram;
-            console.log('Old PN nodes:  ' + oldPetriNet.allNodes + '      ' +'marking  ' + oldPetriNet.currentMarking$);
-            oldPetriNet.marking = node.rGMarking;
-            oldPetriNet.updateMarking;
-            this._sourceNetService.updateEditedNet(oldPetriNet);
-            console.log('Changed PN:' + oldPetriNet.currentMarking$);
-            this._notificationService.showSuccess('TOASTER.HEADER.SUCCESS', 'TOASTER.BODY.SWITCHED_STATE_SUCCESSFULLY');
+            // let oldPetriNet = this._sourceNetService.getCurrentSourceNet;
+            // if(oldPetriNet instanceof Diagram){
+                console.log('Old PN nodes:  ' + oldPetriNet.allNodes + '      ' +'marking  ' + oldPetriNet.currentMarking$);
+                oldPetriNet.marking = node.rGMarking;
+                
+                oldPetriNet.updateMarking;
+                this._sourceNetService.updateEditedNet(oldPetriNet);
+                console.log('Changed PN:' + oldPetriNet.currentMarking$);
+                this._notificationService.showSuccess('TOASTER.HEADER.SUCCESS', 'TOASTER.BODY.SWITCHED_STATE_SUCCESSFULLY');
+            // }
         }
     }
 }
