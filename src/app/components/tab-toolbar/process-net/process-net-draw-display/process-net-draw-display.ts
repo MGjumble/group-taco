@@ -29,6 +29,8 @@ import { TOAST_POSITIONS, ToastList } from '../../../../classes/toast';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModeService } from '../../../../services/mode.service';
 import { AppMode } from '../../../../classes/app-mode';
+import { MainTabComponent } from '../../../main-tab/main-tab.component';
+import { Tab } from '../../../../classes/tabs';
 
 interface DrawnElement {
     node: DiagramNode;
@@ -109,6 +111,10 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
     readonly viewBox = this.panningService.viewBoxAsString;
     readonly viewBoxObj = this.panningService.viewBox;
     private modeChange = effect(() => {
+        // return if the current tab is not process net draw
+        if (inject(MainTabComponent).selectedIndex !== Tab.PROCESS_NET) {
+            return;
+        }
         const diagram = this.diagramSignal();
         if (!diagram) return;
         if (this.modeService.currentMode() == AppMode.EXAM) {
