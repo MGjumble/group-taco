@@ -6,7 +6,7 @@ import { AppMode } from './classes/app-mode';
 import { SourcePetriNetService } from './services/source-petri-net.service';
 import { Diagram } from './classes/diagram/diagram';
 import { ToasterNotificationService } from './services/toaster-notification.service';
-import { PetriNet } from './services/validation.service';
+import { PetriNet } from './services/process-net-validation.service';
 import { PlayService } from './services/play.service';
 import { DisplayableNode } from './classes/displayable-graph.interface';
 
