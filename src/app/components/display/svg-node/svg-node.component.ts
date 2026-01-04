@@ -58,8 +58,6 @@ export class SvgNodeComponent {
 
     stateNodeClick = output<StateNode>();
 
-    // clickStateNode = output<StateNode>();
-
     readonly fillColor = signal('white');
 
     readonly transitionFillColor = computed(() => {

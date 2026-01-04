@@ -95,11 +95,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
         if (this.isReachabilityGraphEnabled() && node instanceof StateNode) {
             console.log('StateNode clicked.' + node.id);
             this._reachabilityGraphService.switchPnStateToClickedState(node as StateNode);
-            //  if (this.isReachabilityGraphEnabled() && node ) {
-            //     // if(this.isReachabilityGraphEnabled() && diagram && diagram instanceof ReachabilityGraph && node instanceof StateNode) {
-            //     console.log('StateNode clicked.')
-            //     this._reachabilityGraphService.switchPnStateToClickedState(node);
-            //  }
         }
     }
 

@@ -18,16 +18,4 @@ export class ReachabilityGraphDrawDisplayComponent extends DisplayComponent {
     readonly reachabilityGraphDiagram = this._reachabilityGraphService.reachabilityGraphSignal;
     readonly rgNodes = signal<StateNode[]>([]);
     readonly rgEdges = signal<FiringEdge[]>([]);
-
-    // public stateNodeClick(id: string){
-    //     const rgDiagram = this.diagram();
-    //     console.log('StateNode clicked.');
-    //     console.log(id);
-
-    //     // if (this.isReachabilityGraphEnabled() && node ) {
-    //         if(this.isReachabilityGraphEnabled() && rgDiagram) {
-    //         console.log('StateNode clicked.')
-    //         this._reachabilityGraphService.switchPnStateToClickedState(id);
-    //     }
-    // }
 }

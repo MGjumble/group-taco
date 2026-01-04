@@ -33,14 +33,11 @@
         }
 
         @for (node of reachabilityGraphDiagram().getNodes(); track node.id) {
-            <!-- TODO Hier Fehler finden -->
             <g appSvgNode [diagramNode]="node" (stateNodeClick)="stateNodeClicked(node)" />
         }
     </svg>
     <div class="toolbar">
         <h3>Drawing Area</h3>
-        <!-- <button class="clear-btn" (click)="clearDrawing()">Clear Drawing</button>
-         -->
     </div>
     <div class="instructions">
         <p>REACHABILITY GRAPH</p>

@@ -148,7 +148,6 @@ export class ReachabilityGraphService {
      * @param node: The clicked StateNode
      */
     switchPnStateToClickedState(node: StateNode) {
-        //important: diagram is rRG, but switching / setMarking needs to be implemented in PN
         console.log('ChangeStateMethod started.');
         console.log('StateNode ID' + node.id);
         console.log('Label' + node.label);
@@ -157,7 +156,7 @@ export class ReachabilityGraphService {
         }
 
         if (!this._sourceNetService.getCurrentSourceNet()) {
-            this._notificationService.showError('TOASTER.HEADER.ERROR', 'TOASTER.BODY.NO_CURRENT_NET');
+            this._notificationService.showError('TOASTER.HEADER.READ_ERROR', 'TOASTER.BODY.LOAD_NET_FIRST');
             return;
         } else {
             const oldPetriNet: Diagram | null = this._sourceNetService.getCurrentSourceNet();

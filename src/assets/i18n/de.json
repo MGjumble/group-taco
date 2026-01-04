@@ -61,7 +61,8 @@
             "VALIDATION_ERROR": "Bitte zuerst ein Petri-Netz laden.",
             "VALIDATION_VALID_MAXIMAL": "Das Prozessnetz ist gültig und maximal.",
             "VALIDATION_VALID_WITH_INFOS": "Das Prozessnetz ist gültig.",
-            "VALIDATION_INVALID": "Das Prozessnetz ist ungültig."
+            "VALIDATION_INVALID": "Das Prozessnetz ist ungültig.",
+            "SWITCHED_STATE_SUCCESSFULLY": "Die Markierung des Petrinetzes wurde erfolgreich angepasst."
         },
         "VALIDATION_MESSAGES": {
             "TRANSITION_NO_MATCH": "❌ Transition {{label}} hat keine passende Beschriftung im Petri-Netz.",

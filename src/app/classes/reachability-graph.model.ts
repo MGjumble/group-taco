@@ -13,9 +13,7 @@ export class StateNode implements DisplayableNode {
     label: string;
     rGMarking: Record<string, number>;
 
-    //Auf previous und nextState verweisen ? alle Möglichkeiten / neighbours
-    //double linked list ohne Ende
-    //is StartNode :true -- kann aber trotzdem Vorgänger haben
+    //To-Do: is StartNode :true -- kann aber trotzdem Vorgänger haben
 
     get shape(): SHAPE {
         return SHAPE.CIRCLE;
