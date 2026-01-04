@@ -3,7 +3,7 @@
     "CLEAR_NET": "Petri-Netz löschen",
     "LAYOUT_SPRING_EMBEDDER": "Spring Embedder Layout",
     "TAB_DRAW": "Zeichnen",
-    "TAB_PLAY": "Abspielen",
+    "TAB_PLAY": "Schalten",
     "TAB_REACHABILITY": "Erreichbarkeitsgraph",
     "TAB_PROCESS": "Prozessnetz",
     "TOGGLE_MODE": "Modus umschalten",
@@ -85,8 +85,8 @@
         "BUTTON_SET_START_POSITION": "Startposition setzen (löscht das bisherige Prozessnetz)",
         "INSTRUCTION_DRAG_DROP": "Ziehen Sie Elemente aus dem linken Anzeigebereich hierher, um Ihr Prozessnetz zu erstellen.",
         "INSTRUCTION_LEFT_CLICK_MOVE": "Mit Linksklick Elemente ziehen, um sie zu bewegen.",
-        "INSTRUCTION_MIDDLE_CLICK_DELETE": "Mit Mittelklick einen Place oder eine Transition löschen (Verbindungen werden automatisch entfernt).",
-        "INSTRUCTION_RIGHT_CLICK_CONNECT": "Rechtsklick auf einen Place oder eine Transition, um ihn als Quelle zu wählen; anschließend Rechtsklick auf den entgegengesetzten Typ, um eine gerichtete Verbindung zum zweiten Element zu erstellen.",
+        "INSTRUCTION_MIDDLE_CLICK_DELETE": "Mit Mittelklick eine Stelle oder eine Transition löschen (Verbindungen werden automatisch entfernt).",
+        "INSTRUCTION_RIGHT_CLICK_CONNECT": "Rechtsklick auf eine Stelle oder eine Transition, um ihn als Quelle zu wählen; anschließend Rechtsklick auf den entgegengesetzten Typ, um eine gerichtete Verbindung zum zweiten Element zu erstellen.",
         "INSTRUCTION_MIDDLE_CLICK_DELETE_CONN": "Mittelklick auf eine Verbindung, um sie zu löschen.",
         "INSTRUCTION_VALIDATE_TOAST": "Validieren, um eine Toast-Nachricht mit dem Ergebnis zu sehen."
     }
