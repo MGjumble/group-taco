@@ -5,6 +5,7 @@ import { ToasterNotificationService } from './toaster-notification.service';
 import { SourcePetriNetService } from './source-petri-net.service';
 import { TabStateService } from './tab-state.service';
 import { Tab } from '../classes/tabs';
+import { ReachabilityGraphService } from '../reachability-graph.service';
 import { Diagram } from '../classes/diagram/diagram';
 import { DiagramTransition } from '../classes/diagram/diagram-transition';
 import { FiringEntry } from '../classes/firing-entry';
@@ -15,6 +16,7 @@ export class PlayService {
     private _notificationService = inject(ToasterNotificationService);
     private _sourceNetService = inject(SourcePetriNetService);
     private _tabStateService = inject(TabStateService);
+    private _reachabilityGraphService = inject(ReachabilityGraphService);
 
     private _startMarking: Record<string, number> = {};
     private _currentMarking = signal<Record<string, number>>(this._startMarking);
@@ -228,6 +230,7 @@ export class PlayService {
         entry.firingSequence += ` ${label}`;
         entry.transitionCount += 1;
         if (updateEndMarking) entry.endMarking = this._currentMarking();
+        this._reachabilityGraphService.convertFiringEntryLabelToReachabilityGraphID(entry, label);
     }
 
     /**

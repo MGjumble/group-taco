@@ -2,11 +2,14 @@ import { computed, ElementRef, Injectable, signal } from '@angular/core';
 import { DisplayableGraph } from '../classes/displayable-graph.interface';
 import { ViewBox, viewBoxValues } from '../components/display/display.constants';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class PanningService {
     INITIAL_VIEWBOX: ViewBox = viewBoxValues;
     private readonly ZOOM_INTENSITY = 0.1;
     private _viewBoxValues = signal(this.INITIAL_VIEWBOX);
+    public viewBox = this._viewBoxValues.asReadonly();
     private _isPanning = false;
     private _panStartPoint = { x: 0, y: 0 };
 

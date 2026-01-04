@@ -1,4 +1,5 @@
 import {
+    AfterViewInit,
     ChangeDetectorRef,
     Component,
     computed,
@@ -8,7 +9,6 @@ import {
     OnInit,
     signal,
     ViewChild,
-    AfterViewInit,
 } from '@angular/core';
 import { SvgNodeComponent } from '../../../display/svg-node/svg-node.component';
 import { DiagramNode, SHAPE } from '../../../../classes/diagram/diagram-node';
@@ -101,6 +101,7 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
     private toaster = inject(ToasterNotificationService);
     private panningService = inject(PanningService);
     readonly viewBox = this.panningService.viewBoxAsString;
+    readonly viewBoxObj = this.panningService.viewBox;
 
     // Dimensions consistent with SvgNodeComponent
     private readonly PLACE_RADIUS = 25;
