@@ -73,6 +73,8 @@ export class SourcePetriNetService {
      * Should be called whenever the user makes changes to the petri net.
      * @param modifiedNet
      *          the modified petri net diagram
+     * @param options
+     *         optional parameters
      */
     public updateEditedNet(modifiedNet: Diagram, options?: { triggeredByFiring?: boolean }): void {
         this._lastChangeTriggeredByFiring = !!options?.triggeredByFiring;

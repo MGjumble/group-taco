@@ -833,6 +833,8 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
         let outputOffset = 0;
 
         const newElements: DrawnElement[] = [];
+        const usedPlaces = new Set<string>();
+        this.connections().forEach((connection) => usedPlaces.add(connection.aId));
 
         const inputElements = event.inputs.map((flow, idx) =>
             this.resolvePlaceForFlow(
@@ -841,6 +843,7 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
                 inputBaseY + idx * laneSpacing,
                 newElements,
                 flow.weight,
+                usedPlaces,
             ),
         );
 
@@ -895,9 +898,16 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
         defaultY: number,
         createdElements: DrawnElement[],
         weight: number,
+        usedPlaces: Set<string>,
     ): { id: string; weight: number } {
-        const existing = this.findPlaceByLabel(label);
+        const existing = this.drawnElements().find((el) => {
+            if (!(el.node instanceof DiagramPlace)) return false;
+            if (usedPlaces.has(el.id)) return false;
+            const nodeLabel = el.node.label ?? el.node.displayLabel;
+            return nodeLabel === label;
+        });
         if (existing) {
+            usedPlaces.add(existing.id);
             return { id: existing.id, weight };
         }
         const place = this.buildPlace(this.generateElementId('fire-place'), label, 0, {
@@ -908,6 +918,7 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
         place.y = defaultY;
         const element: DrawnElement = { node: place, id: place.id };
         createdElements.push(element);
+        usedPlaces.add(element.id);
         return { id: element.id, weight };
     }
 
