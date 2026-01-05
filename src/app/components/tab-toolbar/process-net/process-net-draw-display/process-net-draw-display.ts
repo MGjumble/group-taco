@@ -32,6 +32,7 @@ import { AppMode } from '../../../../classes/app-mode';
 import { TabStateService } from '../../../../services/tab-state.service';
 import { Tab } from '../../../../classes/tabs';
 import { SourcePetriNetService } from '../../../../services/source-petri-net.service';
+import { ProcessNetFiringService, ProcessNetFiringEvent } from '../../../../services/process-net-firing.service';
 
 interface DrawnElement {
     node: DiagramNode;
@@ -111,6 +112,10 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
     private sourcePetriNetService = inject(SourcePetriNetService);
     private diagramSignal = toSignal(this.displayService.diagram$, { initialValue: undefined });
     private tabStateService = inject(TabStateService);
+    private firingService = inject(ProcessNetFiringService);
+    private firingSub?: ReturnType<typeof this.firingService.events$.subscribe>;
+    private autoFiringCount = 0;
+
     readonly viewBox = this.panningService.viewBoxAsString;
     readonly viewBoxObj = this.panningService.viewBox;
     private modeChange = effect(() => {
@@ -149,6 +154,7 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
             // Add mousedown listener with capture phase to intercept before child elements
             canvas.addEventListener('mousedown', this.handleCanvasMouseDown, true);
         }
+        this.firingSub = this.firingService.events$.subscribe((event) => this.addFiringToDrawing(event));
     }
 
     ngAfterViewInit() {
@@ -162,6 +168,7 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
             canvas.removeEventListener('customDrop', this.customDropListener);
             canvas.removeEventListener('mousedown', this.handleCanvasMouseDown, true);
         }
+        this.firingSub?.unsubscribe();
     }
 
     private handleCanvasMouseDown = (event: MouseEvent) => {
@@ -802,5 +809,124 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
             return false;
         }
         return this.getCurrentStartPlaceCount(placeId) < this.getRequiredStartPlaceCount(placeId);
+    }
+
+    private addFiringToDrawing(event: ProcessNetFiringEvent) {
+        if (this.tabStateService.currentTab() !== Tab.PROCESS_NET) {
+            return;
+        }
+        const viewBox = this.viewBoxObj();
+        const verticalSpacing = 180;
+        const rowIndex = this.autoFiringCount;
+        const baseY = viewBox.minY + 120 + rowIndex * verticalSpacing;
+        const baseX = viewBox.minX + viewBox.width * 0.6;
+        const transition = this.buildTransition(this.generateElementId('fire-transition'), event.transitionLabel);
+        transition.x = baseX;
+        transition.y = baseY;
+        const transitionElement: DrawnElement = { node: transition, id: transition.id };
+
+        const laneSpacing = 60;
+        const inputBaseY = baseY - ((event.inputs.length - 1) * laneSpacing) / 2;
+        const totalOutputNodes = event.outputs.reduce((sum, flow) => sum + flow.weight, 0) || 1;
+        const outputBaseY = baseY - ((totalOutputNodes - 1) * laneSpacing) / 2;
+        let outputOffset = 0;
+
+        const newElements: DrawnElement[] = [];
+
+        const inputElements = event.inputs.map((flow, idx) =>
+            this.resolvePlaceForFlow(
+                flow.placeLabel,
+                baseX - 160,
+                inputBaseY + idx * laneSpacing,
+                newElements,
+                flow.weight,
+            ),
+        );
+
+        const outputElements = event.outputs.flatMap((flow) => {
+            const created: { id: string; weight: number }[] = [];
+            for (let i = 0; i < flow.weight; i++) {
+                const place = this.buildPlace(this.generateElementId('fire-place'), flow.placeLabel, 0, {
+                    hideTokens: true,
+                    innerLabel: this.getNextInnerLabel(),
+                });
+                place.x = baseX + 160;
+                place.y = outputBaseY + outputOffset * laneSpacing;
+                outputOffset++;
+                const element: DrawnElement = { node: place, id: place.id };
+                newElements.push(element);
+                created.push({ id: element.id, weight: 1 });
+            }
+            return created;
+        });
+
+        newElements.push(transitionElement);
+        if (newElements.length) {
+            this.drawnElements.update((elements) => [...elements, ...newElements]);
+        }
+
+        const newConnections: Connection[] = [];
+        inputElements.forEach((input) => {
+            newConnections.push({
+                id: this.generateConnectionId('fire-in'),
+                aId: input.id,
+                bId: transitionElement.id,
+                weight: input.weight,
+            });
+        });
+        outputElements.forEach((output) => {
+            newConnections.push({
+                id: this.generateConnectionId('fire-out'),
+                aId: transitionElement.id,
+                bId: output.id,
+                weight: 1,
+            });
+        });
+        if (newConnections.length) {
+            this.connections.update((connections) => [...connections, ...newConnections]);
+        }
+        this.autoFiringCount++;
+    }
+
+    private resolvePlaceForFlow(
+        label: string,
+        defaultX: number,
+        defaultY: number,
+        createdElements: DrawnElement[],
+        weight: number,
+    ): { id: string; weight: number } {
+        const existing = this.findPlaceByLabel(label);
+        if (existing) {
+            return { id: existing.id, weight };
+        }
+        const place = this.buildPlace(this.generateElementId('fire-place'), label, 0, {
+            hideTokens: true,
+            innerLabel: this.getNextInnerLabel(),
+        });
+        place.x = defaultX;
+        place.y = defaultY;
+        const element: DrawnElement = { node: place, id: place.id };
+        createdElements.push(element);
+        return { id: element.id, weight };
+    }
+
+    private findPlaceByLabel(label: string): DrawnElement | undefined {
+        return this.drawnElements().find((el) => {
+            if (!(el.node instanceof DiagramPlace)) return false;
+            const nodeLabel = el.node.label ?? el.node.displayLabel;
+            return nodeLabel === label;
+        });
+    }
+
+    private generateElementId(prefix: string): string {
+        return `${prefix}-${++this.elementIdCounter}`;
+    }
+
+    private generateConnectionId(prefix: string): string {
+        return `${prefix}-${++this.connectionIdCounter}`;
+    }
+
+    private firingRowOffset(): number {
+        return this.autoFiringCount * 10;
     }
 }

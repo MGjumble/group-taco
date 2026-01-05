@@ -10,6 +10,7 @@ import { ToasterNotificationService } from '../../../../services/toaster-notific
 import { Tab } from '../../../../classes/tabs';
 import { DisplayService } from '../../../../services/display.service';
 import { DiagramPlace } from '../../../../classes/diagram/diagram-place';
+import { ProcessNetFiringService } from '../../../../services/process-net-firing.service';
 
 // Added strongly typed drag data interfaces and Window augmentation
 interface BasicDragData {
@@ -44,6 +45,7 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
     private currentDragData: BasicDragData | null = null;
     private displayService = inject(DisplayService);
     private toaster = inject(ToasterNotificationService);
+    private firingService = inject(ProcessNetFiringService);
 
     readonly isProcessNetTab = this._tabStateService.currentTab;
 
@@ -169,11 +171,26 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
             if (node.isActivated()) {
                 const timestamp = new Date().toISOString();
                 const firedTransition = node.label ?? node.id;
-                const consumed = this.describeFlow(node.getInputFlow());
-                const produced = this.describeFlow(node.getOutputFlow());
+                const inputs = node.getInputFlow().map(({ place, weight }) => ({
+                    placeId: place.id,
+                    placeLabel: place.displayLabel,
+                    weight,
+                }));
+                const outputs = node.getOutputFlow().map(({ place, weight }) => ({
+                    placeId: place.id,
+                    placeLabel: place.displayLabel,
+                    weight,
+                }));
                 node.fire(true);
                 diagram.updateMarking();
-                const flowDescription = `${consumed} -> ${firedTransition} -> ${produced}`;
+                this.firingService.emit({
+                    transitionId: node.id,
+                    transitionLabel: firedTransition,
+                    timestamp,
+                    inputs,
+                    outputs,
+                });
+                const flowDescription = `${this.describeFlow(inputs)} -> ${firedTransition} -> ${this.describeFlow(outputs)}`;
                 console.log('fire', timestamp, 'transition', firedTransition, flowDescription);
                 this.displayService.display(diagram, { triggeredByFiring: true });
             } else {
@@ -190,8 +207,8 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
         super.processNodeClick(node);
     }
 
-    private describeFlow(flow: { place: DiagramPlace; weight: number }[]): string {
-        const expanded = flow.flatMap(({ place, weight }) => Array.from({ length: weight }, () => place.displayLabel));
+    private describeFlow(flow: { placeLabel: string; weight: number }[]): string {
+        const expanded = flow.flatMap(({ placeLabel, weight }) => Array.from({ length: weight }, () => placeLabel));
         return `{${expanded.join(', ')}}`;
     }
 }
