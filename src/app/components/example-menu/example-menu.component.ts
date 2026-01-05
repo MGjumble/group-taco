@@ -16,7 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class ExampleMenuComponent {
     private _petriNetLoaderService = inject(PetriNetLoaderService);
 
-    loadExamples(category: string, filename: string) {
+    loadExampleFromCategory(category: string, filename: string) {
         const url = `assets/examples/${category}/${filename}`;
         this._petriNetLoaderService.loadFileFromUrl(url);
     }
