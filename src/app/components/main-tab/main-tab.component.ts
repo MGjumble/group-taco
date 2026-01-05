@@ -67,9 +67,6 @@ export class MainTabComponent implements OnInit {
         )
             this._playService.recoverLastMarking(diagram);
 
-        const sourceDiagram = this._sourcePetriNetService.getCurrentSourceNet();
-        if (sourceDiagram) {
-            this._sourcePetriNetService.updateEditedNet(sourceDiagram, { triggeredByFiring: false });
-        }
+        this._sourcePetriNetService.updateEditedNet(diagram, { triggeredByFiring: false });
     }
 }
