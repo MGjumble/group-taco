@@ -189,7 +189,6 @@ export class ProcessNetDisplayComponent extends DisplayComponent {
                     inputs,
                     outputs,
                 });
-                const flowDescription = `${this.describeFlow(inputs)} -> ${firedTransition} -> ${this.describeFlow(outputs)}`;
                 this.displayService.display(diagram, { triggeredByFiring: true });
             } else {
                 this.toaster.showWarning(
