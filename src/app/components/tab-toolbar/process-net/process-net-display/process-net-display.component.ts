@@ -9,7 +9,6 @@ import { DiagramTransition } from '../../../../classes/diagram/diagram-transitio
 import { ToasterNotificationService } from '../../../../services/toaster-notification.service';
 import { Tab } from '../../../../classes/tabs';
 import { DisplayService } from '../../../../services/display.service';
-import { DiagramPlace } from '../../../../classes/diagram/diagram-place';
 import { ProcessNetFiringService } from '../../../../services/process-net-firing.service';
 
 // Added strongly typed drag data interfaces and Window augmentation

@@ -577,7 +577,7 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
             diagram.resetMarking();
         }
 
-        if (this.modeService.currentMode() == AppMode.LEARN) {
+        if (this.modeService.currentMode() === AppMode.LEARN) {
             this.onCreateStartPosition();
         }
 
@@ -925,9 +925,5 @@ export class ProcessNetDrawDisplayComponent implements OnInit, OnDestroy, AfterV
 
     private generateConnectionId(prefix: string): string {
         return `${prefix}-${++this.connectionIdCounter}`;
-    }
-
-    private firingRowOffset(): number {
-        return this.autoFiringCount * 10;
     }
 }
