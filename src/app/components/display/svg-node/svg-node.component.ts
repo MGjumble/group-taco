@@ -60,7 +60,7 @@ export class SvgNodeComponent {
         if (this.isFiring()) {
             return 'lime';
         }
-        return this.fillColor() === 'lightgray' ? 'lightgray' : 'white';
+        return this.fillColor();
     });
 
     readonly transitionStrokeColor = computed(() => {
