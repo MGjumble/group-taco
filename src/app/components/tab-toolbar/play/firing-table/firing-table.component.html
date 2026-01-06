@@ -48,10 +48,12 @@
                         }
                     </td>
                     <td class="end-marking-td">
-                        @if (entry.isValid === false) {
+                        @if (entry.isValid) {
+                            {{ entry.formattedEndMarking }}
+                        } @else if (entry.isValid === false) {
                             X
                         } @else {
-                            {{ entry.formattedEndMarking }}
+                            ?
                         }
                     </td>
                     <td class="transition-count-td">{{ entry.transitionCount }}</td>
