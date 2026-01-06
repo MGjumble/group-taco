@@ -97,7 +97,8 @@ export class FiringTableComponent implements OnInit, OnDestroy {
         this._playService.currentFiringEntry = entry;
         entry.transitionCount = entry.labels.length;
         this._playService.currentFiringEntry = entry;
-        if (!this.modeService.isExamMode()) {
+        if (this.modeService.isExamMode()) entry.isValid = undefined;
+        else {
             if (entry.firingSequence.trim() === this._lastFiringSequence.trim()) return;
             this._lastFiringSequence = entry.firingSequence;
             await this._playValidationService.validateInput(this._diagram, entry);
