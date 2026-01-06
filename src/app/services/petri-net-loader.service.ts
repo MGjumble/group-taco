@@ -79,7 +79,7 @@ export class PetriNetLoaderService {
 
             if (parsedNet) {
                 this._sourcePetriNetService.loadNewNet(parsedNet, content);
-                this._displayService.display(parsedNet);
+                this._displayService.display(parsedNet, { triggeredByFiring: false });
                 this._toasterService.showSuccess('TOASTER.HEADER.SUCCESS', 'TOASTER.BODY.NET_LOADED_SUCCESSFULLY');
             } else {
                 this._toasterService.showWarning('TOASTER.HEADER.PARSER_ERROR', 'TOASTER.BODY.FILE_NOT_INTERPRETABLE');
