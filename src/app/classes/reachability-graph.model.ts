@@ -1,49 +1,73 @@
-import { DisplayableGraph, DisplayableNode, DisplayableEdge } from './displayable-graph.interface';
+import { DisplayableEdge, DisplayableGraph, DisplayableNode } from './displayable-graph.interface';
 import { SHAPE } from './diagram/diagram-node';
 import { Coords } from './json-petri-net';
-// ---------------------------------------------- THIS FILE CAN BE REMOVED BEFORE MERGING ----------------------------------------------
+import { signal, Signal, WritableSignal } from '@angular/core';
 
 /**
  * A node representing a state in the reachability graph.
  */
-class StateNode implements DisplayableNode {
+export class StateNode implements DisplayableNode {
     id: string;
-    x = 0;
-    y = 0;
+    _x: WritableSignal<number>;
+    _y: WritableSignal<number>;
+    label: string;
+    rGMarking: Record<string, number>;
+
+    //To-Do: is StartNode :true -- kann aber trotzdem Vorgänger haben
 
     get shape(): SHAPE {
         return SHAPE.CIRCLE;
     }
     get displayLabel(): string {
-        return `[${this.id}]`;
-    }
-    // eslint-disable-next-line @typescript-eslint/class-literal-property-style
-    get tokenCount(): number {
-        return 0;
+        return `[${this.label}]`;
     }
 
-    constructor(id: string, x: number, y: number) {
+    get tokenCount(): Signal<number> {
+        return signal(0);
+    }
+
+    constructor(id: string, x: number, y: number, label: string, marking: Record<string, number>) {
         this.id = id;
-        this.x = x;
-        this.y = y;
+        this._x = signal(x);
+        this._y = signal(y);
+        this.label = label;
+        this.rGMarking = marking;
+    }
+
+    get x(): number {
+        return this._x();
+    }
+
+    set x(value: number) {
+        this._x.set(value);
+    }
+
+    get y(): number {
+        return this._y();
+    }
+
+    set y(value: number) {
+        this._y.set(value);
     }
 }
 
 /**
  * An edge representing a transition firing in the reachability graph.
  */
-class FiringEdge implements DisplayableEdge {
+export class FiringEdge implements DisplayableEdge {
     id: string;
     source: string;
     target: string;
     displayLabel: string;
     bendPoints: Coords[] = [];
+    rgFiringSequencePath: string;
 
-    constructor(id: string, source: string, target: string, transitionLabel: string) {
+    constructor(id: string, source: string, target: string, transitionLabel: string, firedSequence: string) {
         this.id = id;
         this.source = source;
         this.target = target;
         this.displayLabel = transitionLabel;
+        this.rgFiringSequencePath = firedSequence;
     }
 }
 

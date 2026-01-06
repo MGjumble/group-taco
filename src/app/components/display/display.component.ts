@@ -1,7 +1,6 @@
 import { Component, computed, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DisplayService } from '../../services/display.service';
 import { Subscription } from 'rxjs';
-import { ExampleFileComponent } from '../example-file/example-file.component';
 import { SvgNodeComponent } from './svg-node/svg-node.component';
 import { SvgArcComponent } from './svg-arc/svg-arc.component';
 import { TabStateService } from '../../services/tab-state.service';
@@ -15,13 +14,14 @@ import { Diagram } from '../../classes/diagram/diagram';
 import { PanningService } from '../../services/panning.service';
 import { ImageExportService } from '../../services/image-export.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { ReachabilityGraphService } from 'src/app/reachability-graph.service';
+import { StateNode } from '../../classes/reachability-graph.model';
 
 @Component({
     selector: 'app-display',
     standalone: true,
     templateUrl: './display.component.html',
     imports: [SvgNodeComponent, SvgArcComponent],
-    providers: [PanningService],
     styleUrls: ['./display.component.css'],
 })
 export class DisplayComponent implements OnInit, OnDestroy {
@@ -36,8 +36,10 @@ export class DisplayComponent implements OnInit, OnDestroy {
     private _modeService = inject(ModeService);
     private _playService = inject(PlayService);
     private _elementRef = inject(ElementRef);
+    protected _reachabilityGraphService = inject(ReachabilityGraphService);
 
     readonly viewBox = this._panningService.viewBoxAsString;
+    readonly viewBoxObj = this._panningService.viewBox;
     readonly diagram = toSignal(this._displayService.diagram$);
     readonly isDrawingEnabled = computed(() => this._tabStateService.currentTab() === Tab.DRAW);
     readonly isPlayingEnabled = computed(
@@ -67,11 +69,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
     public processDropEvent(e: DragEvent) {
         e.preventDefault();
-        const fileLocation = e.dataTransfer?.getData(ExampleFileComponent.META_DATA_CODE);
-
-        if (fileLocation) {
-            this._loaderService.loadFileFromUrl(fileLocation);
-        } else if (e.dataTransfer?.files) {
+        if (e.dataTransfer?.files) {
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 this._loaderService.loadFile(files[0]);
@@ -85,6 +83,13 @@ export class DisplayComponent implements OnInit, OnDestroy {
             if (this._modeService.isExamMode()) {
                 this._playService.updateFiringEntry(node.label, false);
             } else this._playService.processTransitionClick(diagram, node, true, true, true);
+        }
+    }
+
+    public stateNodeClicked(node: DisplayableNode) {
+        if (this.isReachabilityGraphEnabled() && node instanceof StateNode) {
+            console.log('StateNode clicked.' + node.id);
+            this._reachabilityGraphService.switchPnStateToClickedState(node as StateNode);
         }
     }
 

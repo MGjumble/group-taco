@@ -9,7 +9,7 @@ import { FiringEntry } from '../classes/firing-entry';
 @Injectable({ providedIn: 'root' })
 export class PlayValidationService {
     // TODO:
-    // - use notification service to provide user feedback
+    // - use notification service to provide user feedback, consider mode from mode service
     private _notificationService = inject(ToasterNotificationService);
     private _modeService = inject(ModeService);
     private _playService = inject(PlayService);

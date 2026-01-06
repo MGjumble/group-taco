@@ -6,6 +6,7 @@ import { ModeService } from '../../../services/mode.service';
 import { PlayService } from '../../../services/play.service';
 import { DiagramTransition } from '../../../classes/diagram/diagram-transition';
 import { DiagramPlace } from '../../../classes/diagram/diagram-place';
+import { StateNode } from '../../../classes/reachability-graph.model';
 
 @Component({
     selector: 'g[appSvgNode]',
@@ -54,6 +55,8 @@ export class SvgNodeComponent {
     readonly selected = input<boolean>(false);
 
     clickNode = output<DisplayableNode>();
+
+    stateNodeClick = output<StateNode>();
 
     readonly fillColor = signal('white');
 
@@ -105,7 +108,7 @@ export class SvgNodeComponent {
      */
     readonly displayLabel = computed(() => {
         const label = this.diagramNode()?.displayLabel || '';
-        if (label.length > this.MAX_CHARS) {
+        if (label.length > this.MAX_CHARS && !(this.diagramNode() instanceof StateNode)) {
             return label.substring(0, this.MAX_CHARS) + '...';
         }
         return label;
@@ -247,5 +250,12 @@ export class SvgNodeComponent {
     public click() {
         const node = this.diagramNode();
         if (node) this.clickNode.emit(node);
+        console.log('click');
+    }
+
+    public circleClick() {
+        const node = this.diagramNode();
+        if (node) this.stateNodeClick.emit(node as StateNode);
+        console.log('CircleClick');
     }
 }

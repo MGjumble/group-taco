@@ -4,7 +4,6 @@ import { SvgNodeComponent } from '../../../display/svg-node/svg-node.component';
 import { SvgArcComponent } from '../../../display/svg-arc/svg-arc.component';
 import { SHAPE } from '../../../../classes/diagram/diagram-node';
 import { DisplayableNode } from '../../../../classes/displayable-graph.interface';
-import { PanningService } from 'src/app/services/panning.service';
 
 // Added strongly typed drag data interfaces and Window augmentation
 interface BasicDragData {
@@ -29,7 +28,6 @@ declare global {
     standalone: true,
     imports: [SvgNodeComponent, SvgArcComponent],
     templateUrl: './process-net-display.component.html',
-    providers: [PanningService],
     styleUrls: ['./process-net-display.component.css'],
 })
 export class ProcessNetDisplayComponent extends DisplayComponent {

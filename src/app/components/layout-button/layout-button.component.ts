@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -24,6 +24,13 @@ export class LayoutButtonComponent {
         () =>
             !this._diagramSignal() || this._isCalculating() || this._springEmbedderService.isOptimalLayoutCalculated(),
     );
+
+    constructor() {
+        effect(() => {
+            this._diagramSignal();
+            this._isCalculating.set(false);
+        });
+    }
 
     calculateLayout() {
         this._isCalculating.set(true);

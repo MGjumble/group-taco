@@ -38,7 +38,7 @@ export class FiringEntry {
      *          The marking to be formatted.
      * @returns The formatted marking string.
      */
-    private formatMarking(marking: Record<string, number>): string {
+    private formatMarking(marking: Record<string, number | undefined>): string {
         return Object.entries(marking)
             .filter(([, value]) => value !== 0)
             .map(([key, value]) => (value === 1 ? key : `${value}*${key}`))

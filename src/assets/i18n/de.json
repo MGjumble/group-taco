@@ -3,12 +3,15 @@
     "CLEAR_NET": "Petri-Netz löschen",
     "LAYOUT_SPRING_EMBEDDER": "Spring Embedder Layout",
     "TAB_DRAW": "Zeichnen",
-    "TAB_PLAY": "Abspielen",
+    "TAB_PLAY": "Schalten",
     "TAB_REACHABILITY": "Erreichbarkeitsgraph",
     "TAB_PROCESS": "Prozessnetz",
     "TOGGLE_MODE": "Modus umschalten",
     "SWITCH_TO_LEARNING_MODE": "Wechsel zu Lernmodus",
     "SWITCH_TO_EXAM_MODE": "Wechsel zu Prüfungsmodus",
+    "EXAM_MODE": "Prüfungsmodus",
+    "LEARNING_MODE": "Lernmodus",
+    "MODE_INFO_TOOLTIP": "Nutze den Schieberegler, um zwischen zwei Modi zu wechseln: Der Lernmodus hilft dir, die verschiedenen Bereiche besser zu verstehen. Der Prüfungsmodus dient deiner Prüfungsvorbereitung mit weniger Unterstützung durch die Anwendung und weniger Hinweisen.",
     "FIRING_SEQUENCE": "Schaltsequenz",
     "TRANSITION_COUNT": "Anzahl Transitionen",
     "START_MARKING": "Startmarkierung",
@@ -24,7 +27,19 @@
     "SAVE_AS_PNG": "Speichern als Bild (PNG)",
     "SAVE_AS_JPEG": "Speichern als Bild (JPEG)",
     "UPLOAD_NET": "Netz hochladen",
-    "HEADER_SUBTITLE": "Fachpraktikum Programmiersysteme WiSe25/26 von Marie G., Florian M., Ben L., Oliver S. und Alexander K.",
+    "TUPLE_INPUT": {
+        "HEADER": "Petri-Netz Tupel eingeben",
+        "DESCRIPTION": "Geben Sie ein Petri-Netz Tupel im Format:",
+        "FORMAT": "({Stellen}, {Transitionen}, Kanten, Markierung)",
+        "LABEL": "Tupel String",
+        "BUTTON_TOOLTIP": "Tupel eingeben",
+        "GENERATE": "Generieren",
+        "TOAST_SUCCESS_BODY": "Tupel erfolgreich verarbeitet",
+        "TOAST_SUCCESS_HEADER": "Netz geladen",
+        "TOAST_ERROR_HEADER": "Ungültiges Tupel",
+        "TOAST_ERROR_BODY": "Das angegebene Tupel konnte nicht geparst werden."
+    },
+    "HEADER_SUBTITLE": "Fachpraktikum Programmiersysteme WiSe25/26 von Marie G., Florian M., Ben L. und Alexander K.",
     "TACO_COUNT": "Anzahl der Tacos: {{count}}!",
     "FILE_CONTENT": "Dateiinhalt",
     "EXAMPLE_BUTTON_TITLE": "Knopf",
@@ -61,7 +76,8 @@
             "VALIDATION_ERROR": "Bitte zuerst ein Petri-Netz laden.",
             "VALIDATION_VALID_MAXIMAL": "Das Prozessnetz ist gültig und maximal.",
             "VALIDATION_VALID_WITH_INFOS": "Das Prozessnetz ist gültig.",
-            "VALIDATION_INVALID": "Das Prozessnetz ist ungültig."
+            "VALIDATION_INVALID": "Das Prozessnetz ist ungültig.",
+            "SWITCHED_STATE_SUCCESSFULLY": "Die Markierung des Petrinetzes wurde erfolgreich angepasst."
         },
         "VALIDATION_MESSAGES": {
             "TRANSITION_NO_MATCH": "❌ Transition {{label}} hat keine passende Beschriftung im Petri-Netz.",
@@ -84,9 +100,19 @@
         "BUTTON_SET_START_POSITION": "Startposition setzen (löscht das bisherige Prozessnetz)",
         "INSTRUCTION_DRAG_DROP": "Ziehen Sie Elemente aus dem linken Anzeigebereich hierher, um Ihr Prozessnetz zu erstellen.",
         "INSTRUCTION_LEFT_CLICK_MOVE": "Mit Linksklick Elemente ziehen, um sie zu bewegen.",
-        "INSTRUCTION_MIDDLE_CLICK_DELETE": "Mit Mittelklick einen Place oder eine Transition löschen (Verbindungen werden automatisch entfernt).",
-        "INSTRUCTION_RIGHT_CLICK_CONNECT": "Rechtsklick auf einen Place oder eine Transition, um ihn als Quelle zu wählen; anschließend Rechtsklick auf den entgegengesetzten Typ, um eine gerichtete Verbindung zum zweiten Element zu erstellen.",
+        "INSTRUCTION_MIDDLE_CLICK_DELETE": "Mit Mittelklick eine Stelle oder eine Transition löschen (Verbindungen werden automatisch entfernt).",
+        "INSTRUCTION_RIGHT_CLICK_CONNECT": "Rechtsklick auf eine Stelle oder eine Transition, um ihn als Quelle zu wählen; anschließend Rechtsklick auf den entgegengesetzten Typ, um eine gerichtete Verbindung zum zweiten Element zu erstellen.",
         "INSTRUCTION_MIDDLE_CLICK_DELETE_CONN": "Mittelklick auf eine Verbindung, um sie zu löschen.",
         "INSTRUCTION_VALIDATE_TOAST": "Validieren, um eine Toast-Nachricht mit dem Ergebnis zu sehen."
+    },
+    "EXAMPLE_MENU": {
+        "TOOLTIP": "Klausuraufgaben öffnen",
+        "EXAMPLE_NET": "Beispielnetz",
+        "MK": "MK",
+        "SS24": "SS24",
+        "SS25": "SS25",
+        "WS24": "WS24",
+        "TASK1": "Aufgabe 1",
+        "TASK2": "Aufgabe 2"
     }
 }
