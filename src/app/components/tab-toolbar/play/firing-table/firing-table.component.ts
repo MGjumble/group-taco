@@ -94,7 +94,6 @@ export class FiringTableComponent implements OnInit, OnDestroy {
      */
     async onInputChange(entry: FiringEntry): Promise<void> {
         if (!this._diagram) return;
-        this._playService.currentFiringEntry = entry;
         entry.transitionCount = entry.labels.length;
         this._playService.currentFiringEntry = entry;
         if (this.modeService.isExamMode()) entry.isValid = undefined;
