@@ -6,6 +6,7 @@
     "TAB_PLAY": "Play",
     "TAB_REACHABILITY": "Reachability Graph",
     "TAB_PROCESS": "Process Net",
+    "TAB_INVARIANTS": "Invariants",
     "REACHABILITY_GRAPH": {
         "TOGGLE_VIEW": "Toggle View Mode",
         "BUTTON_VALIDATE_NET": "Validate Reachability Graph",

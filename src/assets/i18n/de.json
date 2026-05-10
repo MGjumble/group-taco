@@ -6,6 +6,7 @@
     "TAB_PLAY": "Schalten",
     "TAB_REACHABILITY": "Erreichbarkeitsgraph",
     "TAB_PROCESS": "Prozessnetz",
+    "TAB_INVARIANTS": "Invarianten",
     "REACHABILITY_GRAPH": {
         "TOGGLE_VIEW": "Ansichtsmodus umschalten",
         "BUTTON_VALIDATE_NET": "Erreichbarkeitsgraph validieren",

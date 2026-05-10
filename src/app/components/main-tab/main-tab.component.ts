@@ -19,6 +19,7 @@ import { LanguageButtonComponent } from '../language-button/language-button.comp
 import { ExampleMenuComponent } from '../example-menu/example-menu.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { TupleInputButtonComponent } from '../tab-toolbar/tuple-input-button/tuple-input-button.component';
+import { InvariantsComponent } from '../tab-toolbar/invariants/invariants.component';
 
 @Component({
     selector: 'app-main-tab',
@@ -29,6 +30,7 @@ import { TupleInputButtonComponent } from '../tab-toolbar/tuple-input-button/tup
         DrawComponent,
         PlayComponent,
         ReachabilityGraphComponent,
+        InvariantsComponent,
         ProcessNetComponent,
         SaveComponent,
         UploadComponent,
