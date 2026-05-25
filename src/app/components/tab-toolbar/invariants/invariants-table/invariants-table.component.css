@@ -1,0 +1,17 @@
+.invariants-table-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding: 5px 0;
+    background-color: transparent;
+}
+
+.invariants-table-panel {
+    background-color: white;
+    font-family: Roboto, sans-serif;
+    border-radius: 8px;
+    width: 100%;
+    overflow: hidden;
+}
