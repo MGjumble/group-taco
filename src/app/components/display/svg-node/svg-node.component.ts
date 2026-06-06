@@ -9,6 +9,7 @@ import { DiagramTransition } from '../../../classes/diagram/diagram-transition';
 import { DiagramPlace } from '../../../classes/diagram/diagram-place';
 import { StateNode } from '../../../classes/reachability-graph.model';
 import { PLACE_RADIUS, TRANSITION_SIZE } from '../display.constants';
+import { Tab } from '../../../classes/tabs';
 
 @Component({
     selector: 'g[appSvgNode]',
@@ -248,6 +249,10 @@ export class SvgNodeComponent {
 
     public circleClick() {
         const node = this.diagramNode();
-        if (node) this.stateNodeClick.emit(node as StateNode);
+        if (node) {
+            if (this._tabStateService.currentTab() === Tab.INVARIANTS) {
+                this.clickNode.emit(node);
+            } else this.stateNodeClick.emit(node as StateNode);
+        }
     }
 }

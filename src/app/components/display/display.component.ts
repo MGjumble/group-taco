@@ -14,11 +14,13 @@ import { Diagram } from '../../classes/diagram/diagram';
 import { PanningService } from '../../services/panning.service';
 import { ImageExportService } from '../../services/image-export.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ReachabilityGraphService } from 'src/app/reachability-graph.service';
+import { ReachabilityGraphService } from '../../reachability-graph.service';
 import { StateNode } from '../../classes/reachability-graph.model';
 import { GRAPH_FILENAMES, GRAPH_IDS, GraphId } from './display.constants';
 import { ProcessNetFiringService } from '../../services/process-net-firing.service';
 import { ToasterNotificationService } from '../../services/toaster-notification.service';
+import { DiagramPlace } from '../../classes/diagram/diagram-place';
+import { InvariantsService } from '../../services/invariants.service';
 
 @Component({
     selector: 'app-display',
@@ -41,6 +43,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     private _elementRef = inject(ElementRef);
     protected _reachabilityGraphService = inject(ReachabilityGraphService);
     protected _processNetFiringService = inject(ProcessNetFiringService);
+    protected _invariantsService = inject(InvariantsService);
     private _notificationService = inject(ToasterNotificationService);
 
     readonly viewBox = this._panningService.viewBoxAsString;
@@ -51,7 +54,8 @@ export class DisplayComponent implements OnInit, OnDestroy {
         () =>
             this._tabStateService.currentTab() === Tab.PLAY ||
             this._tabStateService.currentTab() === Tab.REACHABILITY_GRAPH ||
-            this._tabStateService.currentTab() === Tab.PROCESS_NET,
+            this._tabStateService.currentTab() === Tab.PROCESS_NET ||
+            this._tabStateService.currentTab() === Tab.INVARIANTS,
     );
     readonly isReachabilityGraphEnabled = computed(() => this._tabStateService.currentTab() === Tab.REACHABILITY_GRAPH);
     readonly isProcessNetEnabled = computed(() => this._tabStateService.currentTab() === Tab.PROCESS_NET);
@@ -95,11 +99,15 @@ export class DisplayComponent implements OnInit, OnDestroy {
         if (
             !this.isPlayingEnabled() ||
             !diagram ||
-            !(diagram instanceof Diagram) ||
-            !(node instanceof DiagramTransition)
+            !(diagram instanceof Diagram)
         )
             return;
         const currentTab = this._tabStateService.currentTab();
+        if (currentTab === Tab.INVARIANTS && node instanceof DiagramPlace) {
+            this._invariantsService.processPlaceClicked(node);
+            return;
+        }
+        if (!(node instanceof DiagramTransition)) return;
         if (currentTab === Tab.PLAY) {
             this._playService.processTransitionClicked(diagram, node, true, true, false);
             return;
