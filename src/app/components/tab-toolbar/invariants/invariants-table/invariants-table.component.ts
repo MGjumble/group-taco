@@ -1,24 +1,190 @@
-import { Component, inject, Input } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Invariant } from 'src/app/classes/invariant';
+import { CommonModule } from '@angular/common';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule, MatIconButton } from '@angular/material/button';
+import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatTooltip } from '@angular/material/tooltip';
+import { TranslateModule } from '@ngx-translate/core';
+import { filter, Subscription, take, tap } from 'rxjs';
+import { Diagram } from 'src/app/classes/diagram/diagram';
+import { InvariantEntry, InvariantValidity } from 'src/app/classes/invariant-entry';
+import { Tab } from 'src/app/classes/tabs';
+import { ToastList } from 'src/app/classes/toast';
 import { DisplayService } from 'src/app/services/display.service';
-import { InvariantsService } from 'src/app/services/invariants.service';
 import { ModeService } from 'src/app/services/mode.service';
+import { InvariantsValidationService } from 'src/app/services/invariants-validation.service';
+import { InvariantsService } from 'src/app/services/invariants.service';
 import { ToasterNotificationService } from 'src/app/services/toaster-notification.service';
 
 @Component({
   selector: 'app-invariants-table',
-  imports: [],
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconButton,
+        MatIcon,
+        MatSliderModule,
+        MatExpansionModule,
+        TranslateModule,
+        MatTooltip,
+    ],
   templateUrl: './invariants-table.component.html',
   styleUrl: './invariants-table.component.css',
 })
-export class InvariantsTableComponent {
+export class InvariantsTableComponent implements OnInit, OnDestroy {
     private _sub?: Subscription;
 
     modeService = inject(ModeService);
+    invariantsValidationService = inject(InvariantsValidationService);
     private _notificationService = inject(ToasterNotificationService);
     private _displayService = inject(DisplayService);
     private _invariantsService = inject(InvariantsService);
+    InvariantValidity = InvariantValidity;
 
-    @Input() calculatedInvariants: Invariant[] = [];
+    inputInvariants = this._invariantsService.inputEntries;
+    private _diagram: Diagram | undefined;
+
+    ngOnInit(): void {
+        this._sub = this._displayService.diagram$
+            .pipe(
+                tap((_) => {
+                    this._diagram = undefined;
+                }),
+                filter((diagram): diagram is Diagram => diagram instanceof Diagram),
+            )
+            .subscribe((diagram: Diagram) => {
+                this._diagram = diagram;
+            });
+    }
+
+    ngOnDestroy(): void {
+        this._sub?.unsubscribe();
+    }
+
+    /**
+     * Handles changes to a firing sequence and triggers validation based on the current mode.
+     *
+     * - In **learning mode**, the input is validated immediately.
+     * - In **exam mode**, the validity of the entry is set to `undefined` to increase difficulty.
+     *
+     * @param entry - The firing entry whose sequence was changed.
+     * @returns A Promise that resolves when validation or processing is complete.
+     */
+    async onInputChange(entry: InvariantEntry): Promise<void> {
+        if (!this._diagram) return;
+        this._invariantsService.currentEntry = entry;
+        if (entry.text.trim() === this._invariantsService.currentText.trim()) return;
+        if (this.modeService.isExamMode(Tab.PLAY)) entry.setValidity(undefined, null);
+        else await this.invariantsValidationService.validateInput(this._diagram, entry);
+        this._invariantsService.currentText = entry.text;
+    }
+
+    /**
+     * Deletes a firing entry by its ID.
+     * @param id - The ID of the entry to delete.
+     */
+    onDeleteEntry(id: number): void {
+        this._invariantsService.deleteInvariantEntry(id, this._diagram);
+    }
+
+    /**
+     * Deletes all firing entries and resets the diagram marking.
+     */
+    onDeleteAllEntries(): void {
+        this._invariantsService.clearInvariantEntries();
+        this._displayService.diagram$
+            .pipe(
+                take(1),
+                filter((diagram) => !!diagram && diagram instanceof Diagram),
+            )
+            .subscribe((diagram) => {
+                diagram.resetMarking();
+            });
+    }
+
+    /**
+     * Creates a new firing entry.
+     */
+    onNewEntry(): void {
+        if (this._diagram) this._invariantsService.startNewInvariantEntry(this._diagram);
+    }
+
+    /**
+     * Validates all firing sequences and shows a notification with the results.
+     */
+    async onValidateEntries(): Promise<void> {
+        if (!this._diagram) return;
+        const invalidEntries: ToastList[] = [];
+        for (const entry of this.inputInvariants()) {
+            this._invariantsService.currentEntry = entry;
+            await this.invariantsValidationService.validateInput(this._diagram, entry);
+            if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: entry.message ?? '' });
+        }
+        if (invalidEntries.length === 0)
+            this._notificationService.showSuccess(
+                'TOASTER.HEADER.VALIDATION_COMPLETED',
+                'TOASTER.BODY.VALID_INVARIANTS',
+            );
+        else
+            this._notificationService.showWarning(
+                'TOASTER.HEADER.VALIDATION_COMPLETED',
+                'TOASTER.BODY.INVALID_INVARIANTS',
+                { duration: 8000, list: invalidEntries },
+            );
+    }
+
+    /**
+     * Finds firing sequences based on the current Petri net and user-defined limits.
+     */
+    onFindInvariants(): void {
+        if (!this._diagram) return;
+    }
+
+    /**
+     * Checks if buttons should be disabled (e.g., when no Petri net is loaded or a sequence is playing).
+     * @returns true if buttons should be disabled, false otherwise.
+     */
+    isButtonDisabled(): boolean {
+        return !this._diagram;
+    }
+
+    /**
+     * Adds a new firing entry when the "Add" button is clicked.
+     * @param panel - The expansion panel containing the button.
+     * @param event - The click event.
+     */
+    onAddButton(panel: MatExpansionPanel, event: Event): void {
+        event.stopPropagation();
+        if (!panel.expanded) panel.open();
+        this.onNewEntry();
+    }
+
+    /**
+     * Validates all sequences when the "Validate" button is clicked.
+     * @param panel - The expansion panel containing the button.
+     * @param event - The click event.
+     */
+    onValidateButton(panel: MatExpansionPanel, event: Event): void {
+        event.stopPropagation();
+        if (!panel.expanded) panel.open();
+        this.onValidateEntries().catch(console.error);
+    }
+
+    /**
+     * Finds sequences when the "Find" button is clicked.
+     * @param panel - The expansion panel containing the button.
+     * @param event - The click event.
+     */
+    onFindButton(panel: MatExpansionPanel, event: Event): void {
+        event.stopPropagation();
+        if (!panel.expanded) panel.open();
+        this.onFindInvariants();
+    }
 }

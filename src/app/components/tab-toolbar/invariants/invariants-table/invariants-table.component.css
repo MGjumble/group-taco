@@ -15,3 +15,221 @@
     width: 100%;
     overflow: hidden;
 }
+
+.invariants-table-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.invariants-table-header-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.invariants-table-header {
+    padding-left: 10px;
+}
+
+.invariants-table-container {
+    padding: 0;
+    max-height: 420px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.invariants-table {
+    width: 100%;
+    table-layout: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+}
+
+.invariants-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f5f5f5;
+}
+
+.invariants-table thead::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+.invariants-table th,
+.invariants-table td {
+    border: 1px solid #e0e0e0;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.invariants-table th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    padding: 8px 12px;
+    background: #f5f5f5;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: none;
+}
+
+.narrow-th {
+    width: 5%;
+}
+
+.invariants-table th:first-child,
+.invariants-table td:first-child,
+.invariants-table th.delete-button-th,
+.invariants-table td.delete-button-td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.invariants-table button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.invariants-table th mat-icon,
+.invariants-table td mat-icon,
+.invariants-table button mat-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+}
+
+.minimal-button,
+.not-minimal-button,
+.invalid-button,
+.delete-entry-button,
+.delete-all-entries-button {
+    height: 24px;
+    width: 24px;
+    padding: 0;
+    margin: 0;
+}
+
+.validity-button {
+    pointer-events: none;
+}
+
+.info-icon-container {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+    z-index: 5;
+    pointer-events: all;
+}
+
+.info-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.minimal-icon {
+    color: limegreen;
+}
+
+input[type='text'] {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+    font-size: 14px;
+    text-wrap: wrap;
+    line-height: 1.5;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow-wrap: break-word;
+}
+
+.tab-toolbar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-divider-vertical {
+    width: 1px;
+    height: 32px;
+    background-color: #e0e0e0;
+    margin: 0 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .form-divider-vertical {
+        background-color: #444;
+    }
+}
+
+.slider-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.slider-label {
+    font-size: 13px;
+    color: #555;
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+.slider-wrapper mat-slider {
+    flex: 1;
+}
+
+.slider-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1976d2;
+    min-width: 30px;
+    text-align: center;
+}
+
+.form-button-container {
+    display: flex;
+    gap: 6px;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+.form-button-container button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.form-button-container button mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
