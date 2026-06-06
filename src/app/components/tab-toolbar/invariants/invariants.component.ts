@@ -26,12 +26,10 @@ export class InvariantsComponent implements OnInit, OnDestroy {
     
     ngOnInit(): void {
         this._sub = this._displayService.diagram$
+        //TODO: Optimize subscription
             .pipe(
                 tap((diagram) => {
-                    console.log("Diagram: ", diagram);
-                    if (!diagram) {
-                        this._invariantsService.resetInvariants();
-                    }
+                    this._invariantsService.resetInvariants();
                 }),
                 filter((diagram: any) => !!diagram && diagram instanceof Diagram),
                 tap((diagram: Diagram) => {
