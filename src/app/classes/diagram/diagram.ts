@@ -102,4 +102,8 @@ export class Diagram implements DisplayableGraph {
     getTransitionLabels(): string[] {
         return this._transitions.map((t) => t.label || t.id) || [];
     }
+
+    getPlaceLabels(): string[] {
+        return this._places.map((p) => p.label || p.id) || [];
+    }
 }

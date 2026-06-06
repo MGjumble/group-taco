@@ -5,6 +5,7 @@ import { DisplayService } from 'src/app/services/display.service';
 import { InvariantsService } from 'src/app/services/invariants.service';
 import { InvariantsDisplayComponent } from './invariants-display/invariants-display.component';
 import { InvariantsTableComponent } from './invariants-table/invariants-table.component';
+import { InvariantsValidationService } from 'src/app/services/invariants-validation.service';
 
 @Component({
     selector: 'app-invariants',
@@ -18,9 +19,10 @@ export class InvariantsComponent implements OnInit, OnDestroy {
 
     private _displayService = inject(DisplayService);
     private _invariantsService = inject(InvariantsService);
+    private _validationService = inject(InvariantsValidationService);
 
     inputInvariants = this._invariantsService.inputEntries;
-    calculatedInvariants = this._invariantsService.computedMinInvariants;
+    computedMinInvariants = this._validationService.computedMinInvariants;
     
     ngOnInit(): void {
         this._sub = this._displayService.diagram$
@@ -33,7 +35,7 @@ export class InvariantsComponent implements OnInit, OnDestroy {
                 }),
                 filter((diagram: any) => !!diagram && diagram instanceof Diagram),
                 tap((diagram: Diagram) => {
-                    this._invariantsService.findInvariants(diagram);
+                    this._validationService.computeMinimalInvariants(diagram);
                 }),
             )
             .subscribe((marking) => {
