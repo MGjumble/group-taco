@@ -3,7 +3,7 @@ import { DiagramPlace } from "./diagram/diagram-place";
 /**
  * Representing a string entry for a Petri net invariant.
  */
-export class Invariant {
+export class InvariantEntry {
     private _delimiters = /\s+|,|;|\*|, |; |\* /;
 
     constructor(
