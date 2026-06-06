@@ -2,7 +2,6 @@
     <svg
         #drawingArea
         class="canvas"
-        [class.disabled-look]="isDisabled()"
         [attr.viewBox]="viewBox()"
         preserveAspectRatio="xMidYMid meet"
         (drop)="processDropEvent($event)"
@@ -27,12 +26,4 @@
             <g appSvgNode [diagramNode]="node" (clickNode)="processNodeClick(node)" />
         }
     </svg>
-    @if (isDisabled()) {
-        <div
-            class="disabled-overlay"
-            (click)="handleDisabledClick($event)"
-            (keydown.enter)="handleDisabledClick($event)"
-            (keydown.space)="handleDisabledClick($event)"
-            tabindex="0"></div>
-    }
 </div>

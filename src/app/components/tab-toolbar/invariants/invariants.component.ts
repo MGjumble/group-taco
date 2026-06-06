@@ -19,8 +19,8 @@ export class InvariantsComponent implements OnInit, OnDestroy {
     private _displayService = inject(DisplayService);
     private _invariantsService = inject(InvariantsService);
 
-    inputInvariants = this._invariantsService.inputInvariants;
-    calculatedInvariants = this._invariantsService.calculatedInvariants;
+    inputInvariants = this._invariantsService.inputEntries;
+    calculatedInvariants = this._invariantsService.computedMinInvariants;
     
     ngOnInit(): void {
         this._sub = this._displayService.diagram$
