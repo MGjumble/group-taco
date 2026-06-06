@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
@@ -10,15 +10,15 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, Subscription, take, tap } from 'rxjs';
-import { Diagram } from 'src/app/classes/diagram/diagram';
-import { InvariantEntry, InvariantValidity } from 'src/app/classes/invariant-entry';
-import { Tab } from 'src/app/classes/tabs';
-import { ToastList } from 'src/app/classes/toast';
-import { DisplayService } from 'src/app/services/display.service';
-import { ModeService } from 'src/app/services/mode.service';
-import { InvariantsValidationService } from 'src/app/services/invariants-validation.service';
-import { InvariantsService } from 'src/app/services/invariants.service';
-import { ToasterNotificationService } from 'src/app/services/toaster-notification.service';
+import { Diagram } from '../../../../classes/diagram/diagram';
+import { InvariantEntry, InvariantValidity } from '../../../../classes/invariant-entry';
+import { Tab } from '../../../../classes/tabs';
+import { ToastList } from '../../../../classes/toast';
+import { DisplayService } from '../../../../services/display.service';
+import { ModeService } from '../../../../services/mode.service';
+import { InvariantsValidationService } from '../../../../services/invariants-validation.service';
+import { InvariantsService } from '../../../../services/invariants.service';
+import { ToasterNotificationService } from '../../../../services/toaster-notification.service';
 
 @Component({
   selector: 'app-invariants-table',
@@ -91,14 +91,14 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * @param id - The ID of the entry to delete.
      */
     onDeleteEntry(id: number): void {
-        this._invariantsService.deleteInvariantEntry(id, this._diagram);
+        this._invariantsService.deleteEntry(id);
     }
 
     /**
      * Deletes all firing entries and resets the diagram marking.
      */
     onDeleteAllEntries(): void {
-        this._invariantsService.clearInvariantEntries();
+        this._invariantsService.clearInputEntries();
         this._displayService.diagram$
             .pipe(
                 take(1),
@@ -113,7 +113,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * Creates a new firing entry.
      */
     onNewEntry(): void {
-        if (this._diagram) this._invariantsService.startNewInvariantEntry(this._diagram);
+        if (this._diagram) this._invariantsService.startNewEntry(this._diagram);
     }
 
     /**
