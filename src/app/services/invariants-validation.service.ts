@@ -5,9 +5,7 @@ import { ToasterNotificationService } from './toaster-notification.service';
 import { ModeService } from './mode.service';
 import { PlayService } from './play.service';
 import { Diagram } from '../classes/diagram/diagram';
-import { FiringEntry } from '../classes/firing-entry';
-import { Tab } from '../classes/tabs';
-import { InvariantEntry } from '../classes/invariant-entry';
+import { InvariantEntry, InvariantValidity } from '../classes/invariant-entry';
 
 @Injectable({ providedIn: 'root' })
 export class InvariantsValidationService {
@@ -16,11 +14,9 @@ export class InvariantsValidationService {
     private _playService = inject(PlayService);
     private _translate = inject(TranslateService);
 
-    private _isExamMode = computed(() => this._modeService.isExamMode(Tab.INVARIANTS));
-
     private _EPSILON = 1e-10;
     
-    computedMinInvariants = signal<InvariantEntry[]>([]);
+    computedMinInvariants = signal<number[][]>([]);
     
     /**
      * Finds valid firing sequences in a Petri net diagram beginning at its start marking.
@@ -40,8 +36,23 @@ export class InvariantsValidationService {
      * @param entry - The firing entry to be validated.
      * @returns A promise that resolves when the validation is complete.
      */
-    async validateInput(diagram: Diagram, entry: InvariantEntry): Promise<void> {
-        const hasOnlyValidTransitions: boolean = this.hasOnlyValidPlaces(diagram, entry);
+    async validateEntry(diagram: Diagram, entry: InvariantEntry): Promise<void> {
+        const hasOnlyValidPlaces: boolean = this.hasOnlyValidPlaces(diagram, entry);
+        if (!hasOnlyValidPlaces) {
+            entry.setValidity(InvariantValidity.INVALID, this.getErrorMessage(entry));
+            return;
+        }
+        const isMinimal = this.computedMinInvariants().includes(entry.vector);
+        if (isMinimal) {
+            entry.setValidity(InvariantValidity.VALID_MINIMAL, null);
+            return;
+        }
+        //TODO: Check if invariant is valid and not minimal
+        const isValidNotMinimal = this.computedMinInvariants().includes(entry.vector);
+        if (isValidNotMinimal) {
+            entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL, null);
+            return;
+        }
     }
 
     /**
@@ -51,8 +62,9 @@ export class InvariantsValidationService {
      * @returns true if all labels correnspond to existing transitions, false otherwise.
      */
     private hasOnlyValidPlaces(diagram: Diagram, entry: InvariantEntry): boolean {
-        const places: string[] = diagram.getPlaceLabels();
-        return true;
+        const allowedPlaces: string[] = diagram.getPlaceLabels();
+        const isValidLabel = (label: string): boolean => allowedPlaces.includes(label);
+        return entry.labels.every(isValidLabel);
     }
 
     /**
@@ -102,7 +114,7 @@ export class InvariantsValidationService {
         const minimalInvariants = allFoundInvariants.filter(inv => this._isMinimal(inv, incidenceMatrix));
         console.log("All found invariants:", allFoundInvariants);
         console.log("Minimal invariants:", minimalInvariants);
-        this.computedMinInvariants.set([]);
+        this.computedMinInvariants.set(minimalInvariants);
     }
 
     private _computeInvariants(extendedMatrix: number[][]): number[][] {

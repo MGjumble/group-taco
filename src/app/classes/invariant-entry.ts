@@ -12,17 +12,25 @@ export class InvariantEntry {
         public isClosed: boolean,
         public validity: InvariantValidity | undefined | null = null,
         public message: string | null = null,
-        public placeWeights: Map<DiagramPlace, number> = new Map(),
+        public placeWeights: Map<string, number> = new Map(),
     ) {}
+
+    get labels(): string[] {
+        return Array.from(this.placeWeights.keys());
+    }
+
+    get vector(): number[] {
+        return Array.from(this.placeWeights.values());
+    }
 
     /**
      * Extracts the places with weights from the object's text attribute.
      * @return The array of place strings.
      */
-    parseText(allPlaces: DiagramPlace[]): void {
+    parseText(allPlaceLabels: string[]): void {
         let currentSign = 1;
         let currentWeight = 1;
-        let currentPlaceId = '';
+        let currentLabel = '';
         let i = 0;
         while (i < this.text.length) {
             const char = this.text[i];
@@ -44,24 +52,24 @@ export class InvariantEntry {
                 continue;
             }
             if (/[a-zA-Z]/.test(char)) {
-                let placeId = '';
+                let foundLabel = '';
                 while (i < this.text.length && /[a-zA-Z0-9]/.test(this.text[i])) {
-                    placeId += this.text[i];
+                    foundLabel += this.text[i];
                     i++;
                 }
-                currentPlaceId = placeId;
+                currentLabel = foundLabel;
 
-                const place = allPlaces.find(p => p.displayLabel === currentPlaceId);
-                if (!place) {
+                const label = allPlaceLabels.find(label => label === currentLabel);
+                if (!label) {
                     this.validity = InvariantValidity.INVALID;
-                    this.message = `Unbekannter Platz: ${currentPlaceId}`;
+                    this.message = `Unbekannte Stelle: ${currentLabel}`;
                     return;
                 }
-                this.placeWeights.set(place, currentSign * currentWeight);
+                this.placeWeights.set(label, currentSign * currentWeight);
 
                 currentSign = 1;
                 currentWeight = 1;
-                currentPlaceId = '';
+                currentLabel = '';
                 continue;
             }
         }
