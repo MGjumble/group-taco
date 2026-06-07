@@ -16,7 +16,7 @@ export class InvariantsService {
     private _validationService = inject(InvariantsValidationService);
 
     private _currentEntry: InvariantEntry | undefined;
-    private _currentText = '2p1 * -p3, p4;5p6 -3 p2';
+    private _currentText = '2p1 + 2* -p3, p4;5p6 -3 p2';
     private _idCounter = 0;
     private _isExamMode = computed(() => this._modeService.isExamMode(Tab.INVARIANTS));
 
@@ -55,8 +55,15 @@ export class InvariantsService {
         this._currentText = text;
     }
 
-    processPlaceClicked(place: DiagramPlace): void {
-        this.updateEntry(place.displayLabel);
+    processPlaceClicked(diagram: Diagram, place: DiagramPlace, isRightClick: boolean): void {
+        const entry: InvariantEntry =
+            this._currentEntry && !this._currentEntry.isClosed
+                ? this._currentEntry
+                : this.getEmptyEntry();
+        this._currentEntry = entry;
+        this.updateEntry(entry, place.displayLabel, isRightClick);
+        if (this._isExamMode()) entry.setValidity(undefined, null);
+        else this._validationService.validateEntry(diagram, entry);
     }
 
     /**
@@ -120,21 +127,11 @@ export class InvariantsService {
      * @param label
      *          The label of the fired transition.
      */
-    updateEntry(label: string): void {
-        const entry = this._currentEntry || this.getEmptyEntry();
-        const delimiter = entry.text.includes('; ')
-            ? '; '
-            : entry.text.includes(', ')
-                ? ', '
-                : entry.text.includes(';')
-                ? ';'
-                : entry.text.includes(',')
-                    ? ','
-                    : ' ';
+    updateEntry(entry: InvariantEntry,label: string, positive: boolean): void {
         if (entry.text.length === 0) entry.text = label;
         //TODO: If the new input place is already present in the text, they should be summed up
-        else entry.text = entry.text.replace(/[\s,;]+$/, '') + delimiter + label;
-        if (this._isExamMode()) entry.validity = undefined;
+        else entry.text = entry.text.replace(/[\s,;]+$/, '') + (positive ? ' + ' : ' - ') + label;
+        this._currentText = entry.text;
     }
 
     /**

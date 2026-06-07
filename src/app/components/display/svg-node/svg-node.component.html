@@ -30,7 +30,9 @@
         [attr.fill]="placeFillColor()"
         stroke="black"
         stroke-width="2"
-        (click)="circleClick()" />
+        pointer-events="auto"
+        (mousedown)="circleClick($event)"
+        (contextmenu)="$event.preventDefault();" />
 
     <!-- Tokens visualization inside place -->
     @if (!hideTokens() && !showTokenNumber()) {

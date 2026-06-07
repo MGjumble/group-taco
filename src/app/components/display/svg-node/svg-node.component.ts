@@ -57,7 +57,7 @@ export class SvgNodeComponent {
     // Mark if this node is currently selected (for connection creation)
     readonly selected = input<boolean>(false);
 
-    clickNode = output<DisplayableNode>();
+    clickNode = output<{ node: DisplayableNode, isRightClick: boolean }>();
 
     stateNodeClick = output<StateNode>();
 
@@ -244,14 +244,19 @@ export class SvgNodeComponent {
 
     public click() {
         const node = this.diagramNode();
-        if (node) this.clickNode.emit(node);
+        if (node) this.clickNode.emit({ node: node, isRightClick: false });
     }
 
-    public circleClick() {
+    public circleClick(event: MouseEvent) {
+        const isRightClick = event.button === 2;
+        if (isRightClick) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
         const node = this.diagramNode();
         if (node) {
             if (this._tabStateService.currentTab() === Tab.INVARIANTS) {
-                this.clickNode.emit(node);
+                this.clickNode.emit({ node: node, isRightClick: isRightClick });
             } else this.stateNodeClick.emit(node as StateNode);
         }
     }

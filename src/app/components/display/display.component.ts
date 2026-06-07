@@ -94,7 +94,8 @@ export class DisplayComponent implements OnInit, OnDestroy {
         }
     }
 
-    public processNodeClick(node: DisplayableNode) {
+    public processNodeClick(node: DisplayableNode, isRightClick?: boolean) {
+        const currentTab = this._tabStateService.currentTab();
         const diagram = this.diagram();
         if (
             !this.isPlayingEnabled() ||
@@ -102,9 +103,8 @@ export class DisplayComponent implements OnInit, OnDestroy {
             !(diagram instanceof Diagram)
         )
             return;
-        const currentTab = this._tabStateService.currentTab();
-        if (currentTab === Tab.INVARIANTS && node instanceof DiagramPlace) {
-            this._invariantsService.processPlaceClicked(node);
+        if (currentTab === Tab.INVARIANTS && node instanceof DiagramPlace && isRightClick !== undefined) {
+            this._invariantsService.processPlaceClicked(diagram, node, isRightClick);
             return;
         }
         if (!(node instanceof DiagramTransition)) return;
