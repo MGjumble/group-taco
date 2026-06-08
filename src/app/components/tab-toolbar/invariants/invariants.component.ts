@@ -29,12 +29,11 @@ export class InvariantsComponent implements OnInit, OnDestroy {
         //TODO: Optimize subscription
             .pipe(
                 tap((diagram) => {
-                    this._invariantsService.resetInvariants();
+                    this._invariantsService.clearInputEntries();
                 }),
                 filter((diagram: any) => !!diagram && diagram instanceof Diagram),
                 tap((diagram: Diagram) => {
-                    this._validationService.allowedLabels = diagram.getPlaceLabels();
-                    this._validationService.computeMinimalInvariants(diagram);
+                    this._validationService.initialize(diagram);
                 }),
             )
             .subscribe((marking) => {

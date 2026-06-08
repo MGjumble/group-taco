@@ -1,4 +1,6 @@
+import { Diagram } from "./diagram/diagram";
 import { DiagramPlace } from "./diagram/diagram-place";
+import { DiagramTransition } from "./diagram/diagram-transition";
 import { EntryError } from "./entry-error";
 
 /**
@@ -12,11 +14,15 @@ export class InvariantEntry {
         public text: string,
         public isClosed: boolean,
         public validity: InvariantValidity | undefined = undefined,
-        public allowedLabels: string[],
+        public allPlaces: string[],
+        public allTransitions: string[],
+        public placeFlows: Map<string, Map<string, number>>,
         public placeWeights: Map<string, number> = new Map(),
+        public transitionWeights: Map<string, number> = new Map(),
         public error: EntryError | null = null,
     ) {
-        this.allowedLabels.forEach(label => { this.placeWeights.set(label, 0); });
+        this.allPlaces.forEach(label => { this.placeWeights.set(label, 0); });
+        this.allTransitions.forEach(label => { this.transitionWeights.set(label, 0); });
     }
 
     get labels(): string[] {
@@ -79,12 +85,26 @@ export class InvariantEntry {
         console.log(`Parsed invariant ${this.id}:`, this.placeWeights);
     }
 
-    changePlaceWeight(label: string, weightDiff: number) {
-        let weight = this.placeWeights.get(label);
+    changePlaceWeight(placeLabel: string, weightDiff: number) {
+        let weight = this.placeWeights.get(placeLabel);
+        console.log(placeLabel, weight);
         if (weight !== undefined) {
-            this.placeWeights.set(label, weight + weightDiff);
+            this.placeWeights.set(placeLabel, weight + weightDiff);
         }
+        this.updateTransitionWeights(placeLabel, weightDiff);
         this.updateText();
+    }
+
+    updateTransitionWeights(placeLabel: string, weightDiff: number) {
+        const flow = this.placeFlows.get(placeLabel);
+        if (!flow) return;
+        for (let [tranLabel, factor] of flow) { 
+            const weight = this.transitionWeights.get(tranLabel);
+            if (weight !== undefined) {
+                this.transitionWeights.set(tranLabel, weight + factor * weightDiff);
+            }
+        }
+        console.log(this.transitionWeights);
     }
 
     updateText() {
