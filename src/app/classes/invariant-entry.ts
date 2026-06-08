@@ -1,4 +1,5 @@
 import { DiagramPlace } from "./diagram/diagram-place";
+import { EntryError } from "./entry-error";
 
 /**
  * Representing a string entry for a Petri net invariant.
@@ -10,9 +11,9 @@ export class InvariantEntry {
         public id: number,
         public text: string,
         public isClosed: boolean,
-        public validity: InvariantValidity | undefined | null = null,
-        public message: string | null = null,
+        public validity: InvariantValidity | undefined = undefined,
         public placeWeights: Map<string, number> = new Map(),
+        public error: EntryError | null = null,
     ) {}
 
     get labels(): string[] {
@@ -62,7 +63,6 @@ export class InvariantEntry {
                 const label = allPlaceLabels.find(label => label === currentLabel);
                 if (!label) {
                     this.validity = InvariantValidity.INVALID;
-                    this.message = `Unbekannte Stelle: ${currentLabel}`;
                     return;
                 }
                 this.placeWeights.set(label, currentSign * currentWeight);
@@ -80,11 +80,11 @@ export class InvariantEntry {
     /**
      * Sets the validity of the invariant object and optionally an associated message.
      * @param validity - The validity status of the proposed invariant.
-     * @param message - A message for the user.
+     * @param error - An error object with error information.
      */
-    setValidity(validity: InvariantValidity | undefined, message: string | null) {
-        this.validity = validity ?? undefined;
-        this.message = message ?? null;
+    setValidity(validity: InvariantValidity | undefined, error: EntryError | null) {
+        this.validity = validity;
+        this.error = error;
     }
 }
 
