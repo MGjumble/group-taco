@@ -104,7 +104,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
         )
             return;
         if (currentTab === Tab.INVARIANTS && node instanceof DiagramPlace && isRightClick !== undefined) {
-            this._invariantsService.processPlaceClicked(diagram, node, isRightClick);
+            this._invariantsService.processPlaceClicked(node, isRightClick);
             return;
         }
         if (!(node instanceof DiagramTransition)) return;

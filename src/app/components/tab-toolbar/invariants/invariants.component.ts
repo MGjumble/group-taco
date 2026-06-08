@@ -33,6 +33,7 @@ export class InvariantsComponent implements OnInit, OnDestroy {
                 }),
                 filter((diagram: any) => !!diagram && diagram instanceof Diagram),
                 tap((diagram: Diagram) => {
+                    this._validationService.allowedLabels = diagram.getPlaceLabels();
                     this._validationService.computeMinimalInvariants(diagram);
                 }),
             )

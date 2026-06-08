@@ -22,52 +22,36 @@ export class InvariantsService {
 
     inputEntries = signal<InvariantEntry[]>([]);
 
-    /**
-     * Returns the current firing sequence as a string.
-     * @returns The current firing sequence.
-     */
     get currentEntry(): InvariantEntry | undefined {
         return this._currentEntry;
     }
 
-    /**
-     * Sets the currently active firing entry. This is used to avoid unnecessary
-     * validation, e.g. when spaces are added or removed.
-     * @param entry - The firing entry to set as current.
-     */
     set currentEntry(entry: InvariantEntry | undefined) {
         this._currentEntry = entry;
     }
 
-    /**
-     * Returns the current firing sequence as a string.
-     * @returns The current firing sequence.
-     */
     get currentText(): string {
         return this._currentText;
     }
 
-    /**
-     * Sets the current firing sequence.
-     * @param sequence - The firing sequence to set.
-     */
     set currentText(text: string) {
         this._currentText = text;
     }
 
-    processPlaceClicked(diagram: Diagram, place: DiagramPlace, isRightClick: boolean): void {
+    processPlaceClicked(place: DiagramPlace, isRightClick: boolean): void {
         const entry: InvariantEntry =
             this._currentEntry && !this._currentEntry.isClosed
                 ? this._currentEntry
                 : this.getEmptyEntry();
         this._currentEntry = entry;
-        this.updateEntry(entry, place.displayLabel, isRightClick);
+        const weightDiff = isRightClick ? 1 : -1;
+        this.updateEntry(entry, place.displayLabel, weightDiff);
         if (this._isExamMode()) entry.setValidity(undefined, null);
-        else this._validationService.validateEntry(diagram, entry);
+        else this._validationService.validateEntry(entry);
     }
 
     /**
-     * Clears all firing entries in the firing sequence table.
+     * Clears all entries in the table.
      */
     clearInputEntries(): void {
         this.inputEntries.set([]);
@@ -86,7 +70,7 @@ export class InvariantsService {
      */
     startNewEntry(diagram: Diagram): void {
         diagram.resetMarking();
-        if (this._currentEntry) this.closeCurrentFiringEntry();
+        if (this._currentEntry) this.closeCurrentEntry();
         this.getEmptyEntry();
         setTimeout(() => {
             document.getElementById('invariant-input')?.focus();
@@ -113,31 +97,23 @@ export class InvariantsService {
     addValidEntry(
         text: string,
     ) {
-        if (this._currentEntry) this.closeCurrentFiringEntry();
-        const newEntry = new InvariantEntry(this.getNewId(), text, true, InvariantValidity.VALID_MINIMAL);
+        if (this._currentEntry) this.closeCurrentEntry();
+        const newEntry = new InvariantEntry(this.getNewId(), text, true, InvariantValidity.VALID_MINIMAL, this._validationService.allowedLabels);
         this.inputEntries.update((entries) => {
             entries.push(newEntry);
             return entries;
         });
     }
 
-    /**
-     * Appends the label of a fired transition to the current firing sequence.
-     * Updates the transition count and optionally the end marking accordingly.
-     * @param label
-     *          The label of the fired transition.
-     */
-    updateEntry(entry: InvariantEntry,label: string, positive: boolean): void {
-        if (entry.text.length === 0) entry.text = label;
-        //TODO: If the new input place is already present in the text, they should be summed up
-        else entry.text = entry.text.replace(/[\s,;]+$/, '') + (positive ? ' + ' : ' - ') + label;
+    updateEntry(entry: InvariantEntry, label: string, weightDiff: number): void {
+        entry.changePlaceWeight(label, weightDiff);
         this._currentText = entry.text;
     }
 
     /**
-     * Closes the current firing entry in the firing table, preventing further updates to it.
+     * Closes the current entry in the table, preventing further updates to it.
      */
-    closeCurrentFiringEntry(): void {
+    closeCurrentEntry(): void {
         if (this._currentEntry)
             this.inputEntries.update((entries) => {
                 this._currentEntry!.isClosed = true;
@@ -147,11 +123,11 @@ export class InvariantsService {
     }
 
     /**
-     * Creates a new empty firing entry with start values.
-     * @returns A firing entry with an empty sequence.
+     * Creates a new empty entry with start values.
+     * @returns An entry with an empty sequence.
      */
     private getEmptyEntry(): InvariantEntry {
-        const newEntry = new InvariantEntry(this.getNewId(), '', false, undefined);
+        const newEntry = new InvariantEntry(this.getNewId(), '', false, undefined, this._validationService.allowedLabels);
         this._currentEntry = newEntry;
         this.inputEntries.update((entries) => {
             entries.push(newEntry);
@@ -161,7 +137,7 @@ export class InvariantsService {
     }
 
     /**
-     * Generates a new unique ID for a firing entry.
+     * Generates a new unique ID for a entry.
      * @returns The new ID
      */
     getNewId(): number {

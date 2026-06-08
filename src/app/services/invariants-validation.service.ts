@@ -3,20 +3,29 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { ToasterNotificationService } from './toaster-notification.service';
 import { ModeService } from './mode.service';
-import { PlayService } from './play.service';
 import { Diagram } from '../classes/diagram/diagram';
 import { InvariantEntry, InvariantValidity } from '../classes/invariant-entry';
+import { Tab } from '../classes/tabs';
 
 @Injectable({ providedIn: 'root' })
 export class InvariantsValidationService {
     private _notificationService = inject(ToasterNotificationService);
     private _modeService = inject(ModeService);
-    private _playService = inject(PlayService);
     private _translate = inject(TranslateService);
+
+    private _allowedLabels: string[] = []
 
     private _EPSILON = 1e-10;
     
     computedMinInvariants = signal<number[][]>([]);
+    
+    get allowedLabels(): string[] {
+        return this._allowedLabels;
+    }
+
+    set allowedLabels(labels: string[]) {
+        this._allowedLabels = labels;
+    }
     
     /**
      * Finds valid firing sequences in a Petri net diagram beginning at its start marking.
@@ -32,39 +41,58 @@ export class InvariantsValidationService {
 
     /**
      * Validates a firing entry input.
-     * @param diagram - The diagram on which the firing entry is to be validated.
      * @param entry - The firing entry to be validated.
      * @returns A promise that resolves when the validation is complete.
      */
-    async validateEntry(diagram: Diagram, entry: InvariantEntry): Promise<void> {
-        const hasOnlyValidPlaces: boolean = this.hasOnlyValidPlaces(diagram, entry);
-        if (!hasOnlyValidPlaces) {
-            entry.setValidity(InvariantValidity.INVALID, this.getErrorMessage(entry));
-            return;
-        }
-        const isMinimal = this.computedMinInvariants().includes(entry.vector);
-        if (isMinimal) {
-            entry.setValidity(InvariantValidity.VALID_MINIMAL, null);
-            return;
-        }
-        //TODO: Check if invariant is valid and not minimal
-        const isValidNotMinimal = this.computedMinInvariants().includes(entry.vector);
-        if (isValidNotMinimal) {
-            entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL, null);
-            return;
+    async validateEntry(entry: InvariantEntry): Promise<void> {
+        const hasOnlyValidPlaces: boolean = this.hasOnlyValidPlaces(entry);
+        if (hasOnlyValidPlaces) {
+            const isMinimal = this.computedMinInvariants().includes(entry.vector);
+            if (isMinimal) {
+                entry.setValidity(InvariantValidity.VALID_MINIMAL, null);
+                return;
+            }
+            //TODO: Check if invariant is valid and not minimal
+            const isValidNotMinimal = this.computedMinInvariants().includes(entry.vector);
+            if (isValidNotMinimal) {
+                entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL, null);
+                return;
+            }
         }
     }
 
     /**
      * Checks if all labels correspond to existing transitions in the diagram.
-     * @param diagram - The diagram for which the sequence is to be checked.
      * @param entry - The firing entry to be validated.
      * @returns true if all labels correnspond to existing transitions, false otherwise.
      */
-    private hasOnlyValidPlaces(diagram: Diagram, entry: InvariantEntry): boolean {
-        const allowedPlaces: string[] = diagram.getPlaceLabels();
-        const isValidLabel = (label: string): boolean => allowedPlaces.includes(label);
-        return entry.labels.every(isValidLabel);
+    private hasOnlyValidPlaces(entry: InvariantEntry): boolean {
+        entry.setValidity(InvariantValidity.VALID_MINIMAL, null);
+        if (entry.labels.length === 0) return true;
+
+        const visitedLabels: string[] = [];
+        for (const label of entry.labels) {
+            visitedLabels.push(label);
+            const exactMatch = this.allowedLabels.includes(label);
+            const partialMatch = this.allowedLabels.some((place) => place.startsWith(label));
+            if (exactMatch) {
+                continue;
+            } else {
+                if (!this._modeService.isExamMode(Tab.INVARIANTS) && !partialMatch)
+                    this._notificationService.showWarning(
+                        'TOASTER.HEADER.PLACE_NOT_PRESENT',
+                        'TOASTER.BODY.PLACE_NOT_PRESENT',
+                        { messageParams: { label: label } },
+                    );
+                entry.setValidity(InvariantValidity.INVALID, {
+                    type: 'INVARIANTS.NOT_PRESENT',
+                    invalidLabel: label,
+                    visitedLabels: visitedLabels,
+                });
+                break;
+            }
+        }
+        return entry.validity !== InvariantValidity.INVALID;
     }
 
     /**
@@ -73,7 +101,8 @@ export class InvariantsValidationService {
      * @returns A formatted error message string.
      */
     getErrorMessage(entry: InvariantEntry): string {
-        return entry.message ?? '';
+        //TODO: Update message
+        return '';
     }
 
     createIncidenceMatrix(diagram: Diagram): number[][] {

@@ -80,9 +80,9 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
     async onInputChange(entry: InvariantEntry): Promise<void> {
         if (!this._diagram) return;
         this._invariantsService.currentEntry = entry;
-        if (entry.text.trim() === this._invariantsService.currentText.trim()) return;
-        if (this.modeService.isExamMode(Tab.PLAY)) entry.setValidity(undefined, null);
-        else await this.invariantsValidationService.validateInput(this._diagram, entry);
+        if (entry.text.trim().replace(/\*/g, '') === this._invariantsService.currentText.trim().replace(/\*/g, '')) return;
+        if (this.modeService.isExamMode(Tab.INVARIANTS)) entry.setValidity(undefined, null);
+        else await this.invariantsValidationService.validateEntry(entry);
         this._invariantsService.currentText = entry.text;
     }
 
@@ -124,8 +124,9 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
         const invalidEntries: ToastList[] = [];
         for (const entry of this.inputInvariants()) {
             this._invariantsService.currentEntry = entry;
-            await this.invariantsValidationService.validateInput(this._diagram, entry);
-            if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: entry.message ?? '' });
+            await this.invariantsValidationService.validateEntry(entry);
+            //TODO: Update error message
+            if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: '' });
         }
         if (invalidEntries.length === 0)
             this._notificationService.showSuccess(
