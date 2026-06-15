@@ -10,6 +10,7 @@ import { DiagramPlace } from '../../../classes/diagram/diagram-place';
 import { StateNode } from '../../../classes/reachability-graph.model';
 import { PLACE_RADIUS, TRANSITION_SIZE } from '../display.constants';
 import { Tab } from '../../../classes/tabs';
+import { InvariantsService } from '../../../services/invariants.service';
 
 @Component({
     selector: 'g[appSvgNode]',
@@ -30,6 +31,7 @@ export class SvgNodeComponent {
     private _modeService = inject(ModeService);
     private _tabStateService = inject(TabStateService);
     private _playService = inject(PlayService);
+    private _invariantsService = inject(InvariantsService);
 
     readonly showInnerLabel = input<boolean>(false);
     readonly transitionLabelPlacement = input<'inside' | 'below'>('inside');
@@ -52,6 +54,10 @@ export class SvgNodeComponent {
             return node.isFiring();
         }
         return false;
+    });
+
+    readonly enableInvariants = computed(() => {
+        return this._tabStateService.currentTab() === Tab.INVARIANTS;
     });
 
     // Mark if this node is currently selected (for connection creation)
@@ -241,6 +247,19 @@ export class SvgNodeComponent {
     // Computed values for selection highlighting
     readonly isSelected = computed(() => !!this.selected());
     readonly selectionStrokeColor = computed(() => (this.isSelected() ? 'orange' : 'transparent'));
+    
+    readonly placeWeight = computed(() => {
+        const entry = this._invariantsService.currentEntry();
+        return entry?.placeWeights().get(this.displayLabel());
+    });
+
+    readonly shouldShowPlaceWeight = computed(() => {
+        const weight = this.placeWeight();
+        console.log("enableInvariants:", this.enableInvariants());
+        console.log("placeWeight:", weight);
+        console.log("shouldShow:", this.enableInvariants() && weight !== 0 && weight !== undefined);
+        return this.enableInvariants() && weight !== 0 && weight !== undefined;
+    });
 
     public click() {
         const node = this.diagramNode();
