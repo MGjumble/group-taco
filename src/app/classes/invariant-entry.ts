@@ -1,3 +1,4 @@
+import { signal } from "@angular/core";
 import { Diagram } from "./diagram/diagram";
 import { DiagramPlace } from "./diagram/diagram-place";
 import { DiagramTransition } from "./diagram/diagram-transition";
@@ -17,80 +18,30 @@ export class InvariantEntry {
         public allPlaces: string[],
         public allTransitions: string[],
         public placeFlows: Map<string, Map<string, number>>,
-        public placeWeights: Map<string, number> = new Map(),
+        public placeWeights = signal<Map<string, number>>(new Map()),
         public transitionWeights: Map<string, number> = new Map(),
         public error: EntryError | null = null,
     ) {
-        this.allPlaces.forEach(label => { this.placeWeights.set(label, 0); });
+        this.placeWeights.set(new Map(this.allPlaces.map(label => [label, 0])));
         this.allTransitions.forEach(label => { this.transitionWeights.set(label, 0); });
     }
 
     get labels(): string[] {
-        return Array.from(this.placeWeights.keys());
+        return Array.from(this.placeWeights().keys());
     }
 
     get vector(): number[] {
-        return Array.from(this.placeWeights.values());
-    }
-
-    /**
-     * Extracts the places with weights from the object's text attribute.
-     * @return The array of place strings.
-     */
-    parseText(allPlaceLabels: string[]): void {
-        let currentSign = 1;
-        let currentWeight = 1;
-        let currentLabel = '';
-        let i = 0;
-        while (i < this.text.length) {
-            const char = this.text[i];
-            if (char === '+' || char === '-') {
-                currentSign = char === '+' ? 1 : -1;
-                i++;
-                continue;
-            }
-            if (this._delimiters.test(char)) {
-                i++;
-                continue;
-            } else if (/\d/.test(char)) {
-                let numStr = '';
-            while (i < this.text.length && /\d/.test(this.text[i])) {
-                numStr += this.text[i];
-                i++;
-                }
-                currentWeight = parseInt(numStr);
-                continue;
-            }
-            if (/[a-zA-Z]/.test(char)) {
-                let foundLabel = '';
-                while (i < this.text.length && /[a-zA-Z0-9]/.test(this.text[i])) {
-                    foundLabel += this.text[i];
-                    i++;
-                }
-                currentLabel = foundLabel;
-
-                const label = allPlaceLabels.find(label => label === currentLabel);
-                if (!label) {
-                    this.validity = InvariantValidity.INVALID;
-                    return;
-                }
-                this.placeWeights.set(label, currentSign * currentWeight);
-
-                currentSign = 1;
-                currentWeight = 1;
-                currentLabel = '';
-                continue;
-            }
-        }
-        console.log(`Parsed invariant ${this.id}:`, this.placeWeights);
+        return Array.from(this.placeWeights().values());
     }
 
     changePlaceWeight(placeLabel: string, weightDiff: number) {
-        let weight = this.placeWeights.get(placeLabel);
-        console.log(placeLabel, weight);
-        if (weight !== undefined) {
-            this.placeWeights.set(placeLabel, weight + weightDiff);
-        }
+        this.placeWeights.update(currentMap => {
+            const newMap = new Map(currentMap);
+            const currentWeight = newMap.get(placeLabel) || 0;
+            const newWeight = currentWeight + weightDiff;
+            newMap.set(placeLabel, newWeight);
+            return newMap;
+        });
         this.updateTransitionWeights(placeLabel, weightDiff);
         this.updateText();
     }
@@ -109,7 +60,7 @@ export class InvariantEntry {
 
     updateText() {
         const textParts = [];
-        for (let [place, weight] of this.placeWeights) {
+        for (let [place, weight] of this.placeWeights()) {
             if (weight === 0) continue;
             let sign = '- ';
             if (weight >= 0) sign = textParts.length === 0 ? '' : '+ ';

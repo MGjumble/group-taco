@@ -15,20 +15,12 @@ export class InvariantsService {
     private _sourceNetService = inject(SourcePetriNetService);
     private _validationService = inject(InvariantsValidationService);
 
-    private _currentEntry: InvariantEntry | undefined;
+    currentEntry = signal<InvariantEntry | undefined>(undefined);
     private _currentText = '2p1 + 2* -p3, p4;5p6 -3 p2';
     private _idCounter = 0;
     private _isExamMode = computed(() => this._modeService.isExamMode(Tab.INVARIANTS));
 
     inputEntries = signal<InvariantEntry[]>([]);
-
-    get currentEntry(): InvariantEntry | undefined {
-        return this._currentEntry;
-    }
-
-    set currentEntry(entry: InvariantEntry | undefined) {
-        this._currentEntry = entry;
-    }
 
     get currentText(): string {
         return this._currentText;
@@ -39,14 +31,14 @@ export class InvariantsService {
     }
 
     processPlaceClicked(place: DiagramPlace, isRightClick: boolean): void {
-        const entry: InvariantEntry =
-            this._currentEntry && !this._currentEntry.isClosed
-                ? this._currentEntry
-                : this.getEmptyEntry();
-        this._currentEntry = entry;
+        let entry = this.currentEntry();
+        if (!entry || entry.isClosed) {
+            entry = this.getEmptyEntry();
+        }
         const weightDiff = isRightClick ? 1 : -1;
         this.updateEntry(entry, place, weightDiff);
         if (this._isExamMode()) entry.setValidity(undefined, null);
+        this.currentEntry.set(entry);
         //TODO: Validate invariant in learning mode
     }
 
@@ -55,7 +47,7 @@ export class InvariantsService {
      */
     clearInputEntries(): void {
         this.inputEntries.set([]);
-        this.currentEntry = undefined;
+        this.currentEntry.set(undefined);
         this.currentText = '';
     }
     
@@ -65,7 +57,7 @@ export class InvariantsService {
      */
     startNewEntry(diagram: Diagram): void {
         diagram.resetMarking();
-        if (this._currentEntry) this.closeCurrentEntry();
+        if (this.currentEntry()) this.closeCurrentEntry();
         this.getEmptyEntry();
         setTimeout(() => {
             document.getElementById('invariant-input')?.focus();
@@ -80,8 +72,8 @@ export class InvariantsService {
      */
     deleteEntry(id: number): void {
         this.inputEntries.update((entries) => entries.filter((entry) => entry.id !== id));
-        if (id === this._currentEntry?.id || this.inputEntries().length === 0) {
-            this._currentEntry = undefined;
+        if (id === this.currentEntry()?.id || this.inputEntries().length === 0) {
+            this.currentEntry.set(undefined);
         }
     }
 
@@ -92,7 +84,7 @@ export class InvariantsService {
     addValidEntry(
         text: string,
     ) {
-        if (this._currentEntry) this.closeCurrentEntry();
+        if (this.currentEntry()) this.closeCurrentEntry();
         const newEntry = new InvariantEntry(this.getNewId(), text, true, InvariantValidity.VALID_MINIMAL, this._validationService.allPlaceLabels, this._validationService.allTransitionLabels, this._validationService.placeFlows);
         this.inputEntries.update((entries) => {
             entries.push(newEntry);
@@ -109,12 +101,13 @@ export class InvariantsService {
      * Closes the current entry in the table, preventing further updates to it.
      */
     closeCurrentEntry(): void {
-        if (this._currentEntry)
+        const entry = this.currentEntry();
+        if (entry)
             this.inputEntries.update((entries) => {
-                this._currentEntry!.isClosed = true;
+                entry.isClosed = true;
                 return entries;
             });
-        this._currentEntry = undefined;
+        this.currentEntry.set(undefined);
     }
 
     /**
@@ -123,7 +116,7 @@ export class InvariantsService {
      */
     private getEmptyEntry(): InvariantEntry {
         const newEntry = new InvariantEntry(this.getNewId(), '', false, undefined, this._validationService.allPlaceLabels, this._validationService.allTransitionLabels, this._validationService.placeFlows);
-        this._currentEntry = newEntry;
+        this.currentEntry.set(newEntry);
         this.inputEntries.update((entries) => {
             entries.push(newEntry);
             return entries;

@@ -79,7 +79,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      */
     async onInputChange(entry: InvariantEntry): Promise<void> {
         if (!this._diagram) return;
-        this._invariantsService.currentEntry = entry;
+        this._invariantsService.currentEntry.set(entry);
         if (entry.text.trim().replace(/\*/g, '') === this._invariantsService.currentText.trim().replace(/\*/g, '')) return;
         if (this.modeService.isExamMode(Tab.INVARIANTS)) entry.setValidity(undefined, null);
         else await this.invariantsValidationService.validateEntry(entry);
@@ -123,7 +123,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
         if (!this._diagram) return;
         const invalidEntries: ToastList[] = [];
         for (const entry of this.inputInvariants()) {
-            this._invariantsService.currentEntry = entry;
+            this._invariantsService.currentEntry.set(entry);
             await this.invariantsValidationService.validateEntry(entry);
             //TODO: Update error message
             if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: '' });
