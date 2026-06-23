@@ -18,3 +18,17 @@
     position: relative;
     width: 100%;
 }
+
+.node-weight-mask-group {
+  pointer-events: auto;
+}
+
+.node-weight-mask {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+:host ::ng-deep .node-weight-mask-group:hover .node-weight-mask {
+  opacity: 0;
+}

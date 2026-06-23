@@ -56,10 +56,6 @@ export class SvgNodeComponent {
         return false;
     });
 
-    readonly enableInvariants = computed(() => {
-        return this._tabStateService.currentTab() === Tab.INVARIANTS;
-    });
-
     // Mark if this node is currently selected (for connection creation)
     readonly selected = input<boolean>(false);
 
@@ -248,17 +244,21 @@ export class SvgNodeComponent {
     readonly isSelected = computed(() => !!this.selected());
     readonly selectionStrokeColor = computed(() => (this.isSelected() ? 'orange' : 'transparent'));
     
-    readonly placeWeight = computed(() => {
+    readonly nodeWeight = computed(() => {
         const entry = this._invariantsService.currentEntry();
-        return entry?.placeWeights().get(this.displayLabel());
+        if (this.isPlace()) return entry?.placeWeights().get(this.displayLabel());
+        else if (this.isTransition()) return entry?.transitionWeights().get(this.displayLabel());
+        return undefined;
     });
 
-    readonly shouldShowPlaceWeight = computed(() => {
-        const weight = this.placeWeight();
-        console.log("enableInvariants:", this.enableInvariants());
-        console.log("placeWeight:", weight);
-        console.log("shouldShow:", this.enableInvariants() && weight !== 0 && weight !== undefined);
-        return this.enableInvariants() && weight !== 0 && weight !== undefined;
+    readonly shouldShowNodeWeight = computed(() => {
+        const weight = this.nodeWeight();
+        return this._tabStateService.currentTab() === Tab.INVARIANTS && weight !== 0 && weight !== undefined;
+    });
+
+    readonly shouldMaskNodeWeight = computed(() => {
+        const isExamMode = this._modeService.getIsExamModeSignal(Tab.INVARIANTS);
+        return this._tabStateService.currentTab() === Tab.INVARIANTS && isExamMode!();
     });
 
     public click() {
@@ -278,5 +278,13 @@ export class SvgNodeComponent {
                 this.clickNode.emit({ node: node, isRightClick: isRightClick });
             } else this.stateNodeClick.emit(node as StateNode);
         }
+    }
+
+    getTrianglePoints(): string {
+        const x = this.rectX() + this.rectWidth();
+        const y = this.rectY();
+        const size = 35;
+
+        return `${x},${y} ${x - size},${y} ${x},${y + size}`;
     }
 }

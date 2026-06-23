@@ -93,7 +93,7 @@ export class InvariantsService {
     }
 
     updateEntry(entry: InvariantEntry, place: DiagramPlace, weightDiff: number): void {
-        entry.changePlaceWeight(place.displayLabel, weightDiff);
+        entry.selectPlace(place.displayLabel, weightDiff);
         this._currentText = entry.text;
     }
 

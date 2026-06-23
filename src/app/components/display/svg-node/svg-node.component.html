@@ -70,8 +70,8 @@
         </svg:text>
     }
 
-    <!-- Place weights display -->
-    @if (shouldShowPlaceWeight()) {
+    <!-- Place weight display -->
+    @if (shouldShowNodeWeight()) {
         <svg:g>
             <svg:ellipse
                 xmlns:svg="http://www.w3.org/2000/svg"
@@ -91,7 +91,7 @@
                 dominant-baseline="central"
                 font-size="12"
                 fill="blue">
-                {{ placeWeight() }}
+                {{ nodeWeight() }}
             </svg:text>
         </svg:g>
     }
@@ -135,6 +135,52 @@
             fill="black">
             {{ innerLabel() }}
         </svg:text>
+    }
+
+    @if (shouldShowNodeWeight()) {
+        <svg:g>
+            <svg:polygon
+            xmlns:svg="http://www.w3.org/2000/svg"
+            [attr.points]="getTrianglePoints()"
+            [attr.fill]="nodeWeight()! > 0 ? '#aaffaa' : '#ffaaaa'"
+            stroke="black"
+            stroke-width="0.5" />
+
+        <svg:text
+            xmlns:svg="http://www.w3.org/2000/svg"
+            [attr.x]="rectX() + rectWidth() - 12"  
+            [attr.y]="rectY() + 12"
+            text-anchor="middle"
+            dominant-baseline="central"
+            font-size="12"
+            fill="black">
+                {{ nodeWeight()! > 0 ? ' +' : '' }}{{ nodeWeight() }}
+            </svg:text>
+        </svg:g>
+    }
+
+    @if (shouldMaskNodeWeight()) {
+        <svg:g class="node-weight-mask-group">
+            <svg:polygon
+                xmlns:svg="http://www.w3.org/2000/svg"
+                class="node-weight-mask"
+                [attr.points]="getTrianglePoints()"
+                fill="#eeeeee"
+                stroke="black"
+                stroke-width="0.5" />
+
+            <svg:text
+                xmlns:svg="http://www.w3.org/2000/svg"
+                class="node-weight-mask"
+                [attr.x]="rectX() + rectWidth() - 12"
+                [attr.y]="rectY() + 12"
+                text-anchor="middle"
+                dominant-baseline="central"
+                font-size="12"
+                fill="black">
+                ?
+            </svg:text>
+        </svg:g>
     }
 }
 

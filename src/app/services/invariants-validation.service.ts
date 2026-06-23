@@ -44,12 +44,19 @@ export class InvariantsValidationService {
 
     setPlaceFlows(transitions: DiagramTransition[]) {
         this._allPlaceLabels.forEach(label => { this._placeFlows.set(label, new Map()); });
-        for (let transition of transitions) {
+        for (const transition of transitions) {
+            const transitionLabel = transition.displayLabel;
+
             for (const { place, weight } of transition.getInputFlow()) {
-                this._placeFlows.get(place.displayLabel)?.set(transition.displayLabel, weight);
+                const placeLabel = place.displayLabel;
+                const currentWeight = this._placeFlows.get(placeLabel)?.get(transitionLabel) || 0;
+                this._placeFlows.get(placeLabel)?.set(transitionLabel, currentWeight + weight);
             }
+
             for (const { place, weight } of transition.getOutputFlow()) {
-                this._placeFlows.get(place.displayLabel)?.set(transition.displayLabel, weight * -1);
+                const placeLabel = place.displayLabel;
+                const currentWeight = this._placeFlows.get(placeLabel)?.get(transitionLabel) || 0;
+                this._placeFlows.get(placeLabel)?.set(transitionLabel, currentWeight - weight);
             }
         }
         console.log(this._placeFlows);
@@ -176,8 +183,7 @@ export class InvariantsValidationService {
         const extendedMatrix = this.extendIncidenceMatrix(incidenceMatrix);
         const allFoundInvariants = this._computeInvariants(extendedMatrix);
         const minimalInvariants = allFoundInvariants.filter(inv => this._isMinimal(inv, incidenceMatrix));
-        console.log("All found invariants:", allFoundInvariants);
-        console.log("Minimal invariants:", minimalInvariants);
+        this._printInvariantsAsTable(minimalInvariants, this._allPlaceLabels);
         this.computedMinInvariants.set(minimalInvariants);
     }
 
@@ -199,11 +205,25 @@ export class InvariantsValidationService {
             }
             if (isInvariant) {
                 const invariant = M[row].slice(transitionCount, cols);
-                const gcd = this._gcdOfArray(invariant);
-                invariants.push(invariant.map(val => val / gcd));
+                const normalizedInvariant = this._normalizeInvariant(invariant);
+                invariants.push(normalizedInvariant);
             }
         }
         return invariants;
+    }
+
+    private _normalizeInvariant(invariant: number[]): number[] {
+        const gcd = this._gcdOfArray(invariant.filter(val => val !== 0));
+        if (gcd === 0) return invariant;
+
+        const normalized = invariant.map(val => val / gcd);
+
+        const firstNonZeroIndex = normalized.findIndex(val => val !== 0);
+        if (firstNonZeroIndex !== -1 && normalized[firstNonZeroIndex] < 0) {
+            return normalized.map(val => 0 - val);
+        }
+
+        return normalized;
     }
 
     private _isMinimal(invariant: number[], incidenceMatrix: number[][]): boolean {
@@ -272,5 +292,28 @@ export class InvariantsValidationService {
     
     private _gcdOfTwoNumbers(a: number, b: number): number {
         return b === 0 ? a : this._gcdOfTwoNumbers(b, a % b);
+    }
+
+    private _printInvariantsAsTable(invariants: number[][], placeLabels: string[]): void {
+        if (invariants.length === 0) {
+            console.log("Keine Invarianten gefunden.");
+            return;
+        }
+
+        // Header-Zeile
+        let header = "#\t";
+        placeLabels.forEach(label => {
+            header += `${label}\t`;
+        });
+        console.log(header.trim());
+
+        // Datenzeilen
+        invariants.forEach((invariant, index) => {
+            let row = `${index + 1}\t`;
+            invariant.forEach(coeff => {
+                row += `${coeff}\t`;
+            });
+            console.log(row.trim());
+        });
     }
 }

@@ -19,11 +19,11 @@ export class InvariantEntry {
         public allTransitions: string[],
         public placeFlows: Map<string, Map<string, number>>,
         public placeWeights = signal<Map<string, number>>(new Map()),
-        public transitionWeights: Map<string, number> = new Map(),
+        public transitionWeights = signal<Map<string, number>>(new Map()),
         public error: EntryError | null = null,
     ) {
         this.placeWeights.set(new Map(this.allPlaces.map(label => [label, 0])));
-        this.allTransitions.forEach(label => { this.transitionWeights.set(label, 0); });
+        this.transitionWeights.set(new Map(this.allTransitions.map(label => [label, 0])));
     }
 
     get labels(): string[] {
@@ -34,7 +34,23 @@ export class InvariantEntry {
         return Array.from(this.placeWeights().values());
     }
 
-    changePlaceWeight(placeLabel: string, weightDiff: number) {
+    /**
+     * Sets the validity of the invariant object and optionally an associated message.
+     * @param validity - The validity status of the proposed invariant.
+     * @param error - An error object with error information.
+     */
+    setValidity(validity: InvariantValidity | undefined, error: EntryError | null) {
+        this.validity = validity;
+        this.error = error;
+    }
+
+    selectPlace(placeLabel: string, weightDiff: number): void {
+        this._updatePlaceWeight(placeLabel, weightDiff);
+        this._updateTransitionWeights(placeLabel, weightDiff);
+        this._updateText();
+    }
+
+    private _updatePlaceWeight(placeLabel: string, weightDiff: number): void {
         this.placeWeights.update(currentMap => {
             const newMap = new Map(currentMap);
             const currentWeight = newMap.get(placeLabel) || 0;
@@ -42,23 +58,25 @@ export class InvariantEntry {
             newMap.set(placeLabel, newWeight);
             return newMap;
         });
-        this.updateTransitionWeights(placeLabel, weightDiff);
-        this.updateText();
     }
 
-    updateTransitionWeights(placeLabel: string, weightDiff: number) {
+    private _updateTransitionWeights(placeLabel: string, weightDiff: number): void {
         const flow = this.placeFlows.get(placeLabel);
         if (!flow) return;
-        for (let [tranLabel, factor] of flow) { 
-            const weight = this.transitionWeights.get(tranLabel);
-            if (weight !== undefined) {
-                this.transitionWeights.set(tranLabel, weight + factor * weightDiff);
+        
+        this.transitionWeights.update(currentMap => {
+            const newMap = new Map(currentMap);
+            for (const [tranLabel, factor] of flow) {
+                const currentWeight = newMap.get(tranLabel) || 0;
+                newMap.set(tranLabel, currentWeight + factor * weightDiff);
             }
-        }
-        console.log(this.transitionWeights);
+            return newMap;
+        });
+
+        console.log(this.transitionWeights()); // 🔹 Signal abrufen mit ()
     }
 
-    updateText() {
+    private _updateText() {
         const textParts = [];
         for (let [place, weight] of this.placeWeights()) {
             if (weight === 0) continue;
@@ -68,16 +86,6 @@ export class InvariantEntry {
             textParts.push(`${sign}${factor}${place}`);
         }
         this.text = textParts.join(" ");
-    }
-
-    /**
-     * Sets the validity of the invariant object and optionally an associated message.
-     * @param validity - The validity status of the proposed invariant.
-     * @param error - An error object with error information.
-     */
-    setValidity(validity: InvariantValidity | undefined, error: EntryError | null) {
-        this.validity = validity;
-        this.error = error;
     }
 }
 
