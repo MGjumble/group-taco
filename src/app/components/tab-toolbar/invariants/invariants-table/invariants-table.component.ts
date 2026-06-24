@@ -49,41 +49,23 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
     InvariantValidity = InvariantValidity;
 
     inputInvariants = this._invariantsService.inputEntries;
-    private _diagram: Diagram | undefined;
+    diagram: Diagram | undefined;
 
     ngOnInit(): void {
         this._sub = this._displayService.diagram$
             .pipe(
                 tap((_) => {
-                    this._diagram = undefined;
+                    this.diagram = undefined;
                 }),
                 filter((diagram): diagram is Diagram => diagram instanceof Diagram),
             )
             .subscribe((diagram: Diagram) => {
-                this._diagram = diagram;
+                this.diagram = diagram;
             });
     }
 
     ngOnDestroy(): void {
         this._sub?.unsubscribe();
-    }
-
-    /**
-     * Handles changes to a firing sequence and triggers validation based on the current mode.
-     *
-     * - In **learning mode**, the input is validated immediately.
-     * - In **exam mode**, the validity of the entry is set to `undefined` to increase difficulty.
-     *
-     * @param entry - The firing entry whose sequence was changed.
-     * @returns A Promise that resolves when validation or processing is complete.
-     */
-    async onInputChange(entry: InvariantEntry): Promise<void> {
-        if (!this._diagram) return;
-        this._invariantsService.currentEntry.set(entry);
-        if (entry.text.trim().replace(/\*/g, '') === this._invariantsService.currentText.trim().replace(/\*/g, '')) return;
-        if (this.modeService.isExamMode(Tab.INVARIANTS)) entry.setValidity(undefined, null);
-        else await this.invariantsValidationService.validateEntry(entry);
-        this._invariantsService.currentText = entry.text;
     }
 
     /**
@@ -113,14 +95,14 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * Creates a new firing entry.
      */
     onNewEntry(): void {
-        if (this._diagram) this._invariantsService.startNewEntry(this._diagram);
+        if (this.diagram) this._invariantsService.startNewEntry(this.diagram);
     }
 
     /**
      * Validates all firing sequences and shows a notification with the results.
      */
     async onValidateEntries(): Promise<void> {
-        if (!this._diagram) return;
+        if (!this.diagram) return;
         const invalidEntries: ToastList[] = [];
         for (const entry of this.inputInvariants()) {
             this._invariantsService.currentEntry.set(entry);
@@ -145,7 +127,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * Finds firing sequences based on the current Petri net and user-defined limits.
      */
     onFindInvariants(): void {
-        if (!this._diagram) return;
+        if (!this.diagram) return;
     }
 
     /**
@@ -153,7 +135,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * @returns true if buttons should be disabled, false otherwise.
      */
     isButtonDisabled(): boolean {
-        return !this._diagram;
+        return !this.diagram;
     }
 
     /**

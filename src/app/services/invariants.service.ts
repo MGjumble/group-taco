@@ -59,9 +59,6 @@ export class InvariantsService {
         diagram.resetMarking();
         if (this.currentEntry()) this.closeCurrentEntry();
         this.getEmptyEntry();
-        setTimeout(() => {
-            document.getElementById('invariant-input')?.focus();
-        }, 0);
         this._currentText = '';
     }
 

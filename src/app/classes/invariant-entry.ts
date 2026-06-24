@@ -8,7 +8,6 @@ import { EntryError } from "./entry-error";
  * Representing a string entry for a Petri net invariant.
  */
 export class InvariantEntry {
-    private _delimiters = /\s+|,|;|\*|, |; |\* /;
 
     constructor(
         public id: number,
@@ -72,8 +71,6 @@ export class InvariantEntry {
             }
             return newMap;
         });
-
-        console.log(this.transitionWeights()); // 🔹 Signal abrufen mit ()
     }
 
     private _updateText() {

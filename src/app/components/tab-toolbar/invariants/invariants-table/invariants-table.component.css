@@ -152,17 +152,8 @@
     color: limegreen;
 }
 
-input[type='text'] {
-    width: 100%;
-    box-sizing: border-box;
-    font-family: Roboto, sans-serif;
-    font-size: 14px;
-    text-wrap: wrap;
-    line-height: 1.5;
-    padding: 6px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    overflow-wrap: break-word;
+.not-minimal-icon {
+    color: gold;
 }
 
 .tab-toolbar-container {
@@ -232,4 +223,19 @@ input[type='text'] {
     font-size: 18px;
     width: 18px;
     height: 18px;
+}
+
+.progress-container {
+  display: flex;
+  height: 50px;
+  width: 99%;
+  margin: 30px 0 0 0;
+  overflow: hidden;
+}
+
+.progress-text {
+  text-align: center;
+  margin: 4px;
+  font-size: 14px;
+  color: #555;
 }
