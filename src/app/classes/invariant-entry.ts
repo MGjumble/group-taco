@@ -12,7 +12,6 @@ export class InvariantEntry {
     constructor(
         public id: number,
         public text: string,
-        public isClosed: boolean,
         public validity: InvariantValidity | undefined = undefined,
         public allPlaces: string[],
         public allTransitions: string[],

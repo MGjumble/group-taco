@@ -31,10 +31,7 @@ export class InvariantsService {
     }
 
     processPlaceClicked(place: DiagramPlace, isRightClick: boolean): void {
-        let entry = this.currentEntry();
-        if (!entry || entry.isClosed) {
-            entry = this.getEmptyEntry();
-        }
+        let entry = this.currentEntry() || this.getEmptyEntry();
         const weightDiff = isRightClick ? 1 : -1;
         this.updateEntry(entry, place, weightDiff);
         if (this._isExamMode()) entry.setValidity(undefined, null);
@@ -74,37 +71,9 @@ export class InvariantsService {
         }
     }
 
-    /**
-     * Adds a predefined firing entry to the firing table.
-     * @param text - The text.
-     */
-    addValidEntry(
-        text: string,
-    ) {
-        if (this.currentEntry()) this.closeCurrentEntry();
-        const newEntry = new InvariantEntry(this.getNewId(), text, true, InvariantValidity.VALID_MINIMAL, this._validationService.allPlaceLabels, this._validationService.allTransitionLabels, this._validationService.placeFlows);
-        this.inputEntries.update((entries) => {
-            entries.push(newEntry);
-            return entries;
-        });
-    }
-
     updateEntry(entry: InvariantEntry, place: DiagramPlace, weightDiff: number): void {
         entry.selectPlace(place.displayLabel, weightDiff);
         this._currentText = entry.text;
-    }
-
-    /**
-     * Closes the current entry in the table, preventing further updates to it.
-     */
-    closeCurrentEntry(): void {
-        const entry = this.currentEntry();
-        if (entry)
-            this.inputEntries.update((entries) => {
-                entry.isClosed = true;
-                return entries;
-            });
-        this.currentEntry.set(undefined);
     }
 
     /**
@@ -112,7 +81,7 @@ export class InvariantsService {
      * @returns An entry with an empty sequence.
      */
     private getEmptyEntry(): InvariantEntry {
-        const newEntry = new InvariantEntry(this.getNewId(), '', false, undefined, this._validationService.allPlaceLabels, this._validationService.allTransitionLabels, this._validationService.placeFlows);
+        const newEntry = new InvariantEntry(this.getNewId(), '', undefined, this._validationService.allPlaceLabels, this._validationService.allTransitionLabels, this._validationService.placeFlows);
         this.currentEntry.set(newEntry);
         this.inputEntries.update((entries) => {
             entries.push(newEntry);
