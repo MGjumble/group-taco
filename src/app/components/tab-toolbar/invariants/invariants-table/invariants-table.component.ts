@@ -45,10 +45,10 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
     invariantsValidationService = inject(InvariantsValidationService);
     private _notificationService = inject(ToasterNotificationService);
     private _displayService = inject(DisplayService);
-    private _invariantsService = inject(InvariantsService);
+    invariantsService = inject(InvariantsService);
     InvariantValidity = InvariantValidity;
 
-    inputEntries = this._invariantsService.inputEntries;
+    inputEntries = this.invariantsService.inputEntries;
     diagram: Diagram | undefined;
 
     ngOnInit(): void {
@@ -73,14 +73,14 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * @param id - The ID of the entry to delete.
      */
     onDeleteEntry(id: number): void {
-        this._invariantsService.deleteEntry(id);
+        this.invariantsService.deleteEntry(id);
     }
 
     /**
      * Deletes all firing entries and resets the diagram marking.
      */
     onDeleteAllEntries(): void {
-        this._invariantsService.clearInputEntries();
+        this.invariantsService.clearInputEntries();
         this._displayService.diagram$
             .pipe(
                 take(1),
@@ -95,11 +95,11 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * Creates a new firing entry.
      */
     onNewEntry(): void {
-        if (this.diagram) this._invariantsService.addEmptyEntry();
+        if (this.diagram) this.invariantsService.addEmptyEntry();
     }
 
     onActivateEntry(id: number): void {
-        this._invariantsService.activateEntry(id);
+        this.invariantsService.activateEntry(id);
     }
 
     /**
@@ -109,7 +109,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
         if (!this.diagram) return;
         const invalidEntries: ToastList[] = [];
         for (const entry of this.inputEntries()) {
-            this._invariantsService.currentEntry.set(entry);
+            this.invariantsService.currentEntry.set(entry);
             await this.invariantsValidationService.validateEntry(entry);
             //TODO: Update error message
             if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: '' });

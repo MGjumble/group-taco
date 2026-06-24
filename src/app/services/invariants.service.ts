@@ -21,6 +21,8 @@ export class InvariantsService {
 
     inputEntries = signal<InvariantEntry[]>([]);
 
+    isEntryActive = (id: number) => computed(() => this.currentEntry()?.id === id);
+
     getCurrentEntry(): InvariantEntry {
         return this.currentEntry() || this.addEmptyEntry();
     }
@@ -61,7 +63,7 @@ export class InvariantsService {
     activateEntry(id: number): void {
         console.log(this.inputEntries());
         const entry = this.inputEntries().find((entry) => entry.id === id);
-        console.log(entry, entry?.text);
+        console.log(entry, entry?.notation);
         this.currentEntry.set(entry);
     }
 
@@ -70,7 +72,7 @@ export class InvariantsService {
      * @returns An entry with an empty sequence.
      */
     addEmptyEntry(): InvariantEntry {
-        const newEntry = new InvariantEntry(this.getNewId(), '', undefined, this._validationService.allPlaceLabels, this._validationService.allTransitionLabels, this._validationService.placeFlows);
+        const newEntry = new InvariantEntry(this.getNewId(), '', undefined, "", this._validationService.allPlaceLabels, this._validationService.allTransitionLabels, this._validationService.placeFlows);
         this.currentEntry.set(newEntry);
         this.inputEntries.update((entries) => {
             entries.push(newEntry);

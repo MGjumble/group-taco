@@ -41,7 +41,8 @@
                             <th class="narrow-th">
                                 <mat-icon>playlist_add_check</mat-icon>
                             </th>
-                            <th class="invariant-text-th">Notation</th>
+                            <th class="invariant-notation-th">Notation</th>
+                            <th class="invariant-description-th">Description</th>
                             <th class="narrow-th">
                                 <button
                                     mat-icon-button
@@ -56,7 +57,11 @@
                     </thead>
                     <tbody>
                         @for (entry of inputEntries(); track entry.id) {
-                            <tr class="invariant-row" (click)="onActivateEntry(entry.id)">
+                            <tr 
+                                class="invariant-row"
+                                [attr.active]="invariantsService.isEntryActive(entry.id)() ? '' : null"
+                                (click)="onActivateEntry(entry.id)"
+                                >
                                 <td class="invariant-validity-td">
                                     @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
                                         <button
@@ -98,11 +103,12 @@
                                         </button>
                                     }
                                 </td>
-                                <td class="invariant-text-td"
-                                    type="text"
-                                    [(ngModel)]="entry.text"
-                                    [disabled]="isButtonDisabled()">
-                                    {{ entry.text }}
+                                <td class="invariant-notation-td">
+                                    {{ entry.notation }}
+                                </td>
+                                
+                                <td class="invariant-description-td">
+                                    {{ entry.validityDescription }}
                                 </td>
                                 
                                 <td class="delete-button-td">

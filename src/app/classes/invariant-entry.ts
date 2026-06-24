@@ -11,8 +11,9 @@ export class InvariantEntry {
 
     constructor(
         public id: number,
-        public text: string,
+        public notation: string,
         public validity: InvariantValidity | undefined = undefined,
+        public validityDescription: string,
         public allPlaces: string[],
         public allTransitions: string[],
         public placeFlows: Map<string, Map<string, number>>,
@@ -45,7 +46,7 @@ export class InvariantEntry {
     selectPlace(placeLabel: string, weightDiff: number): void {
         this._updatePlaceWeight(placeLabel, weightDiff);
         this._updateTransitionWeights(placeLabel, weightDiff);
-        this._updateText();
+        this._updateNotation();
     }
 
     private _updatePlaceWeight(placeLabel: string, weightDiff: number): void {
@@ -72,16 +73,16 @@ export class InvariantEntry {
         });
     }
 
-    private _updateText() {
-        const textParts = [];
+    private _updateNotation() {
+        const parts = [];
         for (let [place, weight] of this.placeWeights()) {
             if (weight === 0) continue;
             let sign = '- ';
-            if (weight >= 0) sign = textParts.length === 0 ? '' : '+ ';
+            if (weight >= 0) sign = parts.length === 0 ? '' : '+ ';
             const factor = Math.abs(weight) === 1 ? '' : Math.abs(weight)
-            textParts.push(`${sign}${factor}${place}`);
+            parts.push(`${sign}${factor}${place}`);
         }
-        this.text = textParts.join(" ");
+        this.notation = parts.join(" ");
     }
 }
 
