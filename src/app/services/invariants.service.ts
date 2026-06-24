@@ -16,22 +16,17 @@ export class InvariantsService {
     private _validationService = inject(InvariantsValidationService);
 
     currentEntry = signal<InvariantEntry | undefined>(undefined);
-    private _currentText = '2p1 + 2* -p3, p4;5p6 -3 p2';
     private _idCounter = 0;
     private _isExamMode = computed(() => this._modeService.isExamMode(Tab.INVARIANTS));
 
     inputEntries = signal<InvariantEntry[]>([]);
 
-    get currentText(): string {
-        return this._currentText;
-    }
-
-    set currentText(text: string) {
-        this._currentText = text;
+    getCurrentEntry(): InvariantEntry {
+        return this.currentEntry() || this.addEmptyEntry();
     }
 
     processPlaceClicked(place: DiagramPlace, isRightClick: boolean): void {
-        let entry = this.currentEntry() || this.getEmptyEntry();
+        let entry = this.getCurrentEntry();
         const weightDiff = isRightClick ? 1 : -1;
         this.updateEntry(entry, place, weightDiff);
         if (this._isExamMode()) entry.setValidity(undefined, null);
@@ -45,18 +40,6 @@ export class InvariantsService {
     clearInputEntries(): void {
         this.inputEntries.set([]);
         this.currentEntry.set(undefined);
-        this.currentText = '';
-    }
-    
-    /**
-     * Starts a new, empty entry.
-     * @param diagram - The diagram for which the entry is started.
-     */
-    startNewEntry(diagram: Diagram): void {
-        diagram.resetMarking();
-        if (this.currentEntry()) this.closeCurrentEntry();
-        this.getEmptyEntry();
-        this._currentText = '';
     }
 
     /**
@@ -73,14 +56,20 @@ export class InvariantsService {
 
     updateEntry(entry: InvariantEntry, place: DiagramPlace, weightDiff: number): void {
         entry.selectPlace(place.displayLabel, weightDiff);
-        this._currentText = entry.text;
+    }
+
+    activateEntry(id: number): void {
+        console.log(this.inputEntries());
+        const entry = this.inputEntries().find((entry) => entry.id === id);
+        console.log(entry, entry?.text);
+        this.currentEntry.set(entry);
     }
 
     /**
      * Creates a new empty entry with start values.
      * @returns An entry with an empty sequence.
      */
-    private getEmptyEntry(): InvariantEntry {
+    addEmptyEntry(): InvariantEntry {
         const newEntry = new InvariantEntry(this.getNewId(), '', undefined, this._validationService.allPlaceLabels, this._validationService.allTransitionLabels, this._validationService.placeFlows);
         this.currentEntry.set(newEntry);
         this.inputEntries.update((entries) => {
@@ -95,6 +84,6 @@ export class InvariantsService {
      * @returns The new ID
      */
     getNewId(): number {
-        return this._idCounter++;
+        return ++this._idCounter;
     }
 }

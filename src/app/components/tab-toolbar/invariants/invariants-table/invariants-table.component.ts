@@ -48,7 +48,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
     private _invariantsService = inject(InvariantsService);
     InvariantValidity = InvariantValidity;
 
-    inputInvariants = this._invariantsService.inputEntries;
+    inputEntries = this._invariantsService.inputEntries;
     diagram: Diagram | undefined;
 
     ngOnInit(): void {
@@ -95,7 +95,11 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * Creates a new firing entry.
      */
     onNewEntry(): void {
-        if (this.diagram) this._invariantsService.startNewEntry(this.diagram);
+        if (this.diagram) this._invariantsService.addEmptyEntry();
+    }
+
+    onActivateEntry(id: number): void {
+        this._invariantsService.activateEntry(id);
     }
 
     /**
@@ -104,7 +108,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
     async onValidateEntries(): Promise<void> {
         if (!this.diagram) return;
         const invalidEntries: ToastList[] = [];
-        for (const entry of this.inputInvariants()) {
+        for (const entry of this.inputEntries()) {
             this._invariantsService.currentEntry.set(entry);
             await this.invariantsValidationService.validateEntry(entry);
             //TODO: Update error message

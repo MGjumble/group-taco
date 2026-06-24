@@ -18,7 +18,7 @@
                     </button>
                     <button
                         matIconButton
-                        [disabled]="isButtonDisabled() || inputInvariants().length === 0"
+                        [disabled]="isButtonDisabled() || inputEntries().length === 0"
                         color="primary"
                         [matTooltip]="'INVARIANTS.VALIDATE_INVARIANTS' | translate"
                         (click)="onValidateButton(invariantsPanel, $event)">
@@ -48,15 +48,15 @@
                                     color="warn"
                                     (click)="onDeleteAllEntries()"
                                     class="delete-all-entries-button"
-                                    [disabled]="inputInvariants().length === 0">
+                                    [disabled]="inputEntries().length === 0">
                                     <mat-icon>delete_sweep</mat-icon>
                                 </button>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @for (entry of inputInvariants(); track entry.id) {
-                            <tr>
+                        @for (entry of inputEntries(); track entry.id) {
+                            <tr class="invariant-row" (click)="onActivateEntry(entry.id)">
                                 <td class="invariant-validity-td">
                                     @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
                                         <button

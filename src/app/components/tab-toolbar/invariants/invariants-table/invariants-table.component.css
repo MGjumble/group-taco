@@ -122,6 +122,10 @@
     margin: 0;
 }
 
+.invariant-row {
+    cursor: pointer;
+}
+
 .validity-button {
     pointer-events: none;
 }

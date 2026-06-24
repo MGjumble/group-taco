@@ -21,7 +21,7 @@ export class InvariantsComponent implements OnInit, OnDestroy {
     private _invariantsService = inject(InvariantsService);
     private _validationService = inject(InvariantsValidationService);
 
-    inputInvariants = this._invariantsService.inputEntries;
+    inputEntries = this._invariantsService.inputEntries;
     computedMinInvariants = this._validationService.computedMinInvariants;
     
     ngOnInit(): void {
