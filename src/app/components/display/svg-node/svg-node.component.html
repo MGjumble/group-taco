@@ -35,26 +35,28 @@
         (contextmenu)="$event.preventDefault();" />
 
     <!-- Tokens visualization inside place -->
-    @if (!hideTokens() && !showTokenNumber()) {
-        @for (token of tokenPositions(); track token.x + '-' + token.y) {
-            <svg:circle
+    @if (shouldShowTokens()){
+        @if (!hideTokens() && !showTokenNumber()) {
+            @for (token of tokenPositions(); track token.x + '-' + token.y) {
+                <svg:circle
+                    xmlns:svg="http://www.w3.org/2000/svg"
+                    [attr.cx]="token.x"
+                    [attr.cy]="token.y"
+                    r="5"
+                    fill="black" />
+            }
+        } @else if (!hideTokens()) {
+            <svg:text
                 xmlns:svg="http://www.w3.org/2000/svg"
-                [attr.cx]="token.x"
-                [attr.cy]="token.y"
-                r="5"
-                fill="black" />
+                [attr.x]="circleX()"
+                [attr.y]="circleY()"
+                text-anchor="middle"
+                dominant-baseline="central"
+                class="token-count"
+                fill="black">
+                {{ tokenCount() }}
+            </svg:text>
         }
-    } @else if (!hideTokens()) {
-        <svg:text
-            xmlns:svg="http://www.w3.org/2000/svg"
-            [attr.x]="circleX()"
-            [attr.y]="circleY()"
-            text-anchor="middle"
-            dominant-baseline="central"
-            class="token-count"
-            fill="black">
-            {{ tokenCount() }}
-        </svg:text>
     }
 
     @if (shouldShowInnerLabel()) {
@@ -72,26 +74,67 @@
 
     <!-- Place weight display -->
     @if (shouldShowNodeWeight()) {
+        <svg:text
+            class="place-weight"
+            xmlns:svg="http://www.w3.org/2000/svg"
+            [attr.x]="circleX()"
+            [attr.y]="circleY()"
+            text-anchor="middle"
+            dominant-baseline="central"
+            fill="black">
+            {{ nodeWeight() }}
+        </svg:text>
+    }
+
+    @if (enablePlaceWeights()) {
         <svg:g>
-            <svg:ellipse
+            <svg:circle
+                class="change-place-weight-button"
+                xmlns:svg="http://www.w3.org/2000/svg"
+                [attr.cx]="circleX() - RADIUS + 5"
+                [attr.cy]="circleY() - RADIUS + 5"
+                [attr.r]="8"
+                fill="white"
+                stroke="darkblue"
+                stroke-width="1"
+                pointer-events="auto"
+                (click)="onChangePlaceWeight(-1)" />
+
+            <svg:text
+                xmlns:svg="http://www.w3.org/2000/svg"
+                [attr.x]="circleX() - RADIUS + 5"
+                [attr.y]="circleY() - RADIUS + 5"
+                text-anchor="middle"
+                dominant-baseline="central"
+                font-size="18"
+                fill="darkblue"
+                pointer-events="none">
+                ‒
+            </svg:text>
+        </svg:g>
+        <svg:g>
+            <svg:circle
+                class="change-place-weight-button"
                 xmlns:svg="http://www.w3.org/2000/svg"
                 [attr.cx]="circleX() + RADIUS - 5"
                 [attr.cy]="circleY() - RADIUS + 5"
-                [attr.rx]="15"
-                [attr.ry]="10"
+                [attr.r]="8"
                 fill="white"
-                stroke="blue"
-                stroke-width="1.5" />
+                stroke="darkblue"
+                stroke-width="1"
+                pointer-events="auto"
+                (click)="onChangePlaceWeight(1)" />
 
             <svg:text
                 xmlns:svg="http://www.w3.org/2000/svg"
                 [attr.x]="circleX() + RADIUS - 5"
-                [attr.y]="circleY() - RADIUS + 5"
+                [attr.y]="circleY() - RADIUS + 6.5"
                 text-anchor="middle"
                 dominant-baseline="central"
-                font-size="12"
-                fill="black">
-                {{ nodeWeight() }}
+                font-size="18"
+                fill="darkblue"
+                pointer-events="none">
+                +
             </svg:text>
         </svg:g>
     }

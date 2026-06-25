@@ -94,20 +94,16 @@ export class DisplayComponent implements OnInit, OnDestroy {
         }
     }
 
-    public processNodeClick(node: DisplayableNode, isRightClick?: boolean) {
+    public processNodeClick(node: DisplayableNode) {
         const currentTab = this._tabStateService.currentTab();
         const diagram = this.diagram();
         if (
             !this.isPlayingEnabled() ||
             !diagram ||
-            !(diagram instanceof Diagram)
+            !(diagram instanceof Diagram) ||
+            !(node instanceof DiagramTransition)
         )
             return;
-        if (currentTab === Tab.INVARIANTS && node instanceof DiagramPlace && isRightClick !== undefined) {
-            this._invariantsService.processPlaceClicked(node, isRightClick);
-            return;
-        }
-        if (!(node instanceof DiagramTransition)) return;
         if (currentTab === Tab.PLAY) {
             this._playService.processTransitionClicked(diagram, node, true, true, false);
             return;

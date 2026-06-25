@@ -53,3 +53,20 @@
     font-weight: bold;
     pointer-events: none;
 }
+
+.place-weight {
+    font-size: 18px;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.change-place-weight-button {
+    cursor: pointer;
+    z-index: 3;
+}
+
+.change-place-weight-button:hover {
+    fill: gainsboro;
+    stroke-width: 1.5;
+}

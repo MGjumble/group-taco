@@ -27,9 +27,8 @@ export class InvariantsService {
         return this.currentEntry() || this.addEmptyEntry();
     }
 
-    processPlaceClicked(place: DiagramPlace, isRightClick: boolean): void {
+    processPlaceClicked(place: DiagramPlace, weightDiff: number): void {
         let entry = this.getCurrentEntry();
-        const weightDiff = isRightClick ? 1 : -1;
         this.updateEntry(entry, place, weightDiff);
         if (this._isExamMode()) entry.setValidity(undefined, null);
         this.currentEntry.set(entry);

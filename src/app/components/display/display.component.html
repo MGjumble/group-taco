@@ -21,6 +21,6 @@
     }
 
     @for (node of diagram()?.getNodes(); track node.id) {
-        <g appSvgNode [diagramNode]="node" (clickNode)="processNodeClick($event.node)" />
+        <g appSvgNode [diagramNode]="node" (clickNode)="processNodeClick(node)" />
     }
 </svg>

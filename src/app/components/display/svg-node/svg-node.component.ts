@@ -37,6 +37,10 @@ export class SvgNodeComponent {
     readonly transitionLabelPlacement = input<'inside' | 'below'>('inside');
     readonly disableActiveColoring = input<boolean>(false);
 
+    readonly enablePlaceWeights = computed(() => {
+        return this._tabStateService.currentTab() === Tab.INVARIANTS;
+    });
+
     readonly isTransitionAndActive = computed(() => {
         if (this.disableActiveColoring()) return false;
         const node = this.diagramNode();
@@ -59,7 +63,7 @@ export class SvgNodeComponent {
     // Mark if this node is currently selected (for connection creation)
     readonly selected = input<boolean>(false);
 
-    clickNode = output<{ node: DisplayableNode, isRightClick: boolean }>();
+    clickNode = output<DisplayableNode>();
 
     stateNodeClick = output<StateNode>();
 
@@ -94,6 +98,8 @@ export class SvgNodeComponent {
     });
 
     readonly placeFillColor = computed(() => {
+        const weight = this.nodeWeight();
+        if (this.enablePlaceWeights() && weight && weight !== 0) return '#CFE9FF';
         return this.fillColor();
     });
 
@@ -251,6 +257,10 @@ export class SvgNodeComponent {
         return undefined;
     });
 
+    readonly shouldShowTokens = computed(() => {
+        return this._tabStateService.currentTab() !== Tab.INVARIANTS;
+    });
+
     readonly shouldShowNodeWeight = computed(() => {
         const weight = this.nodeWeight();
         return this._tabStateService.currentTab() === Tab.INVARIANTS && weight !== 0 && weight !== undefined;
@@ -263,20 +273,18 @@ export class SvgNodeComponent {
 
     public click() {
         const node = this.diagramNode();
-        if (node) this.clickNode.emit({ node: node, isRightClick: false });
+        if (node) this.clickNode.emit(node);
     }
 
     public circleClick(event: MouseEvent) {
-        const isRightClick = event.button === 2;
-        if (isRightClick) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
         const node = this.diagramNode();
-        if (node) {
-            if (this._tabStateService.currentTab() === Tab.INVARIANTS) {
-                this.clickNode.emit({ node: node, isRightClick: isRightClick });
-            } else this.stateNodeClick.emit(node as StateNode);
+        if (node) this.stateNodeClick.emit(node as StateNode);
+    }
+
+    onChangePlaceWeight(weightDiff: number): void {
+        const node = this.diagramNode();
+        if (node instanceof DiagramPlace) {
+            this._invariantsService.processPlaceClicked(node, weightDiff);
         }
     }
 
