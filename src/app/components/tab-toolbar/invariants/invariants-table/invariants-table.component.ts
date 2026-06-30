@@ -19,6 +19,8 @@ import { ModeService } from '../../../../services/mode.service';
 import { InvariantsValidationService } from '../../../../services/invariants-validation.service';
 import { InvariantsService } from '../../../../services/invariants.service';
 import { ToasterNotificationService } from '../../../../services/toaster-notification.service';
+import { MatDialog } from '@angular/material/dialog';
+import { InvariantsModalComponent } from '../invariants-modal/invariants-modal.component';
 
 @Component({
     selector: 'app-invariants-table',
@@ -42,10 +44,11 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
     private _sub?: Subscription;
 
     modeService = inject(ModeService);
-    invariantsValidationService = inject(InvariantsValidationService);
     private _notificationService = inject(ToasterNotificationService);
     private _displayService = inject(DisplayService);
+    private _dialog = inject(MatDialog);
     invariantsService = inject(InvariantsService);
+    validationService = inject(InvariantsValidationService);
     InvariantValidity = InvariantValidity;
 
     inputEntries = this.invariantsService.inputEntries;
@@ -109,7 +112,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
         if (!this.diagram) return;
         const invalidEntries: ToastList[] = [];
         for (const entry of this.inputEntries()) {
-            await this.invariantsValidationService.validateEntry(entry, true);
+            await this.validationService.validateEntry(entry, true);
             //TODO: Update error message
             if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: '' });
         }
@@ -131,6 +134,15 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      */
     onFindInvariants(): void {
         if (!this.diagram) return;
+        const vectors = this.validationService.computedMinInvariants();
+        const notations = [];
+        for (let vector of vectors) {
+            const notation = InvariantEntry.toNotation(vector, this.diagram.getPlaceLabels());
+            notations.push(notation);
+        }
+        this._dialog.open(InvariantsModalComponent, {
+            data: { notations: notations },
+        });
     }
 
     /**

@@ -76,15 +76,23 @@ export class InvariantEntry {
     }
 
     private _updateNotation() {
+        const labels = Array.from(this.placeWeights().keys());
+        const vector = Array.from(this.placeWeights().values());
+        this.notation = InvariantEntry.toNotation(vector, labels)
+    }
+
+    static toNotation(vector: number[], placeLabels: string[]): string {
         const parts = [];
-        for (let [place, weight] of this.placeWeights()) {
+        for (let i = 0; i < vector.length; i++) {
+            const weight = vector[i];
+            const label = placeLabels[i];
             if (weight === 0) continue;
             let sign = '- ';
             if (weight >= 0) sign = parts.length === 0 ? '' : '+ ';
             const factor = Math.abs(weight) === 1 ? '' : Math.abs(weight);
-            parts.push(`${sign}${factor}${place}`);
+            parts.push(`${sign}${factor}${label}`);
         }
-        this.notation = parts.join(' ');
+        return parts.join(' ');
     }
 }
 

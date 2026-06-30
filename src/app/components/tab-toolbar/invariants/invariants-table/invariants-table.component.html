@@ -68,7 +68,7 @@
                                     <button
                                         mat-icon-button
                                         class="not-minimal-button validity-button"
-                                        matTooltip="{{ this.invariantsValidationService.getErrorMessage(entry) }}"
+                                        matTooltip="{{ this.validationService.getErrorMessage(entry) }}"
                                         matTooltipClass="wide-tooltip">
                                         <mat-icon class="not-minimal-icon">check_circle</mat-icon>
                                     </button>
@@ -76,7 +76,7 @@
                                     <button
                                         mat-icon-button
                                         class="incomplete-button validity-button"
-                                        matTooltip="{{ this.invariantsValidationService.getErrorMessage(entry) }}"
+                                        matTooltip="{{ this.validationService.getErrorMessage(entry) }}"
                                         matTooltipClass="wide-tooltip">
                                         <mat-icon class="incomplete-icon">build_circle</mat-icon>
                                     </button>
@@ -84,7 +84,7 @@
                                     <button
                                         mat-icon-button
                                         class="invalid-button validity-button"
-                                        matTooltip="{{ this.invariantsValidationService.getErrorMessage(entry) }}"
+                                        matTooltip="{{ this.validationService.getErrorMessage(entry) }}"
                                         matTooltipClass="wide-tooltip">
                                         <mat-icon color="warn">cancel</mat-icon>
                                     </button>
@@ -114,8 +114,8 @@
             @if (diagram) {
                 <div class="progress-container">
                     <p class="progress-text">
-                        Gefunden: {{ invariantsValidationService.foundCount() }} /
-                        {{ invariantsValidationService.totalCount() }}
+                        Gefunden: {{ validationService.foundCount() }} /
+                        {{ validationService.totalCount() }}
                     </p>
                 </div>
             }
