@@ -5,10 +5,10 @@ import { SvgNodeComponent } from 'src/app/components/display/svg-node/svg-node.c
 import { ToasterNotificationService } from 'src/app/services/toaster-notification.service';
 
 @Component({
-  selector: 'app-invariants-display',
-  imports: [SvgNodeComponent, SvgArcComponent],
-  templateUrl: './invariants-display.component.html',
-  styleUrl: './invariants-display.component.css',
+    selector: 'app-invariants-display',
+    imports: [SvgNodeComponent, SvgArcComponent],
+    templateUrl: './invariants-display.component.html',
+    styleUrl: './invariants-display.component.css',
 })
 export class InvariantsDisplayComponent extends DisplayComponent {
     private _toaster = inject(ToasterNotificationService);

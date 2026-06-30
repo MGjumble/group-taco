@@ -20,15 +20,15 @@
 }
 
 .node-weight-mask-group {
-  pointer-events: auto;
+    pointer-events: auto;
 }
 
 .node-weight-mask {
-  opacity: 1;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
 }
 
 :host ::ng-deep .node-weight-mask-group:hover .node-weight-mask {
-  opacity: 0;
+    opacity: 0;
 }
