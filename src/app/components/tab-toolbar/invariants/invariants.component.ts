@@ -23,10 +23,10 @@ export class InvariantsComponent implements OnInit, OnDestroy {
 
     inputEntries = this._invariantsService.inputEntries;
     computedMinInvariants = this._validationService.computedMinInvariants;
-    
+
     ngOnInit(): void {
         this._sub = this._displayService.diagram$
-        //TODO: Optimize subscription
+            //TODO: Optimize subscription
             .pipe(
                 tap((diagram) => {
                     this._invariantsService.clearInputEntries();
@@ -36,9 +36,7 @@ export class InvariantsComponent implements OnInit, OnDestroy {
                     this._validationService.initialize(diagram);
                 }),
             )
-            .subscribe((marking) => {
-                ;
-            });
+            .subscribe((marking) => {});
     }
 
     ngOnDestroy(): void {

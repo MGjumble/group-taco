@@ -21,7 +21,7 @@ import { InvariantsService } from '../../../../services/invariants.service';
 import { ToasterNotificationService } from '../../../../services/toaster-notification.service';
 
 @Component({
-  selector: 'app-invariants-table',
+    selector: 'app-invariants-table',
     imports: [
         CommonModule,
         FormsModule,
@@ -35,8 +35,8 @@ import { ToasterNotificationService } from '../../../../services/toaster-notific
         TranslateModule,
         MatTooltip,
     ],
-  templateUrl: './invariants-table.component.html',
-  styleUrl: './invariants-table.component.css',
+    templateUrl: './invariants-table.component.html',
+    styleUrl: './invariants-table.component.css',
 })
 export class InvariantsTableComponent implements OnInit, OnDestroy {
     private _sub?: Subscription;
@@ -109,8 +109,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
         if (!this.diagram) return;
         const invalidEntries: ToastList[] = [];
         for (const entry of this.inputEntries()) {
-            this.invariantsService.currentEntry.set(entry);
-            await this.invariantsValidationService.validateEntry(entry);
+            await this.invariantsValidationService.validateEntry(entry, true);
             //TODO: Update error message
             if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: '' });
         }

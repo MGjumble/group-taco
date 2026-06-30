@@ -249,7 +249,7 @@ export class SvgNodeComponent {
     // Computed values for selection highlighting
     readonly isSelected = computed(() => !!this.selected());
     readonly selectionStrokeColor = computed(() => (this.isSelected() ? 'orange' : 'transparent'));
-    
+
     readonly nodeWeight = computed(() => {
         const entry = this._invariantsService.currentEntry();
         if (this.isPlace()) return entry?.placeWeights().get(this.displayLabel());

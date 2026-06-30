@@ -7,21 +7,28 @@ import { Diagram } from '../classes/diagram/diagram';
 import { InvariantEntry, InvariantValidity } from '../classes/invariant-entry';
 import { Tab } from '../classes/tabs';
 import { DiagramTransition } from '../classes/diagram/diagram-transition';
+import { PlaceInvariantsService } from './invariants-computing.service';
 
 @Injectable({ providedIn: 'root' })
 export class InvariantsValidationService {
     private _notificationService = inject(ToasterNotificationService);
     private _modeService = inject(ModeService);
     private _translate = inject(TranslateService);
+    private _computingService = inject(PlaceInvariantsService);
 
     private _EPSILON = 1e-10;
 
-    private _allPlaceLabels: string[] = []
-    private _allTransitionLabels: string[] = []
+    private _allPlaceLabels: string[] = [];
+    private _allTransitionLabels: string[] = [];
     private _placeFlows: Map<string, Map<string, number>> = new Map();
-    
+    private _incidenceMatrix: number[][] = [];
+
+    foundMinInvariants = signal<number[][]>([]);
     computedMinInvariants = signal<number[][]>([]);
-    
+
+    foundCount = computed(() => this.foundMinInvariants().length);
+    totalCount = computed(() => this.computedMinInvariants().length);
+
     get allPlaceLabels(): string[] {
         return this._allPlaceLabels;
     }
@@ -29,7 +36,7 @@ export class InvariantsValidationService {
     set allPlaceLabels(labels: string[]) {
         this._allPlaceLabels = labels;
     }
-    
+
     get allTransitionLabels(): string[] {
         return this._allTransitionLabels;
     }
@@ -42,8 +49,17 @@ export class InvariantsValidationService {
         return this._placeFlows;
     }
 
+    initialize(diagram: Diagram): void {
+        this._allPlaceLabels = diagram.getPlaceLabels();
+        this._allTransitionLabels = diagram.getTransitionLabels();
+        this.setPlaceFlows(diagram.transitions);
+        this._computeMinimalInvariants(diagram);
+    }
+
     setPlaceFlows(transitions: DiagramTransition[]) {
-        this._allPlaceLabels.forEach(label => { this._placeFlows.set(label, new Map()); });
+        this._allPlaceLabels.forEach((label) => {
+            this._placeFlows.set(label, new Map());
+        });
         for (const transition of transitions) {
             const transitionLabel = transition.displayLabel;
 
@@ -59,26 +75,6 @@ export class InvariantsValidationService {
                 this._placeFlows.get(placeLabel)?.set(transitionLabel, currentWeight - weight);
             }
         }
-        console.log(this._placeFlows);
-    }
-
-    initialize(diagram: Diagram): void {
-        this._allPlaceLabels = diagram.getPlaceLabels();
-        this._allTransitionLabels = diagram.getTransitionLabels();
-        this.setPlaceFlows(diagram.transitions);
-        this._computeMinimalInvariants(diagram);
-    }
-    
-    /**
-     * Finds valid firing sequences in a Petri net diagram beginning at its start marking.
-     * @param diagram  - The Petri net diagram for which firing sequences are to be found.
-     */
-    findInvariants(diagram: Diagram): void {
-        ;
-    }
-
-    resetComputedInvariants(): void {
-        this.computedMinInvariants.set([]);
     }
 
     /**
@@ -86,21 +82,51 @@ export class InvariantsValidationService {
      * @param entry - The firing entry to be validated.
      * @returns A promise that resolves when the validation is complete.
      */
-    async validateEntry(entry: InvariantEntry): Promise<void> {
-        const hasOnlyValidPlaces: boolean = this.hasOnlyValidPlaces(entry);
-        if (hasOnlyValidPlaces) {
-            const isMinimal = this.computedMinInvariants().includes(entry.vector);
-            if (isMinimal) {
-                entry.setValidity(InvariantValidity.VALID_MINIMAL, null);
-                return;
-            }
-            //TODO: Check if invariant is valid and not minimal
-            const isValidNotMinimal = this.computedMinInvariants().includes(entry.vector);
-            if (isValidNotMinimal) {
-                entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL, null);
-                return;
-            }
+    async validateEntry(entry: InvariantEntry, rejectTrivial: boolean = false): Promise<void> {
+        const vector = entry.vector;
+        const isTrivial = vector.every((val) => val === 0);
+        if (isTrivial) {
+            console.log('trivial');
+            if (rejectTrivial) {
+                entry.setValidity(InvariantValidity.INVALID);
+            } else entry.setValidity(undefined);
+            return;
         }
+
+        const computedInvariants = this.computedMinInvariants();
+        const isExactMatch = computedInvariants.some((inv) => this._areVectorsEqual(vector, inv));
+
+        if (isExactMatch) {
+            console.log('minimal');
+            entry.setValidity(InvariantValidity.VALID_MINIMAL);
+            return;
+        }
+
+        const isIncompleteInvariant = computedInvariants.some((inv) => {
+            return vector.every((val, i) => inv[i] - val >= 0);
+        });
+
+        if (isIncompleteInvariant) {
+            console.log('incomplete');
+            entry.setValidity(InvariantValidity.INCOMPLETE);
+            return;
+        }
+
+        const isInvariant = this._isInvariant(vector);
+        if (!isInvariant) {
+            const nonZeroTransitions = entry.getNonZeroTransitions();
+            console.log(nonZeroTransitions);
+            entry.setValidity(InvariantValidity.INVALID);
+            return;
+        }
+
+        console.log('not minimal');
+        entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL);
+    }
+
+    private _areVectorsEqual(a: number[], b: number[]): boolean {
+        if (a.length !== b.length) return false;
+        return a.every((val, i) => Math.abs(val - b[i]) < this._EPSILON);
     }
 
     /**
@@ -108,33 +134,15 @@ export class InvariantsValidationService {
      * @param entry - The firing entry to be validated.
      * @returns true if all labels correnspond to existing transitions, false otherwise.
      */
-    private hasOnlyValidPlaces(entry: InvariantEntry): boolean {
-        entry.setValidity(InvariantValidity.VALID_MINIMAL, null);
-        if (entry.labels.length === 0) return true;
-
-        const visitedLabels: string[] = [];
-        for (const label of entry.labels) {
-            visitedLabels.push(label);
-            const exactMatch = this._allPlaceLabels.includes(label);
-            const partialMatch = this._allPlaceLabels.some((place) => place.startsWith(label));
-            if (exactMatch) {
-                continue;
-            } else {
-                if (!this._modeService.isExamMode(Tab.INVARIANTS) && !partialMatch)
-                    this._notificationService.showWarning(
-                        'TOASTER.HEADER.PLACE_NOT_PRESENT',
-                        'TOASTER.BODY.PLACE_NOT_PRESENT',
-                        { messageParams: { label: label } },
-                    );
-                entry.setValidity(InvariantValidity.INVALID, {
-                    type: 'INVARIANTS.NOT_PRESENT',
-                    invalidLabel: label,
-                    visitedLabels: visitedLabels,
-                });
-                break;
+    private _isInvariant(vector: number[]): boolean {
+        for (let j = 0; j < this._incidenceMatrix[0].length; j++) {
+            let sum = 0;
+            for (let i = 0; i < vector.length; i++) {
+                sum += vector[i] * this._incidenceMatrix[i][j];
             }
+            if (Math.abs(sum) > this._EPSILON) return false;
         }
-        return entry.validity !== InvariantValidity.INVALID;
+        return true;
     }
 
     /**
@@ -155,154 +163,35 @@ export class InvariantsValidationService {
             const inputFlows = transitions[i].getInputFlow();
             const outputFlows = transitions[i].getOutputFlow();
             inputFlows.forEach(({ place, weight }) => {
-                const pIndex = places.findIndex(p => p.id === place.id);
+                const pIndex = places.findIndex((p) => p.id === place.id);
                 matrix[pIndex][i] -= weight;
             });
 
             outputFlows.forEach(({ place, weight }) => {
-                const pIndex = places.findIndex(p => p.id === place.id);
+                const pIndex = places.findIndex((p) => p.id === place.id);
                 matrix[pIndex][i] += weight;
             });
         }
         return matrix;
     }
 
-    extendIncidenceMatrix(matrix: number[][]): number[][] {
-        const extendedMatrix: number[][] = matrix.map((row, i) => {
-            const extendedRow = [...row];
-            for (let j = 0; j < matrix.length; j++) {
-                extendedRow.push(i === j ? 1 : 0);
-            }
-            return extendedRow;
-        });
-        return extendedMatrix;
-    }
-
     private _computeMinimalInvariants(diagram: Diagram): void {
-        const incidenceMatrix = this.createIncidenceMatrix(diagram);
-        const extendedMatrix = this.extendIncidenceMatrix(incidenceMatrix);
-        const allFoundInvariants = this._computeInvariants(extendedMatrix);
-        const minimalInvariants = allFoundInvariants.filter(inv => this._isMinimal(inv, incidenceMatrix));
+        this._incidenceMatrix = this.createIncidenceMatrix(diagram);
+        const allFoundInvariants = this._computingService.placeInvariants(this._incidenceMatrix);
+        const minimalInvariants = this._computingService.calculateMinimalPIs(allFoundInvariants, this._incidenceMatrix);
         this._printInvariantsAsTable(minimalInvariants, this._allPlaceLabels);
         this.computedMinInvariants.set(minimalInvariants);
     }
 
-    private _computeInvariants(extendedMatrix: number[][]): number[][] {
-        const rows = extendedMatrix.length;
-        const cols = extendedMatrix[0].length;
-        const transitionCount = cols - rows;
-
-        let M = this._gaussianEliminationZ(extendedMatrix);
-
-        const invariants: number[][] = [];
-        for (let row = 0; row < rows; row++) {
-            let isInvariant = true;
-            for (let col = 0; col < transitionCount; col++) {
-                if (M[row][col] !== 0) {
-                    isInvariant = false;
-                    break;
-                }
-            }
-            if (isInvariant) {
-                const invariant = M[row].slice(transitionCount, cols);
-                const normalizedInvariant = this._normalizeInvariant(invariant);
-                invariants.push(normalizedInvariant);
-            }
-        }
-        return invariants;
-    }
-
-    private _normalizeInvariant(invariant: number[]): number[] {
-        const gcd = this._gcdOfArray(invariant.filter(val => val !== 0));
-        if (gcd === 0) return invariant;
-
-        const normalized = invariant.map(val => val / gcd);
-
-        const firstNonZeroIndex = normalized.findIndex(val => val !== 0);
-        if (firstNonZeroIndex !== -1 && normalized[firstNonZeroIndex] < 0) {
-            return normalized.map(val => 0 - val);
-        }
-
-        return normalized;
-    }
-
-    private _isMinimal(invariant: number[], incidenceMatrix: number[][]): boolean {
-        if (invariant.every(val => val === 0)) return false;
-
-        for (const otherInv of incidenceMatrix) {
-            if (invariant === otherInv) continue;
-
-            const isMultiple = invariant.every((val, i) => {
-                if (otherInv[i] === 0) return val === 0;
-                if (val === 0) return false;
-                return val % otherInv[i] === 0 && val / otherInv[i] === invariant[0] / otherInv[0];
-            });
-
-            if (isMultiple) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private _gaussianEliminationZ(matrix: number[][]): number[][] {
-        const rows = matrix.length;
-        const cols = matrix[0].length;
-        let M = matrix.map(row => [...row]);
-
-        for (let col = 0, row = 0; col < cols && row < rows; col++) {
-            let pivot = row;
-            while (pivot < rows && M[pivot][col] === 0) pivot++;
-            if (pivot === rows) continue;
-
-            [M[row], M[pivot]] = [M[pivot], M[row]];
-
-            for (let i = 0; i < rows; i++) {
-                if (i !== row && M[i][col] !== 0) {
-                    const gcd = this._gcdOfTwoNumbers(Math.abs(M[row][col]), Math.abs(M[i][col]));
-                    const lcm = (Math.abs(M[row][col]) * Math.abs(M[i][col])) / gcd;
-                    const factor1 = lcm / Math.abs(M[row][col]);
-                    const factor2 = lcm / Math.abs(M[i][col]);
-
-                    for (let j = col; j < cols; j++) {
-                        M[row][j] *= factor1;
-                        M[i][j] *= factor2;
-                    }
-
-                    const intFactor = M[i][col] / M[row][col];
-                    for (let j = col; j < cols; j++) {
-                        M[i][j] -= intFactor * M[row][j];
-                    }
-                }
-            }
-            row++;
-        }
-        return M;
-    }
-
-    private _gcdOfArray(arr: number[]): number {
-        const absArr = arr.map(Math.abs).filter(val => val !== 0);
-        if (absArr.length === 0) return 1;
-        let gcd = absArr[0];
-        for (let i = 1; i < absArr.length; i++) {
-            gcd = this._gcdOfTwoNumbers(gcd, absArr[i]);
-        }
-        return gcd;
-    }
-    
-    private _gcdOfTwoNumbers(a: number, b: number): number {
-        return b === 0 ? a : this._gcdOfTwoNumbers(b, a % b);
-    }
-
     private _printInvariantsAsTable(invariants: number[][], placeLabels: string[]): void {
         if (invariants.length === 0) {
-            console.log("Keine Invarianten gefunden.");
+            console.log('Keine Invarianten gefunden.');
             return;
         }
 
         // Header-Zeile
-        let header = "#\t";
-        placeLabels.forEach(label => {
+        let header = '#\t';
+        placeLabels.forEach((label) => {
             header += `${label}\t`;
         });
         console.log(header.trim());
@@ -310,7 +199,7 @@ export class InvariantsValidationService {
         // Datenzeilen
         invariants.forEach((invariant, index) => {
             let row = `${index + 1}\t`;
-            invariant.forEach(coeff => {
+            invariant.forEach((coeff) => {
                 row += `${coeff}\t`;
             });
             console.log(row.trim());

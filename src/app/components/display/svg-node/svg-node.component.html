@@ -32,10 +32,10 @@
         stroke-width="2"
         pointer-events="auto"
         (mousedown)="circleClick($event)"
-        (contextmenu)="$event.preventDefault();" />
+        (contextmenu)="$event.preventDefault()" />
 
     <!-- Tokens visualization inside place -->
-    @if (shouldShowTokens()){
+    @if (shouldShowTokens()) {
         @if (!hideTokens() && !showTokenNumber()) {
             @for (token of tokenPositions(); track token.x + '-' + token.y) {
                 <svg:circle
@@ -87,31 +87,33 @@
     }
 
     @if (enablePlaceWeights()) {
-        <svg:g>
-            <svg:circle
-                class="change-place-weight-button"
-                xmlns:svg="http://www.w3.org/2000/svg"
-                [attr.cx]="circleX() - RADIUS + 5"
-                [attr.cy]="circleY() - RADIUS + 5"
-                [attr.r]="8"
-                fill="white"
-                stroke="darkblue"
-                stroke-width="1"
-                pointer-events="auto"
-                (click)="onChangePlaceWeight(-1)" />
+        @if (nodeWeight()) {
+            <svg:g>
+                <svg:circle
+                    class="change-place-weight-button"
+                    xmlns:svg="http://www.w3.org/2000/svg"
+                    [attr.cx]="circleX() - RADIUS + 5"
+                    [attr.cy]="circleY() - RADIUS + 5"
+                    [attr.r]="8"
+                    fill="white"
+                    stroke="darkblue"
+                    stroke-width="1"
+                    pointer-events="auto"
+                    (click)="onChangePlaceWeight(-1)" />
 
-            <svg:text
-                xmlns:svg="http://www.w3.org/2000/svg"
-                [attr.x]="circleX() - RADIUS + 5"
-                [attr.y]="circleY() - RADIUS + 5"
-                text-anchor="middle"
-                dominant-baseline="central"
-                font-size="18"
-                fill="darkblue"
-                pointer-events="none">
-                ‒
-            </svg:text>
-        </svg:g>
+                <svg:text
+                    xmlns:svg="http://www.w3.org/2000/svg"
+                    [attr.x]="circleX() - RADIUS + 5"
+                    [attr.y]="circleY() - RADIUS + 5"
+                    text-anchor="middle"
+                    dominant-baseline="central"
+                    font-size="18"
+                    fill="darkblue"
+                    pointer-events="none">
+                    ‒
+                </svg:text>
+            </svg:g>
+        }
         <svg:g>
             <svg:circle
                 class="change-place-weight-button"
@@ -183,20 +185,20 @@
     @if (shouldShowNodeWeight()) {
         <svg:g>
             <svg:polygon
-            xmlns:svg="http://www.w3.org/2000/svg"
-            [attr.points]="getTrianglePoints()"
-            [attr.fill]="nodeWeight()! > 0 ? '#aaffaa' : '#ffaaaa'"
-            stroke="black"
-            stroke-width="0.5" />
+                xmlns:svg="http://www.w3.org/2000/svg"
+                [attr.points]="getTrianglePoints()"
+                [attr.fill]="nodeWeight()! > 0 ? '#aaffaa' : '#ffaaaa'"
+                stroke="black"
+                stroke-width="0.5" />
 
-        <svg:text
-            xmlns:svg="http://www.w3.org/2000/svg"
-            [attr.x]="rectX() + rectWidth() - 12"  
-            [attr.y]="rectY() + 12"
-            text-anchor="middle"
-            dominant-baseline="central"
-            font-size="12"
-            fill="black">
+            <svg:text
+                xmlns:svg="http://www.w3.org/2000/svg"
+                [attr.x]="rectX() + rectWidth() - 12"
+                [attr.y]="rectY() + 12"
+                text-anchor="middle"
+                dominant-baseline="central"
+                font-size="12"
+                fill="black">
                 {{ nodeWeight()! > 0 ? ' +' : '' }}{{ nodeWeight() }}
             </svg:text>
         </svg:g>

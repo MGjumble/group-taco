@@ -1,12 +1,12 @@
-import { computed, inject, Injectable, signal } from "@angular/core";
-import { ModeService } from "./mode.service";
-import { ToasterNotificationService } from "./toaster-notification.service";
-import { SourcePetriNetService } from "./source-petri-net.service";
-import { InvariantEntry, InvariantValidity } from "../classes/invariant-entry";
-import { InvariantsValidationService } from "./invariants-validation.service";
-import { Diagram } from "../classes/diagram/diagram";
-import { Tab } from "../classes/tabs";
-import { DiagramPlace } from "../classes/diagram/diagram-place";
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { ModeService } from './mode.service';
+import { ToasterNotificationService } from './toaster-notification.service';
+import { SourcePetriNetService } from './source-petri-net.service';
+import { InvariantEntry, InvariantValidity } from '../classes/invariant-entry';
+import { InvariantsValidationService } from './invariants-validation.service';
+import { Diagram } from '../classes/diagram/diagram';
+import { Tab } from '../classes/tabs';
+import { DiagramPlace } from '../classes/diagram/diagram-place';
 
 @Injectable({ providedIn: 'root' })
 export class InvariantsService {
@@ -24,15 +24,16 @@ export class InvariantsService {
     isEntryActive = (id: number) => computed(() => this.currentEntry()?.id === id);
 
     getCurrentEntry(): InvariantEntry {
-        return this.currentEntry() || this.addEmptyEntry();
+        let currentEntry = this.currentEntry() || this.addEmptyEntry();
+        this.currentEntry.set(currentEntry);
+        return currentEntry;
     }
 
     processPlaceClicked(place: DiagramPlace, weightDiff: number): void {
         let entry = this.getCurrentEntry();
         this.updateEntry(entry, place, weightDiff);
-        if (this._isExamMode()) entry.setValidity(undefined, null);
-        this.currentEntry.set(entry);
-        //TODO: Validate invariant in learning mode
+        if (this._isExamMode()) entry.setValidity(undefined, undefined);
+        else this._validationService.validateEntry(entry);
     }
 
     /**
@@ -71,7 +72,15 @@ export class InvariantsService {
      * @returns An entry with an empty sequence.
      */
     addEmptyEntry(): InvariantEntry {
-        const newEntry = new InvariantEntry(this.getNewId(), '', undefined, "", this._validationService.allPlaceLabels, this._validationService.allTransitionLabels, this._validationService.placeFlows);
+        const newEntry = new InvariantEntry(
+            this.getNewId(),
+            '',
+            undefined,
+            '',
+            this._validationService.allPlaceLabels,
+            this._validationService.allTransitionLabels,
+            this._validationService.placeFlows,
+        );
         this.currentEntry.set(newEntry);
         this.inputEntries.update((entries) => {
             entries.push(newEntry);

@@ -1,4 +1,4 @@
-<div class="invariants-table-wrapper"> 
+<div class="invariants-table-wrapper">
     <mat-expansion-panel class="invariants-table-panel" [expanded]="true" #invariantsPanel>
         <mat-expansion-panel-header class="invariants-table-header">
             <div class="invariants-table-header-title">
@@ -40,7 +40,7 @@
                             <mat-icon>playlist_add_check</mat-icon>
                         </th>
                         <th class="invariant-notation-th">Notation</th>
-                        <th class="invariant-description-th">Description</th>
+                        <th class="invariant-message-th">Description</th>
                         <th class="narrow-th">
                             <button
                                 mat-icon-button
@@ -55,16 +55,13 @@
                 </thead>
                 <tbody>
                     @for (entry of inputEntries(); track entry.id) {
-                        <tr 
+                        <tr
                             class="invariant-row"
                             [attr.active]="invariantsService.isEntryActive(entry.id)() ? '' : null"
-                            (click)="onActivateEntry(entry.id)"
-                            >
+                            (click)="onActivateEntry(entry.id)">
                             <td class="invariant-validity-td">
                                 @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
-                                    <button
-                                        mat-icon-button
-                                        class="minimal-button validity-button">
+                                    <button mat-icon-button class="minimal-button validity-button">
                                         <mat-icon class="minimal-icon">check_circle</mat-icon>
                                     </button>
                                 } @else if (entry.validity === InvariantValidity.VALID_NOT_MINIMAL) {
@@ -74,9 +71,6 @@
                                         matTooltip="{{ this.invariantsValidationService.getErrorMessage(entry) }}"
                                         matTooltipClass="wide-tooltip">
                                         <mat-icon class="not-minimal-icon">check_circle</mat-icon>
-                                        <div class="info-icon-container">
-                                            <mat-icon color="primary" class="info-icon"> info_outline </mat-icon>
-                                        </div>
                                     </button>
                                 } @else if (entry.validity === InvariantValidity.INCOMPLETE) {
                                     <button
@@ -84,9 +78,7 @@
                                         class="incomplete-button validity-button"
                                         matTooltip="{{ this.invariantsValidationService.getErrorMessage(entry) }}"
                                         matTooltipClass="wide-tooltip">
-                                        <div class="info-icon-container">
-                                            <mat-icon color="primary" class="info-icon"> info_outline </mat-icon>
-                                        </div>
+                                        <mat-icon class="incomplete-icon">build_circle</mat-icon>
                                     </button>
                                 } @else if (entry.validity === InvariantValidity.INVALID) {
                                     <button
@@ -95,20 +87,17 @@
                                         matTooltip="{{ this.invariantsValidationService.getErrorMessage(entry) }}"
                                         matTooltipClass="wide-tooltip">
                                         <mat-icon color="warn">cancel</mat-icon>
-                                        <div class="info-icon-container">
-                                            <mat-icon color="primary" class="info-icon"> info_outline </mat-icon>
-                                        </div>
                                     </button>
                                 }
                             </td>
                             <td class="invariant-notation-td">
                                 {{ entry.notation }}
                             </td>
-                            
-                            <td class="invariant-description-td">
-                                {{ entry.validityDescription }}
+
+                            <td class="invariant-message-td">
+                                {{ entry.message }}
                             </td>
-                            
+
                             <td class="delete-button-td">
                                 <button
                                     mat-icon-button
@@ -125,7 +114,8 @@
             @if (diagram) {
                 <div class="progress-container">
                     <p class="progress-text">
-                        Gefunden: {{ invariantsValidationService.foundCount() }} / {{ invariantsValidationService.totalCount() }}
+                        Gefunden: {{ invariantsValidationService.foundCount() }} /
+                        {{ invariantsValidationService.totalCount() }}
                     </p>
                 </div>
             }
