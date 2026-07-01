@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
@@ -51,8 +51,9 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
     validationService = inject(InvariantsValidationService);
     InvariantValidity = InvariantValidity;
 
-    inputEntries = this.invariantsService.inputEntries;
+    inputEntries = this.validationService.inputEntries;
     diagram: Diagram | undefined;
+    isExamMode = computed(() => this.modeService.isExamMode(Tab.INVARIANTS));
 
     ngOnInit(): void {
         this._sub = this._displayService.diagram$

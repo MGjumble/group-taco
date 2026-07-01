@@ -242,6 +242,15 @@
         "INSTRUCTION_AUTO_FIRING": "Automatische Erstellung",
         "INSTRUCTION_AUTO_FIRING_TEXT": "Im Lernmodus erstellt das Klicken auf aktivierte Transitionen im Petrinetz automatisch das Prozessnetz."
     },
+    "INVARIANTS": {
+        "VALID_MINIMAL": "Minimale Invariante",
+        "VALID_NOT_MINIMAL": "Nicht-minimale Invariante --- Linearkombination minimaler Invarianten",
+        "INCOMPLETE": "Unvollständig",
+        "PLACES_MISSING": "Fehlende Stellen:",
+        "WEIGHTS_MISSING": "Fehlende Gewichte insgesamt:",
+        "INVALID": "Keine Invariante --- Min. ein Gewicht ist zu hoch",
+        "INVALID_TRIVIAL": "Triviale Invariante --- Der Null-Vektor zählt als ungültig, da er keine Aussagen über das Petri-Netz macht"
+    },
     "EXAMPLE_MENU": {
         "TOOLTIP": "Klausuraufgaben öffnen",
         "EXAMPLE_NET": "Beispielnetz",

@@ -23,8 +23,22 @@ export class InvariantsValidationService {
     private _placeFlows: Map<string, Map<string, number>> = new Map();
     private _incidenceMatrix: number[][] = [];
 
-    foundMinInvariants = signal<number[][]>([]);
+    inputEntries = signal<InvariantEntry[]>([]);
+
     computedMinInvariants = signal<number[][]>([]);
+
+    foundMinInvariants = computed<number[][]>(() => {
+        return this.inputEntries()
+            .filter(entry => entry.validity === InvariantValidity.VALID_MINIMAL)
+            .map(entry => entry.vector);
+    });
+
+    remainingMinInvariants = computed<number[][]>(() => {
+        const found = this.foundMinInvariants();
+        return this.computedMinInvariants().filter(
+            comp => !found.some(found => this._areVectorsEqual(found, comp))
+        );
+    });
 
     foundCount = computed(() => this.foundMinInvariants().length);
     totalCount = computed(() => this.computedMinInvariants().length);
@@ -82,14 +96,12 @@ export class InvariantsValidationService {
      * @param entry - The firing entry to be validated.
      * @returns A promise that resolves when the validation is complete.
      */
-    async validateEntry(entry: InvariantEntry, rejectTrivial: boolean = false): Promise<void> {
+    async validateEntry(entry: InvariantEntry, isFinalValidation: boolean = false): Promise<void> {
         const vector = entry.vector;
         const isTrivial = vector.every((val) => val === 0);
         if (isTrivial) {
-            console.log('trivial');
-            if (rejectTrivial) {
-                entry.setValidity(InvariantValidity.INVALID);
-            } else entry.setValidity(undefined);
+            if (isFinalValidation) entry.setValidity(InvariantValidity.INVALID_TRIVIAL);
+            else entry.setValidity(undefined);
             return;
         }
 
@@ -97,30 +109,38 @@ export class InvariantsValidationService {
         const isExactMatch = computedInvariants.some((inv) => this._areVectorsEqual(vector, inv));
 
         if (isExactMatch) {
-            console.log('minimal');
             entry.setValidity(InvariantValidity.VALID_MINIMAL);
             return;
         }
 
-        const isIncompleteInvariant = computedInvariants.some((inv) => {
-            return vector.every((val, i) => inv[i] - val >= 0);
-        });
+        const remaining = this.remainingMinInvariants();
+
+        const matchedInvariant = remaining.find((inv) =>
+            vector.every((val, i) => inv[i] - val >= 0)
+        );
+
+        const isIncompleteInvariant = matchedInvariant !== undefined;
 
         if (isIncompleteInvariant) {
-            console.log('incomplete');
+            const missingPerPlace = matchedInvariant.map((invVal, i) => invVal - vector[i]);
+            const missingPlacesCount = missingPerPlace.filter(diff => diff > 0).length;
+            const missingWeightsTotal = missingPerPlace.reduce((sum, diff) => sum + diff, 0);
+
+            entry.missingPlacesCount = missingPlacesCount;
+            entry.missingWeightsCount = missingWeightsTotal;
+        }
+
+        if (isIncompleteInvariant && !isFinalValidation) {
             entry.setValidity(InvariantValidity.INCOMPLETE);
             return;
         }
 
         const isInvariant = this._isInvariant(vector);
         if (!isInvariant) {
-            const nonZeroTransitions = entry.getNonZeroTransitions();
-            console.log(nonZeroTransitions);
             entry.setValidity(InvariantValidity.INVALID);
             return;
         }
 
-        console.log('not minimal');
         entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL);
     }
 
@@ -143,16 +163,6 @@ export class InvariantsValidationService {
             if (Math.abs(sum) > this._EPSILON) return false;
         }
         return true;
-    }
-
-    /**
-     * Generates a user-friendly error message for an invalid firing sequence.
-     * @param entry - The firing entry containing the error details.
-     * @returns A formatted error message string.
-     */
-    getErrorMessage(entry: InvariantEntry): string {
-        //TODO: Update message
-        return '';
     }
 
     createIncidenceMatrix(diagram: Diagram): number[][] {

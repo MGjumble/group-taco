@@ -12,7 +12,8 @@ export class InvariantEntry {
         public id: number,
         public notation: string,
         public validity: InvariantValidity | undefined = undefined,
-        public message: string | undefined,
+        public missingPlacesCount: number | undefined = undefined,
+        public missingWeightsCount: number | undefined = undefined,
         public allPlaces: string[],
         public allTransitions: string[],
         public placeFlows: Map<string, Map<string, number>>,
@@ -36,19 +37,14 @@ export class InvariantEntry {
      * @param validity - The validity status of the proposed invariant.
      * @param error - An error object with error information.
      */
-    setValidity(validity: InvariantValidity | undefined, message?: string | undefined) {
+    setValidity(validity: InvariantValidity | undefined) {
         this.validity = validity;
-        this.message = message;
     }
 
     selectPlace(placeLabel: string, weightDiff: number): void {
         this._updatePlaceWeight(placeLabel, weightDiff);
         this._updateTransitionWeights(placeLabel, weightDiff);
         this._updateNotation();
-    }
-
-    getNonZeroTransitions(): Map<string, number> {
-        return new Map([...this.transitionWeights().entries()].filter(([key, val]) => val !== 0));
     }
 
     private _updatePlaceWeight(placeLabel: string, weightDiff: number): void {
@@ -103,5 +99,6 @@ export enum InvariantValidity {
     VALID_MINIMAL = 'VALID_MINIMAL',
     VALID_NOT_MINIMAL = 'VALID_NOT_MINIMAL',
     INVALID = 'INVALID',
+    INVALID_TRIVIAL = 'INVALID_TRIVIAL',
     INCOMPLETE = 'INCOMPLETE',
 }

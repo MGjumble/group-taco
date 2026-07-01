@@ -19,8 +19,6 @@ export class InvariantsService {
     private _idCounter = 0;
     private _isExamMode = computed(() => this._modeService.isExamMode(Tab.INVARIANTS));
 
-    inputEntries = signal<InvariantEntry[]>([]);
-
     isEntryActive = (id: number) => computed(() => this.currentEntry()?.id === id);
 
     getCurrentEntry(): InvariantEntry {
@@ -32,7 +30,7 @@ export class InvariantsService {
     processPlaceClicked(place: DiagramPlace, weightDiff: number): void {
         let entry = this.getCurrentEntry();
         this.updateEntry(entry, place, weightDiff);
-        if (this._isExamMode()) entry.setValidity(undefined, undefined);
+        if (this._isExamMode()) entry.setValidity(undefined);
         else this._validationService.validateEntry(entry);
     }
 
@@ -40,7 +38,7 @@ export class InvariantsService {
      * Clears all entries in the table.
      */
     clearInputEntries(): void {
-        this.inputEntries.set([]);
+        this._validationService.inputEntries.set([]);
         this.currentEntry.set(undefined);
     }
 
@@ -50,8 +48,8 @@ export class InvariantsService {
      * @param diagram - The current Petri net diagram.
      */
     deleteEntry(id: number): void {
-        this.inputEntries.update((entries) => entries.filter((entry) => entry.id !== id));
-        if (id === this.currentEntry()?.id || this.inputEntries().length === 0) {
+        this._validationService.inputEntries.update((entries) => entries.filter((entry) => entry.id !== id));
+        if (id === this.currentEntry()?.id || this._validationService.inputEntries().length === 0) {
             this.currentEntry.set(undefined);
         }
     }
@@ -61,8 +59,7 @@ export class InvariantsService {
     }
 
     activateEntry(id: number): void {
-        console.log(this.inputEntries());
-        const entry = this.inputEntries().find((entry) => entry.id === id);
+        const entry = this._validationService.inputEntries().find((entry) => entry.id === id);
         console.log(entry, entry?.notation);
         this.currentEntry.set(entry);
     }
@@ -76,13 +73,14 @@ export class InvariantsService {
             this.getNewId(),
             '',
             undefined,
-            '',
+            undefined,
+            undefined,
             this._validationService.allPlaceLabels,
             this._validationService.allTransitionLabels,
             this._validationService.placeFlows,
         );
         this.currentEntry.set(newEntry);
-        this.inputEntries.update((entries) => {
+        this._validationService.inputEntries.update((entries) => {
             entries.push(newEntry);
             return entries;
         });

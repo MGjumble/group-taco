@@ -10,23 +10,25 @@
                     matIconButton
                     [disabled]="isButtonDisabled()"
                     color="primary"
-                    [matTooltip]="'INVARIANTS.NEW_INVARIANT' | translate"
+                    [matTooltip]="'INVARIANTS.NEW' | translate"
                     (click)="onAddButton(invariantsPanel, $event)">
                     <mat-icon>add</mat-icon>
                 </button>
-                <button
-                    matIconButton
-                    [disabled]="isButtonDisabled() || inputEntries().length === 0"
-                    color="primary"
-                    [matTooltip]="'INVARIANTS.VALIDATE_INVARIANTS' | translate"
-                    (click)="onValidateButton(invariantsPanel, $event)">
-                    <mat-icon>checklist</mat-icon>
-                </button>
+                @if (isExamMode()) {
+                    <button
+                        matIconButton
+                        [disabled]="isButtonDisabled() || inputEntries().length === 0"
+                        color="primary"
+                        [matTooltip]="'INVARIANTS.VALIDATES' | translate"
+                        (click)="onValidateButton(invariantsPanel, $event)">
+                        <mat-icon>checklist</mat-icon>
+                    </button>
+                }
                 <button
                     matIconButton
                     [disabled]="isButtonDisabled()"
                     color="primary"
-                    [matTooltip]="'INVARIANTS.FIND_INVARIANTS' | translate"
+                    [matTooltip]="'INVARIANTS.FINDS' | translate"
                     (click)="onFindInvariants(); $event.stopPropagation()">
                     <mat-icon>remove_red_eye</mat-icon>
                 </button>
@@ -40,7 +42,7 @@
                             <mat-icon>playlist_add_check</mat-icon>
                         </th>
                         <th class="invariant-notation-th">Notation</th>
-                        <th class="invariant-message-th">Description</th>
+                        <th class="invariant-status-th">Description</th>
                         <th class="narrow-th">
                             <button
                                 mat-icon-button
@@ -68,7 +70,6 @@
                                     <button
                                         mat-icon-button
                                         class="not-minimal-button validity-button"
-                                        matTooltip="{{ this.validationService.getErrorMessage(entry) }}"
                                         matTooltipClass="wide-tooltip">
                                         <mat-icon class="not-minimal-icon">check_circle</mat-icon>
                                     </button>
@@ -76,15 +77,16 @@
                                     <button
                                         mat-icon-button
                                         class="incomplete-button validity-button"
-                                        matTooltip="{{ this.validationService.getErrorMessage(entry) }}"
                                         matTooltipClass="wide-tooltip">
                                         <mat-icon class="incomplete-icon">build_circle</mat-icon>
                                     </button>
-                                } @else if (entry.validity === InvariantValidity.INVALID) {
+                                } @else if (
+                                    entry.validity === InvariantValidity.INVALID ||
+                                    entry.validity === InvariantValidity.INVALID_TRIVIAL
+                                ) {
                                     <button
                                         mat-icon-button
                                         class="invalid-button validity-button"
-                                        matTooltip="{{ this.validationService.getErrorMessage(entry) }}"
                                         matTooltipClass="wide-tooltip">
                                         <mat-icon color="warn">cancel</mat-icon>
                                     </button>
@@ -94,8 +96,22 @@
                                 {{ entry.notation }}
                             </td>
 
-                            <td class="invariant-message-td">
-                                {{ entry.message }}
+                            <td class="invariant-status-td">
+                                @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
+                                    {{ 'INVARIANTS.VALID_MINIMAL' | translate }}
+                                } @else if (entry.validity === InvariantValidity.VALID_NOT_MINIMAL) {
+                                    {{ 'INVARIANTS.VALID_NOT_MINIMAL' | translate }}
+                                } @else if (entry.validity === InvariantValidity.INCOMPLETE) {
+                                    {{ 'INVARIANTS.INCOMPLETE' | translate: entry }} ---
+                                    {{ 'INVARIANTS.PLACES_MISSING' | translate: entry }}
+                                    {{ entry.missingPlacesCount }} ---
+                                    {{ 'INVARIANTS.WEIGHTS_MISSING' | translate: entry }}
+                                    {{ entry.missingWeightsCount }}
+                                } @else if (entry.validity === InvariantValidity.INVALID) {
+                                    {{ 'INVARIANTS.INVALID' | translate }}
+                                } @else if (entry.validity === InvariantValidity.INVALID_TRIVIAL) {
+                                    {{ 'INVARIANTS.INVALID_TRIVIAL' | translate }}
+                                }
                             </td>
 
                             <td class="delete-button-td">

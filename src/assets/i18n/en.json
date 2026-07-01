@@ -241,6 +241,15 @@
         "INSTRUCTION_AUTO_FIRING": "Auto Creation",
         "INSTRUCTION_AUTO_FIRING_TEXT": "In learn mode, clicking activated transitions in the Petri net automatically builds the process net."
     },
+    "INVARIANTS": {
+        "VALID_MINIMAL": "Minimal invariant",
+        "VALID_NOT_MINIMAL": "Non-minimal invariant --- Linear combination of minimal invariants",
+        "INCOMPLETE": "Incomplete",
+        "PLACES_MISSING": "Missing places:",
+        "WEIGHTS_MISSING": "Missing weights total:",
+        "INVALID": "No Invariant --- At least one weight is too high",
+        "INVALID_TRIVIAL": "Trivial invariant --- The zero vector counts as invalid, as it gives no information about the Petri net"
+    },
     "EXAMPLE_MENU": {
         "TOOLTIP": "Open exam files",
         "EXAMPLE_NET": "Example Net",
