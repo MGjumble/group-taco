@@ -37,6 +37,11 @@ export class SvgNodeComponent {
     readonly transitionLabelPlacement = input<'inside' | 'below'>('inside');
     readonly disableActiveColoring = input<boolean>(false);
 
+    readonly isExamMode = computed(() => {
+        const currentTab = this._tabStateService.currentTab();
+        return this._modeService.isExamMode(currentTab);
+    });
+
     readonly enablePlaceWeights = computed(() => {
         return this._tabStateService.currentTab() === Tab.INVARIANTS;
     });
@@ -266,11 +271,6 @@ export class SvgNodeComponent {
         return this._tabStateService.currentTab() === Tab.INVARIANTS && weight !== 0 && weight !== undefined;
     });
 
-    readonly shouldMaskNodeWeight = computed(() => {
-        const isExamMode = this._modeService.getIsExamModeSignal(Tab.INVARIANTS);
-        return this._tabStateService.currentTab() === Tab.INVARIANTS && isExamMode!();
-    });
-
     public click() {
         const node = this.diagramNode();
         if (node) this.clickNode.emit(node);
@@ -294,5 +294,18 @@ export class SvgNodeComponent {
         const size = 35;
 
         return `${x},${y} ${x - size},${y} ${x},${y + size}`;
+    }
+
+    getTriangleFillColor(): string {
+        if (this.isExamMode()) return '#eeeeee';
+        if (this.nodeWeight()! > 0) return '#aaffaa';
+        return '#ffaaaa';
+    }
+
+    getTriangleText(): string {
+        if (this.isExamMode()) return "+‒";
+        const nodeWeight = this.nodeWeight() || 0;
+        if (nodeWeight > 0) return '+' + nodeWeight;
+        return String(nodeWeight);
     }
 }
