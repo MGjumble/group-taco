@@ -268,7 +268,13 @@ export class SvgNodeComponent {
 
     readonly shouldShowNodeWeight = computed(() => {
         const weight = this.nodeWeight();
-        return this._tabStateService.currentTab() === Tab.INVARIANTS && weight !== 0 && weight !== undefined;
+        if (!weight || weight === 0) return false;
+
+        if (this.isTransition() && !this._invariantsService.showTransitionWeights()) {
+            return false;
+        }
+
+        return this._tabStateService.currentTab() === Tab.INVARIANTS;
     });
 
     public click() {
