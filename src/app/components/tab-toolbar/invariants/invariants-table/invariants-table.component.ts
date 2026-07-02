@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, Subscription, take, tap } from 'rxjs';
+import { config, filter, Subscription, take, tap } from 'rxjs';
 import { Diagram } from '../../../../classes/diagram/diagram';
 import { InvariantEntry, InvariantValidity } from '../../../../classes/invariant-entry';
 import { Tab } from '../../../../classes/tabs';
@@ -21,6 +21,8 @@ import { InvariantsService } from '../../../../services/invariants.service';
 import { ToasterNotificationService } from '../../../../services/toaster-notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { InvariantsModalComponent } from '../invariants-modal/invariants-modal.component';
+import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
+import { InvariantsConfirmDialogComponent } from '../invariants-confirm-dialog/invariants-confirm-dialog.component';
 
 @Component({
     selector: 'app-invariants-table',
@@ -133,7 +135,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
     /**
      * Finds firing sequences based on the current Petri net and user-defined limits.
      */
-    onFindInvariants(): void {
+    onShowInvariants(): void {
         if (!this.diagram) return;
         const vectors = this.validationService.computedMinInvariants();
         const notations = [];
@@ -181,9 +183,14 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * @param panel - The expansion panel containing the button.
      * @param event - The click event.
      */
-    onFindButton(panel: MatExpansionPanel, event: Event): void {
+    onShowInvariantsButton(event: Event): void {
         event.stopPropagation();
-        if (!panel.expanded) panel.open();
-        this.onFindInvariants();
+        const dialogRef = this._dialog.open(InvariantsConfirmDialogComponent);
+
+        dialogRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                this.onShowInvariants();
+            }
+        });
     }
 }

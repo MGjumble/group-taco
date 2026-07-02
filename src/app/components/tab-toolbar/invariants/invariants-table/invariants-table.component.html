@@ -29,7 +29,7 @@
                     [disabled]="isButtonDisabled()"
                     color="primary"
                     [matTooltip]="'INVARIANTS.SHOW_INVARIANTS' | translate"
-                    (click)="onFindInvariants(); $event.stopPropagation()">
+                    (click)="onShowInvariantsButton($event)">
                     <mat-icon>remove_red_eye</mat-icon>
                 </button>
             </div>

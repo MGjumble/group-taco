@@ -1,5 +1,10 @@
 .invariants-modal-container {
-    padding: 20px;
+    padding: 10px;
+}
+
+.invariants-modal-header {
+    font-weight: bold;
+    margin: 20px;
 }
 
 .invariant-notation {

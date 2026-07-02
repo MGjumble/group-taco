@@ -33,8 +33,11 @@
         "TITLE": "Switch Mode",
         "MESSAGE_DRAW": "Do you want to keep the current drawing?",
         "MESSAGE_DEFAULT": "Do you want to keep the current content?",
+        "MESSAGE_SHOW_INVARIANTS": "Do you really want to see all invariants?",
         "KEEP": "Keep",
-        "DISCARD": "Discard"
+        "DISCARD": "Discard",
+        "CANCEL": "Cancel",
+        "CONFIRM": "Confirm"
     },
     "RGMARKING_DIALOG": {
         "TITLE": "Input Marking",
@@ -248,6 +251,7 @@
         "NEW_ENTRY": "New Entry",
         "VALIDATE_ENTRIES": "Validate Entries",
         "SHOW_INVARIANTS": "Show Computed Invariants",
+        "COMPUTED_INVARIANTS": "Computed Invariants",
         "FOUND_INVARIANTS": "Found Invariants",
         "SHOW_TRANSITION_WEIGHTS": "Show Transition Status",
         "VALID_MINIMAL": "Minimal invariant",

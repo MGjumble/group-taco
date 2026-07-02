@@ -1,4 +1,5 @@
 <div class="invariants-modal-container">
+    <p class="invariants-modal-header">{{ 'INVARIANTS.COMPUTED_INVARIANTS' | translate }}</p>
     @for (notation of data.notations; track notation; let i = $index) {
         <div class="invariant-notation">{{ notation }}</div>
     }
