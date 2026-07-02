@@ -28,9 +28,10 @@ export class InvariantsValidationService {
     computedMinInvariants = signal<number[][]>([]);
 
     foundMinInvariants = computed<number[][]>(() => {
-        return this.inputEntries()
-            .filter(entry => entry.validity === InvariantValidity.VALID_MINIMAL)
-            .map(entry => entry.vector);
+        const inputs = Array.from(this.inputEntries().map(entry => entry.vector));
+        return this.computedMinInvariants().filter(
+            comp => inputs.some(input => this._areVectorsEqual(input, comp))
+        );
     });
 
     remainingMinInvariants = computed<number[][]>(() => {
@@ -39,9 +40,6 @@ export class InvariantsValidationService {
             comp => !found.some(found => this._areVectorsEqual(found, comp))
         );
     });
-
-    foundCount = computed(() => this.foundMinInvariants().length);
-    totalCount = computed(() => this.computedMinInvariants().length);
 
     get allPlaceLabels(): string[] {
         return this._allPlaceLabels;

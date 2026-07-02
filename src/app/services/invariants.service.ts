@@ -16,6 +16,7 @@ export class InvariantsService {
     private _validationService = inject(InvariantsValidationService);
 
     currentEntry = signal<InvariantEntry | undefined>(undefined);
+    showTransitionWeights = signal<boolean>(true);
     private _idCounter = 0;
     private _isExamMode = computed(() => this._modeService.isExamMode(Tab.INVARIANTS));
 
@@ -56,6 +57,7 @@ export class InvariantsService {
 
     updateEntry(entry: InvariantEntry, place: DiagramPlace, weightDiff: number): void {
         entry.selectPlace(place.displayLabel, weightDiff);
+        this._validationService.inputEntries.update(entries => [...entries]);
     }
 
     activateEntry(id: number): void {
@@ -80,10 +82,7 @@ export class InvariantsService {
             this._validationService.placeFlows,
         );
         this.currentEntry.set(newEntry);
-        this._validationService.inputEntries.update((entries) => {
-            entries.push(newEntry);
-            return entries;
-        });
+        this._validationService.inputEntries.update((entries) => [...entries, newEntry]);
         return newEntry;
     }
 

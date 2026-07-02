@@ -45,7 +45,7 @@
     table-layout: auto;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .invariants-table thead {
@@ -171,17 +171,100 @@
     color: rgb(0, 144, 192);
 }
 
-.progress-container {
+.pn-toggle-container {
     display: flex;
-    height: 50px;
-    width: 99%;
-    margin: 30px 0 0 0;
-    overflow: hidden;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    margin-right: 12px;
 }
 
-.progress-text {
-    text-align: center;
-    margin: 4px;
-    font-size: 14px;
-    color: #555;
+.pn-toggle-label {
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+}
+
+.pn-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.pn-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.pn-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.pn-toggle-slider:before {
+    position: absolute;
+    content: '';
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.pn-toggle-switch input:checked + .pn-toggle-slider {
+    background-color: #1976d2;
+}
+
+.pn-toggle-switch input:focus + .pn-toggle-slider {
+    box-shadow: 0 0 1px #1976d2;
+}
+
+.pn-toggle-switch input:checked + .pn-toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.pn-toggle-switch:hover .pn-toggle-slider {
+    box-shadow: 0 0 8px rgba(25, 118, 210, 0.3);
+}
+
+.invariants-progress-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 13px;
+    justify-content: flex-end;
+}
+
+.invariant-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.invariant-box.found {
+    background-color: limegreen;
+}
+
+.invariant-box.not-found {
+    background-color: white;
+}
+
+.invariant-box.found:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }

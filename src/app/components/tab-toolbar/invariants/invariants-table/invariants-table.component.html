@@ -10,7 +10,7 @@
                     matIconButton
                     [disabled]="isButtonDisabled()"
                     color="primary"
-                    [matTooltip]="'INVARIANTS.NEW' | translate"
+                    [matTooltip]="'INVARIANTS.NEW_ENTRY' | translate"
                     (click)="onAddButton(invariantsPanel, $event)">
                     <mat-icon>add</mat-icon>
                 </button>
@@ -19,7 +19,7 @@
                         matIconButton
                         [disabled]="isButtonDisabled() || inputEntries().length === 0"
                         color="primary"
-                        [matTooltip]="'INVARIANTS.VALIDATES' | translate"
+                        [matTooltip]="'INVARIANTS.VALIDATE_ENTRIES' | translate"
                         (click)="onValidateButton(invariantsPanel, $event)">
                         <mat-icon>checklist</mat-icon>
                     </button>
@@ -28,10 +28,20 @@
                     matIconButton
                     [disabled]="isButtonDisabled()"
                     color="primary"
-                    [matTooltip]="'INVARIANTS.FINDS' | translate"
+                    [matTooltip]="'INVARIANTS.SHOW_INVARIANTS' | translate"
                     (click)="onFindInvariants(); $event.stopPropagation()">
                     <mat-icon>remove_red_eye</mat-icon>
                 </button>
+            </div>
+            <div class="pn-toggle-container">
+                <span class="pn-toggle-label">{{ 'INVARIANTS.SHOW_TRANSITION_WEIGHTS' | translate }}</span>
+                <label class="pn-toggle-switch">
+                    <input
+                        type="checkbox"
+                        [checked]="invariantsService.showTransitionWeights()"
+                        (change)="invariantsService.showTransitionWeights.set($any($event.target).checked)" />
+                    <span class="pn-toggle-slider"></span>
+                </label>
             </div>
         </mat-expansion-panel-header>
         <div class="invariants-table-container">
@@ -41,8 +51,8 @@
                         <th class="narrow-th">
                             <mat-icon>playlist_add_check</mat-icon>
                         </th>
-                        <th class="invariant-notation-th">Notation</th>
-                        <th class="invariant-status-th">Description</th>
+                        <th class="invariant-notation-th">{{ 'INVARIANTS.NOTATION' | translate }}</th>
+                        <th class="invariant-description-th">{{ 'INVARIANTS.DESCRIPTION' | translate }}</th>
                         <th class="narrow-th">
                             <button
                                 mat-icon-button
@@ -96,7 +106,7 @@
                                 {{ entry.notation }}
                             </td>
 
-                            <td class="invariant-status-td">
+                            <td class="invariant-description-td">
                                 @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
                                     {{ 'INVARIANTS.VALID_MINIMAL' | translate }}
                                 } @else if (entry.validity === InvariantValidity.VALID_NOT_MINIMAL) {
@@ -128,11 +138,14 @@
                 </tbody>
             </table>
             @if (diagram) {
-                <div class="progress-container">
-                    <p class="progress-text">
-                        Gefunden: {{ validationService.foundCount() }} /
-                        {{ validationService.totalCount() }}
-                    </p>
+                <div class="invariants-progress-container">
+                    {{ 'INVARIANTS.FOUND_INVARIANTS' | translate }}: 
+                    @for (found of validationService.foundMinInvariants(); track $index) {
+                        <div class="invariant-box found"></div>
+                    }
+                    @for (remaining of validationService.remainingMinInvariants(); track $index) {
+                        <div class="invariant-box not-found"></div>
+                    }
                 </div>
             }
         </div>
