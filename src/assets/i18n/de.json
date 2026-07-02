@@ -243,6 +243,14 @@
         "INSTRUCTION_AUTO_FIRING_TEXT": "Im Lernmodus erstellt das Klicken auf aktivierte Transitionen im Petrinetz automatisch das Prozessnetz."
     },
     "INVARIANTS": {
+        "INVARIANTS_TABLE": "Invarianten-Tabelle",
+        "NOTATION": "Notation",
+        "DESCRIPTION": "Beschreibung",
+        "NEW_ENTRY": "Neuer Eintrag",
+        "VALIDATE_ENTRIES": "Einträge validieren",
+        "SHOW_INVARIANTS": "Berechnete Invarianten anzeigen",
+        "FOUND_INVARIANTS": "Gefundene Invarianten",
+        "SHOW_TRANSITION_WEIGHTS": "Transitionsstatus anzeigen",
         "VALID_MINIMAL": "Minimale Invariante",
         "VALID_NOT_MINIMAL": "Nicht-minimale Invariante --- Linearkombination minimaler Invarianten",
         "INCOMPLETE": "Unvollständig",

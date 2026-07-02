@@ -242,6 +242,14 @@
         "INSTRUCTION_AUTO_FIRING_TEXT": "In learn mode, clicking activated transitions in the Petri net automatically builds the process net."
     },
     "INVARIANTS": {
+        "INVARIANTS_TABLE": "Invariants Table",
+        "NOTATION": "Notation",
+        "DESCRIPTION": "Description",
+        "NEW_ENTRY": "New Entry",
+        "VALIDATE_ENTRIES": "Validate Entries",
+        "SHOW_INVARIANTS": "Show Computed Invariants",
+        "FOUND_INVARIANTS": "Found Invariants",
+        "SHOW_TRANSITION_WEIGHTS": "Show Transition Status",
         "VALID_MINIMAL": "Minimal invariant",
         "VALID_NOT_MINIMAL": "Non-minimal invariant --- Linear combination of minimal invariants",
         "INCOMPLETE": "Incomplete",
