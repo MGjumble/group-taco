@@ -200,7 +200,9 @@
             "RG_CHECK_SUCCESS": "The created reachability graph is complete and correct.",
             "RG_CHECK_MISSING_EDGES": "Missing transitions: {{edges}}",
             "RG_CHECK_MISSING_EDGES_LIST": "The following transitions are missing:",
-            "SWITCH_BACK_TO_USER_GRAPH": "Please switch back to your self-created Graph to continue editing."
+            "SWITCH_BACK_TO_USER_GRAPH": "Please switch back to your self-created Graph to continue editing.",
+            "ALL_MIN_INVARIANTS_FOUND": "All minimal invariants were found.",
+            "INVALID_INVARIANT_ENTRIES": "The following entries are not minimal or no invariants:"
         },
         "VALIDATION_MESSAGES": {
             "TRANSITION_NO_MATCH": "❌ Transition {{label}} has no matching label in the Petri net.",
@@ -246,13 +248,14 @@
     },
     "INVARIANTS": {
         "INVARIANTS_TABLE": "Invariants Table",
+        "HELP": "Combine places with suitable weights until all transitions are balanced.",
         "NOTATION": "Notation",
         "DESCRIPTION": "Description",
         "NEW_ENTRY": "New Entry",
         "VALIDATE_ENTRIES": "Validate Entries",
         "SHOW_INVARIANTS": "Show Computed Invariants",
         "COMPUTED_INVARIANTS": "Computed Invariants",
-        "FOUND_INVARIANTS": "Found Invariants",
+        "FOUND_INVARIANTS": "Found Minimal Invariants",
         "SHOW_TRANSITION_WEIGHTS": "Show Transition Status",
         "VALID_MINIMAL": "Minimal invariant",
         "VALID_NOT_MINIMAL": "Non-minimal invariant --- Linear combination of minimal invariants",

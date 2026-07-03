@@ -36,9 +36,16 @@ export class InvariantsValidationService {
 
     remainingMinInvariants = computed<number[][]>(() => {
         const found = this.foundMinInvariants();
-        return this.computedMinInvariants().filter(
+        const remaining = this.computedMinInvariants().filter(
             comp => !found.some(found => this._areVectorsEqual(found, comp))
         );
+        if (remaining.length === 0 && !this._modeService.isExamMode(Tab.INVARIANTS)) {
+            this._notificationService.showSuccess(
+                'TOASTER.HEADER.SUCCESS',
+                'TOASTER.BODY.ALL_MIN_INVARIANTS_FOUND',
+            );
+        }
+        return remaining;
     });
 
     get allPlaceLabels(): string[] {

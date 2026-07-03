@@ -201,7 +201,9 @@
             "RG_CHECK_SUCCESS": "Der erstellte Erreichbarkeitsgraph ist vollständig und korrekt.",
             "RG_CHECK_MISSING_EDGES": "Fehlende Transitionen: {{edges}}",
             "RG_CHECK_MISSING_EDGES_LIST": "Die folgenden Transitionen fehlen:",
-            "SWITCH_BACK_TO_USER_GRAPH": "Bitte wechseln Sie zurück zum selbst erstellten Graphen, um fortzufahren."
+            "SWITCH_BACK_TO_USER_GRAPH": "Bitte wechseln Sie zurück zum selbst erstellten Graphen, um fortzufahren.",
+            "ALL_MIN_INVARIANTS_FOUND": "Alle minimalen Invarianten wurden gefunden.",
+            "INVALID_INVARIANT_ENTRIES": "Die folgenden Einträge sind nicht minimal oder keine Invarianten:"
         },
         "VALIDATION_MESSAGES": {
             "TRANSITION_NO_MATCH": "❌ Transition {{label}} hat keine passende Beschriftung im Petri-Netz.",
@@ -247,13 +249,14 @@
     },
     "INVARIANTS": {
         "INVARIANTS_TABLE": "Invarianten-Tabelle",
+        "HELP": "Kombiniere Stellen mit passenden Gewichtungen, bis alle Transitionen ausgeglichen sind.",
         "NOTATION": "Notation",
         "DESCRIPTION": "Beschreibung",
         "NEW_ENTRY": "Neuer Eintrag",
         "VALIDATE_ENTRIES": "Einträge validieren",
         "SHOW_INVARIANTS": "Berechnete Invarianten anzeigen",
         "COMPUTED_INVARIANTS": "Berechnete Invarianten",
-        "FOUND_INVARIANTS": "Gefundene Invarianten",
+        "FOUND_INVARIANTS": "Gefundene minimale Invarianten",
         "SHOW_TRANSITION_WEIGHTS": "Transitionsstatus anzeigen",
         "VALID_MINIMAL": "Minimale Invariante",
         "VALID_NOT_MINIMAL": "Nicht-minimale Invariante --- Linearkombination minimaler Invarianten",
