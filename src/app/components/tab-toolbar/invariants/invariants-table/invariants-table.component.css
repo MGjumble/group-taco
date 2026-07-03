@@ -244,27 +244,27 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: 12px;
+    margin: 12px 8px 8px 0px;
     font-size: 13px;
     justify-content: flex-end;
 }
 
-.invariant-box {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
+.progress-circle {
+    border: 1px solid lightgrey;
+    border-radius: 12px;
+    height: 24px;
+    width: 24px;
     transition: all 0.3s ease;
 }
 
-.invariant-box.found {
-    background-color: limegreen;
+.found-circle {
+    color: limegreen;
 }
 
-.invariant-box.not-found {
-    background-color: white;
+.remaining-circle {
+    color: white;
 }
 
-.invariant-box.found:hover {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+.help-icon {
+    cursor: help;
 }

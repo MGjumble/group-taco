@@ -2,7 +2,13 @@
     <mat-expansion-panel class="invariants-table-panel" [expanded]="true" #invariantsPanel>
         <mat-expansion-panel-header class="invariants-table-header">
             <div class="invariants-table-header-title">
-                <mat-icon color="primary">table_chart</mat-icon>
+                <mat-icon
+                    class="help-icon"
+                    [matTooltip]="'INVARIANTS.HELP' | translate"
+                    matTooltipPosition="above"
+                    color="primary">
+                    help_outline
+                </mat-icon>
                 <mat-panel-title>{{ 'INVARIANTS.INVARIANTS_TABLE' | translate }}</mat-panel-title>
             </div>
             <div class="invariants-table-header-actions">
@@ -38,8 +44,8 @@
                 <label class="pn-toggle-switch">
                     <input
                         type="checkbox"
-                        [checked]="invariantsService.showTransitionWeights()"
-                        (change)="invariantsService.showTransitionWeights.set($any($event.target).checked)" />
+                        [checked]="entryService.showTransitionWeights()"
+                        (change)="entryService.showTransitionWeights.set($any($event.target).checked)" />
                     <span class="pn-toggle-slider"></span>
                 </label>
             </div>
@@ -69,7 +75,7 @@
                     @for (entry of inputEntries(); track entry.id) {
                         <tr
                             class="invariant-row"
-                            [attr.active]="invariantsService.isEntryActive(entry.id)() ? '' : null"
+                            [attr.active]="entryService.isEntryActive(entry.id)() ? '' : null"
                             (click)="onActivateEntry(entry.id)">
                             <td class="invariant-validity-td">
                                 @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
@@ -139,12 +145,16 @@
             </table>
             @if (diagram) {
                 <div class="invariants-progress-container">
-                    {{ 'INVARIANTS.FOUND_INVARIANTS' | translate }}: 
+                    {{ 'INVARIANTS.FOUND_INVARIANTS' | translate }}:
                     @for (found of validationService.foundMinInvariants(); track $index) {
-                        <div class="invariant-box found"></div>
+                        <span class="material-symbols-outlined progress-circle found-circle"
+                            ><mat-icon>check_circle</mat-icon></span
+                        >
                     }
                     @for (remaining of validationService.remainingMinInvariants(); track $index) {
-                        <div class="invariant-box not-found"></div>
+                        <span class="material-symbols-outlined progress-circle remaining-circle"
+                            ><mat-icon>circle</mat-icon></span
+                        >
                     }
                 </div>
             }
