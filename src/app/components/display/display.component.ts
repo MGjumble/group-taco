@@ -20,7 +20,7 @@ import { GRAPH_FILENAMES, GRAPH_IDS, GraphId } from './display.constants';
 import { ProcessNetFiringService } from '../../services/process-net-firing.service';
 import { ToasterNotificationService } from '../../services/toaster-notification.service';
 import { DiagramPlace } from '../../classes/diagram/diagram-place';
-import { InvariantsService } from '../../services/invariants.service';
+import { InvariantsEntryService } from '../../services/invariants-entry.service';
 
 @Component({
     selector: 'app-display',
@@ -43,7 +43,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     private _elementRef = inject(ElementRef);
     protected _reachabilityGraphService = inject(ReachabilityGraphService);
     protected _processNetFiringService = inject(ProcessNetFiringService);
-    protected _invariantsService = inject(InvariantsService);
+    protected _invariantsEntryService = inject(InvariantsEntryService);
     private _notificationService = inject(ToasterNotificationService);
 
     readonly viewBox = this._panningService.viewBoxAsString;

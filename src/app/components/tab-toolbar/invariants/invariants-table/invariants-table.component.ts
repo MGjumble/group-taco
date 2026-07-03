@@ -17,7 +17,7 @@ import { ToastList } from '../../../../classes/toast';
 import { DisplayService } from '../../../../services/display.service';
 import { ModeService } from '../../../../services/mode.service';
 import { InvariantsValidationService } from '../../../../services/invariants-validation.service';
-import { InvariantsService } from '../../../../services/invariants.service';
+import { InvariantsEntryService } from '../../../../services/invariants-entry.service';
 import { ToasterNotificationService } from '../../../../services/toaster-notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { InvariantsModalComponent } from '../invariants-modal/invariants-modal.component';
@@ -49,7 +49,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
     private _notificationService = inject(ToasterNotificationService);
     private _displayService = inject(DisplayService);
     private _dialog = inject(MatDialog);
-    invariantsService = inject(InvariantsService);
+    entryService = inject(InvariantsEntryService);
     validationService = inject(InvariantsValidationService);
     InvariantValidity = InvariantValidity;
 
@@ -79,14 +79,14 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * @param id - The ID of the entry to delete.
      */
     onDeleteEntry(id: number): void {
-        this.invariantsService.deleteEntry(id);
+        this.entryService.deleteEntry(id);
     }
 
     /**
      * Deletes all firing entries and resets the diagram marking.
      */
     onDeleteAllEntries(): void {
-        this.invariantsService.clearInputEntries();
+        this.entryService.clearInputEntries();
         this._displayService.diagram$
             .pipe(
                 take(1),
@@ -101,11 +101,11 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * Creates a new firing entry.
      */
     onNewEntry(): void {
-        if (this.diagram) this.invariantsService.addEmptyEntry();
+        if (this.diagram) this.entryService.addEmptyEntry();
     }
 
     onActivateEntry(id: number): void {
-        this.invariantsService.activateEntry(id);
+        this.entryService.activateEntry(id);
     }
 
     /**
@@ -116,18 +116,17 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
         const invalidEntries: ToastList[] = [];
         for (const entry of this.inputEntries()) {
             await this.validationService.validateEntry(entry, true);
-            //TODO: Update error message
-            if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: '' });
+            if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: entry.notation });
         }
         if (invalidEntries.length === 0)
             this._notificationService.showSuccess(
                 'TOASTER.HEADER.VALIDATION_COMPLETED',
-                'TOASTER.BODY.VALID_INVARIANTS',
+                'TOASTER.BODY.ALL_MIN_INVARIANTS_FOUND',
             );
         else
             this._notificationService.showWarning(
                 'TOASTER.HEADER.VALIDATION_COMPLETED',
-                'TOASTER.BODY.INVALID_INVARIANTS',
+                'TOASTER.BODY.INVALID_INVARIANT_ENTRIES',
                 { duration: 8000, list: invalidEntries },
             );
     }

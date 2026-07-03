@@ -1,22 +1,18 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { ModeService } from './mode.service';
-import { ToasterNotificationService } from './toaster-notification.service';
-import { SourcePetriNetService } from './source-petri-net.service';
-import { InvariantEntry, InvariantValidity } from '../classes/invariant-entry';
+import { InvariantEntry } from '../classes/invariant-entry';
 import { InvariantsValidationService } from './invariants-validation.service';
-import { Diagram } from '../classes/diagram/diagram';
 import { Tab } from '../classes/tabs';
 import { DiagramPlace } from '../classes/diagram/diagram-place';
 
 @Injectable({ providedIn: 'root' })
-export class InvariantsService {
+export class InvariantsEntryService {
     private _modeService = inject(ModeService);
-    private _notificationService = inject(ToasterNotificationService);
-    private _sourceNetService = inject(SourcePetriNetService);
     private _validationService = inject(InvariantsValidationService);
 
-    currentEntry = signal<InvariantEntry | undefined>(undefined);
     showTransitionWeights = signal<boolean>(true);
+    currentEntry = signal<InvariantEntry | undefined>(undefined);
+
     private _idCounter = 0;
     private _isExamMode = computed(() => this._modeService.isExamMode(Tab.INVARIANTS));
 

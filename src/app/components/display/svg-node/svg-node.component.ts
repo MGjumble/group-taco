@@ -10,7 +10,7 @@ import { DiagramPlace } from '../../../classes/diagram/diagram-place';
 import { StateNode } from '../../../classes/reachability-graph.model';
 import { PLACE_RADIUS, TRANSITION_SIZE } from '../display.constants';
 import { Tab } from '../../../classes/tabs';
-import { InvariantsService } from '../../../services/invariants.service';
+import { InvariantsEntryService } from '../../../services/invariants-entry.service';
 
 @Component({
     selector: 'g[appSvgNode]',
@@ -31,7 +31,7 @@ export class SvgNodeComponent {
     private _modeService = inject(ModeService);
     private _tabStateService = inject(TabStateService);
     private _playService = inject(PlayService);
-    private _invariantsService = inject(InvariantsService);
+    private _invariantsEntryService = inject(InvariantsEntryService);
 
     readonly showInnerLabel = input<boolean>(false);
     readonly transitionLabelPlacement = input<'inside' | 'below'>('inside');
@@ -256,7 +256,7 @@ export class SvgNodeComponent {
     readonly selectionStrokeColor = computed(() => (this.isSelected() ? 'orange' : 'transparent'));
 
     readonly nodeWeight = computed(() => {
-        const entry = this._invariantsService.currentEntry();
+        const entry = this._invariantsEntryService.currentEntry();
         if (this.isPlace()) return entry?.placeWeights().get(this.displayLabel());
         else if (this.isTransition()) return entry?.transitionWeights().get(this.displayLabel());
         return undefined;
@@ -270,7 +270,7 @@ export class SvgNodeComponent {
         const weight = this.nodeWeight();
         if (!weight || weight === 0) return false;
 
-        if (this.isTransition() && !this._invariantsService.showTransitionWeights()) {
+        if (this.isTransition() && !this._invariantsEntryService.showTransitionWeights()) {
             return false;
         }
 
@@ -290,7 +290,7 @@ export class SvgNodeComponent {
     onChangePlaceWeight(weightDiff: number): void {
         const node = this.diagramNode();
         if (node instanceof DiagramPlace) {
-            this._invariantsService.processPlaceClicked(node, weightDiff);
+            this._invariantsEntryService.processPlaceClicked(node, weightDiff);
         }
     }
 
