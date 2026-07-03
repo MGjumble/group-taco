@@ -143,7 +143,7 @@
                     }
                 </tbody>
             </table>
-            @if (diagram) {
+            @if (diagram && !isExamMode()) {
                 <div class="invariants-progress-container">
                     {{ 'INVARIANTS.FOUND_INVARIANTS' | translate }}:
                     @for (found of validationService.foundMinInvariants(); track $index) {
