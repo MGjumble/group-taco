@@ -2,5 +2,130 @@
 
 <div class="graph-display-layout">
     <app-invariants-display></app-invariants-display>
-    <app-invariants-table></app-invariants-table>
+    
+    <div class="outer-wrapper">
+        <div class="table-wrapper">
+            @if (diagram && inputEntries().length > 0) {
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="narrow-th">
+                                    <mat-icon>playlist_add_check</mat-icon>
+                                </th>
+                                <th class="entry-notation-th">{{ 'INVARIANTS.NOTATION' | translate }}</th>
+                                <th class="entry-description-th">{{ 'INVARIANTS.DESCRIPTION' | translate }}</th>
+                                <th class="narrow-th">
+                                    <button
+                                        mat-icon-button
+                                        color="warn"
+                                        (click)="onDeleteAllEntries()"
+                                        class="delete-all-entries-button"
+                                        [disabled]="inputEntries().length === 0">
+                                        <mat-icon>delete_sweep</mat-icon>
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (entry of inputEntries(); track entry.id) {
+                                <tr
+                                    class="entry-row"
+                                    [attr.active]="entryService.isEntryActive(entry.id)() ? '' : null"
+                                    (click)="onActivateEntry(entry.id)">
+                                    <td class="validity-td">
+                                        @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
+                                            <button mat-icon-button class="minimal-button validity-button">
+                                                <mat-icon class="minimal-icon">check_circle</mat-icon>
+                                            </button>
+                                        } @else if (entry.validity === InvariantValidity.VALID_NOT_MINIMAL) {
+                                            <button
+                                                mat-icon-button
+                                                class="not-minimal-button validity-button"
+                                                matTooltipClass="wide-tooltip">
+                                                <mat-icon class="not-minimal-icon">check_circle</mat-icon>
+                                            </button>
+                                        } @else if (entry.validity === InvariantValidity.INCOMPLETE) {
+                                            <button
+                                                mat-icon-button
+                                                class="incomplete-button validity-button"
+                                                matTooltipClass="wide-tooltip">
+                                                <mat-icon class="incomplete-icon">build_circle</mat-icon>
+                                            </button>
+                                        } @else if (
+                                            entry.validity === InvariantValidity.INVALID_NOT_FINAL ||
+                                            entry.validity === InvariantValidity.INVALID_FINAL ||
+                                            entry.validity === InvariantValidity.INVALID_TRIVIAL
+                                        ) {
+                                            <button
+                                                mat-icon-button
+                                                class="invalid-button validity-button"
+                                                matTooltipClass="wide-tooltip">
+                                                <mat-icon color="warn">cancel</mat-icon>
+                                            </button>
+                                        }
+                                    </td>
+                                    <td class="entry-notation-td">
+                                        {{ entry.notation }}
+                                    </td>
+
+                                    <td class="entry-description-td">
+                                        @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
+                                            {{ 'INVARIANTS.VALID_MINIMAL' | translate }}
+                                        } @else if (entry.validity === InvariantValidity.VALID_NOT_MINIMAL) {
+                                            {{ 'INVARIANTS.VALID_NOT_MINIMAL' | translate }}
+                                        } @else if (entry.validity === InvariantValidity.INCOMPLETE) {
+                                            {{ 'INVARIANTS.INCOMPLETE' | translate: entry }}<br />
+                                            --- {{ 'INVARIANTS.PLACES_MISSING' | translate: entry }}
+                                            {{ entry.missingPlacesCount }}<br />
+                                            --- {{ 'INVARIANTS.WEIGHTS_MISSING' | translate: entry }}
+                                            {{ entry.missingWeightsCount }}
+                                        } @else if (entry.validity === InvariantValidity.INVALID_NOT_FINAL) {
+                                            {{ 'INVARIANTS.INVALID_NOT_FINAL' | translate }}
+                                        } @else if (entry.validity === InvariantValidity.INVALID_FINAL) {
+                                            {{ 'INVARIANTS.INVALID_FINAL' | translate }}
+                                        } @else if (entry.validity === InvariantValidity.INVALID_TRIVIAL) {
+                                            {{ 'INVARIANTS.INVALID_TRIVIAL' | translate }}
+                                        }
+                                    </td>
+
+                                    <td class="delete-button-td">
+                                        <button
+                                            mat-icon-button
+                                            color="warn"
+                                            (click)="onDeleteEntry(entry.id)"
+                                            class="delete-entry-button">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @if (!isExamMode()) {
+                    <div class="progress-container">
+                        {{ 'INVARIANTS.FOUND_INVARIANTS' | translate }}:
+                        @for (found of validationService.foundMinInvariants(); track $index) {
+                            <span class="material-symbols-outlined progress-circle found-circle"
+                                ><mat-icon>check_circle</mat-icon></span
+                            >
+                        }
+                        @for (remaining of validationService.remainingMinInvariants(); track $index) {
+                            <span class="material-symbols-outlined progress-circle remaining-circle"
+                                ><mat-icon>circle</mat-icon></span
+                            >
+                        }
+                    </div>
+                }
+            }
+        </div>
+        <app-draw-toolbar
+            class="instruction-panel"
+            [headerTitle]="'INVARIANTS.ACTIONS' | translate"
+            [helpTooltip]="'INVARIANTS.HELP_TOOLTIP' | translate"
+            [actions]="toolbarActions()"
+            [instructions]="toolbarInstructions()">
+        </app-draw-toolbar>
+    </div>
 </div>
