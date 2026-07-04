@@ -6,9 +6,15 @@
         >
     </div>
     <h2>
-        {{ 'HEADER_SUBTITLE' | translate }}
-        <br />
-        {{ 'HEADER_SUBTITLE_NAMES' | translate }}
+        @if (_tabStateService.currentTab() === Tab.INVARIANTS) {
+            {{ 'INVARIANTS.HEADER_SUBTITLE_1' | translate }}
+            <br />
+            {{ 'INVARIANTS.HEADER_SUBTITLE_2' | translate }}
+        } @else {
+            {{ 'HEADER_SUBTITLE' | translate }}
+            <br />
+            {{ 'HEADER_SUBTITLE_NAMES' | translate }}
+        }
     </h2>
 
     <!--    Main content    -->
