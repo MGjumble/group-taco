@@ -8,7 +8,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { config, filter, Subscription, take, tap } from 'rxjs';
 import { Diagram } from '../../../../classes/diagram/diagram';
 import { InvariantEntry, InvariantValidity } from '../../../../classes/invariant-entry';
@@ -23,6 +23,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { InvariantsModalComponent } from '../invariants-modal/invariants-modal.component';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { InvariantsConfirmDialogComponent } from '../invariants-confirm-dialog/invariants-confirm-dialog.component';
+import { DrawToolbarAction, DrawToolbarComponent, DrawToolbarInstruction, DrawToolbarToggle } from 'src/app/components/draw-toolbar/draw-toolbar.component';
+import { InvariantsDisplayComponent } from '../invariants-display/invariants-display.component';
 
 @Component({
     selector: 'app-invariants-table',
@@ -37,7 +39,8 @@ import { InvariantsConfirmDialogComponent } from '../invariants-confirm-dialog/i
         MatSliderModule,
         MatExpansionModule,
         TranslateModule,
-        MatTooltip,
+        InvariantsDisplayComponent,
+        DrawToolbarComponent,
     ],
     templateUrl: './invariants-table.component.html',
     styleUrl: './invariants-table.component.css',
@@ -49,6 +52,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
     private _notificationService = inject(ToasterNotificationService);
     private _displayService = inject(DisplayService);
     private _dialog = inject(MatDialog);
+    private _translate = inject(TranslateService);
     entryService = inject(InvariantsEntryService);
     validationService = inject(InvariantsValidationService);
     InvariantValidity = InvariantValidity;
@@ -62,17 +66,58 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
             .pipe(
                 tap((_) => {
                     this.diagram = undefined;
+                    this.entryService.clearInputEntries();
                 }),
                 filter((diagram): diagram is Diagram => diagram instanceof Diagram),
             )
             .subscribe((diagram: Diagram) => {
                 this.diagram = diagram;
+                this.validationService.initialize(diagram);
             });
     }
 
     ngOnDestroy(): void {
         this._sub?.unsubscribe();
     }
+    
+    protected readonly toolbarActions = computed<DrawToolbarAction[]>(() => [
+        {
+            icon: 'add',
+            tooltip: 'INVARIANTS.NEW_ENTRY',
+            color: 'primary',
+            isActive: this.diagram !== undefined,
+            action: () => this.onNewEntry(),
+        },
+        {
+            icon: 'checklist',
+            tooltip: 'INVARIANTS.VALIDATE_ENTRIES',
+            color: 'primary',
+            isActive: this.inputEntries().length > 0,
+            action: () => this.onValidateEntries(),
+        },
+        {
+            icon: 'remove_red_eye',
+            tooltip: 'INVARIANTS.SHOW_INVARIANTS',
+            color: 'primary',
+            isActive: this.diagram !== undefined,
+            action: () => this.onShowInvariantsButton(),
+        },
+    ]);
+
+    protected readonly toolbarInstructions = computed<DrawToolbarInstruction[]>(() => {
+        return [
+            { label: 'INVARIANTS.GOAL', text: 'INVARIANTS.GOAL_TEXT' },
+            { label: 'INVARIANTS.TRANSITION_STATUS', text: 'INVARIANTS.TRANSITION_STATUS_TEXT' },
+            { label: 'INVARIANTS.DIFFICULTY_LEVELS', text: 'INVARIANTS.DIFFICULTY_LEVELS_TEXT' },
+        ];
+    });
+
+    protected readonly toolbarToggle = computed<DrawToolbarToggle | null>(() => ({
+        label: 'INVARIANTS.SHOW_TRANSITION_WEIGHTS',
+        tooltip: '', // Optional – falls kein Tooltip gebraucht wird
+        checked: this.entryService.showTransitionWeights(),
+        onChange: (checked: boolean) => this.entryService.showTransitionWeights.set(checked)
+    }));
 
     /**
      * Deletes a firing entry by its ID.
@@ -182,8 +227,7 @@ export class InvariantsTableComponent implements OnInit, OnDestroy {
      * @param panel - The expansion panel containing the button.
      * @param event - The click event.
      */
-    onShowInvariantsButton(event: Event): void {
-        event.stopPropagation();
+    onShowInvariantsButton(): void {
         const dialogRef = this._dialog.open(InvariantsConfirmDialogComponent);
 
         dialogRef.afterClosed().subscribe((result: boolean) => {

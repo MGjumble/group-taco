@@ -1,163 +1,131 @@
-<div class="invariants-table-wrapper">
-    <mat-expansion-panel class="invariants-table-panel" [expanded]="true" #invariantsPanel>
-        <mat-expansion-panel-header class="invariants-table-header">
-            <div class="invariants-table-header-title">
-                <mat-icon
-                    class="help-icon"
-                    [matTooltip]="'INVARIANTS.HELP' | translate"
-                    matTooltipPosition="above"
-                    color="primary">
-                    help_outline
-                </mat-icon>
-                <mat-panel-title>{{ 'INVARIANTS.INVARIANTS_TABLE' | translate }}</mat-panel-title>
-            </div>
-            <div class="invariants-table-header-actions">
-                <button
-                    matIconButton
-                    [disabled]="isButtonDisabled()"
-                    color="primary"
-                    [matTooltip]="'INVARIANTS.NEW_ENTRY' | translate"
-                    (click)="onAddButton(invariantsPanel, $event)">
-                    <mat-icon>add</mat-icon>
-                </button>
-                @if (isExamMode()) {
-                    <button
-                        matIconButton
-                        [disabled]="isButtonDisabled() || inputEntries().length === 0"
-                        color="primary"
-                        [matTooltip]="'INVARIANTS.VALIDATE_ENTRIES' | translate"
-                        (click)="onValidateButton(invariantsPanel, $event)">
-                        <mat-icon>checklist</mat-icon>
-                    </button>
-                }
-                <button
-                    matIconButton
-                    [disabled]="isButtonDisabled()"
-                    color="primary"
-                    [matTooltip]="'INVARIANTS.SHOW_INVARIANTS' | translate"
-                    (click)="onShowInvariantsButton($event)">
-                    <mat-icon>remove_red_eye</mat-icon>
-                </button>
-            </div>
-            <div class="pn-toggle-container">
-                <span class="pn-toggle-label">{{ 'INVARIANTS.SHOW_TRANSITION_WEIGHTS' | translate }}</span>
-                <label class="pn-toggle-switch">
-                    <input
-                        type="checkbox"
-                        [checked]="entryService.showTransitionWeights()"
-                        (change)="entryService.showTransitionWeights.set($any($event.target).checked)" />
-                    <span class="pn-toggle-slider"></span>
-                </label>
-            </div>
-        </mat-expansion-panel-header>
-        <div class="invariants-table-container">
-            <table class="invariants-table">
-                <thead>
-                    <tr>
-                        <th class="narrow-th">
-                            <mat-icon>playlist_add_check</mat-icon>
-                        </th>
-                        <th class="invariant-notation-th">{{ 'INVARIANTS.NOTATION' | translate }}</th>
-                        <th class="invariant-description-th">{{ 'INVARIANTS.DESCRIPTION' | translate }}</th>
-                        <th class="narrow-th">
-                            <button
-                                mat-icon-button
-                                color="warn"
-                                (click)="onDeleteAllEntries()"
-                                class="delete-all-entries-button"
-                                [disabled]="inputEntries().length === 0">
-                                <mat-icon>delete_sweep</mat-icon>
-                            </button>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (entry of inputEntries(); track entry.id) {
-                        <tr
-                            class="invariant-row"
-                            [attr.active]="entryService.isEntryActive(entry.id)() ? '' : null"
-                            (click)="onActivateEntry(entry.id)">
-                            <td class="invariant-validity-td">
-                                @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
-                                    <button mat-icon-button class="minimal-button validity-button">
-                                        <mat-icon class="minimal-icon">check_circle</mat-icon>
-                                    </button>
-                                } @else if (entry.validity === InvariantValidity.VALID_NOT_MINIMAL) {
-                                    <button
-                                        mat-icon-button
-                                        class="not-minimal-button validity-button"
-                                        matTooltipClass="wide-tooltip">
-                                        <mat-icon class="not-minimal-icon">check_circle</mat-icon>
-                                    </button>
-                                } @else if (entry.validity === InvariantValidity.INCOMPLETE) {
-                                    <button
-                                        mat-icon-button
-                                        class="incomplete-button validity-button"
-                                        matTooltipClass="wide-tooltip">
-                                        <mat-icon class="incomplete-icon">build_circle</mat-icon>
-                                    </button>
-                                } @else if (
-                                    entry.validity === InvariantValidity.INVALID ||
-                                    entry.validity === InvariantValidity.INVALID_TRIVIAL
-                                ) {
-                                    <button
-                                        mat-icon-button
-                                        class="invalid-button validity-button"
-                                        matTooltipClass="wide-tooltip">
-                                        <mat-icon color="warn">cancel</mat-icon>
-                                    </button>
-                                }
-                            </td>
-                            <td class="invariant-notation-td">
-                                {{ entry.notation }}
-                            </td>
+<div class="tab-toolbar-container"></div>
 
-                            <td class="invariant-description-td">
-                                @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
-                                    {{ 'INVARIANTS.VALID_MINIMAL' | translate }}
-                                } @else if (entry.validity === InvariantValidity.VALID_NOT_MINIMAL) {
-                                    {{ 'INVARIANTS.VALID_NOT_MINIMAL' | translate }}
-                                } @else if (entry.validity === InvariantValidity.INCOMPLETE) {
-                                    {{ 'INVARIANTS.INCOMPLETE' | translate: entry }} ---
-                                    {{ 'INVARIANTS.PLACES_MISSING' | translate: entry }}
-                                    {{ entry.missingPlacesCount }} ---
-                                    {{ 'INVARIANTS.WEIGHTS_MISSING' | translate: entry }}
-                                    {{ entry.missingWeightsCount }}
-                                } @else if (entry.validity === InvariantValidity.INVALID) {
-                                    {{ 'INVARIANTS.INVALID' | translate }}
-                                } @else if (entry.validity === InvariantValidity.INVALID_TRIVIAL) {
-                                    {{ 'INVARIANTS.INVALID_TRIVIAL' | translate }}
-                                }
-                            </td>
+<div class="graph-display-layout">
+    <app-invariants-display></app-invariants-display>
+    
+    <div class="outer-wrapper">
+        <div class="invariants-table-wrapper">
+            @if (diagram && inputEntries().length > 0) {
+                <div class="invariants-table-container">
+                    <table class="invariants-table">
+                        <thead>
+                            <tr>
+                                <th class="narrow-th">
+                                    <mat-icon>playlist_add_check</mat-icon>
+                                </th>
+                                <th class="invariant-notation-th">{{ 'INVARIANTS.NOTATION' | translate }}</th>
+                                <th class="invariant-description-th">{{ 'INVARIANTS.DESCRIPTION' | translate }}</th>
+                                <th class="narrow-th">
+                                    <button
+                                        mat-icon-button
+                                        color="warn"
+                                        (click)="onDeleteAllEntries()"
+                                        class="delete-all-entries-button"
+                                        [disabled]="inputEntries().length === 0">
+                                        <mat-icon>delete_sweep</mat-icon>
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (entry of inputEntries(); track entry.id) {
+                                <tr
+                                    class="invariant-row"
+                                    [attr.active]="entryService.isEntryActive(entry.id)() ? '' : null"
+                                    (click)="onActivateEntry(entry.id)">
+                                    <td class="invariant-validity-td">
+                                        @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
+                                            <button mat-icon-button class="minimal-button validity-button">
+                                                <mat-icon class="minimal-icon">check_circle</mat-icon>
+                                            </button>
+                                        } @else if (entry.validity === InvariantValidity.VALID_NOT_MINIMAL) {
+                                            <button
+                                                mat-icon-button
+                                                class="not-minimal-button validity-button"
+                                                matTooltipClass="wide-tooltip">
+                                                <mat-icon class="not-minimal-icon">check_circle</mat-icon>
+                                            </button>
+                                        } @else if (entry.validity === InvariantValidity.INCOMPLETE) {
+                                            <button
+                                                mat-icon-button
+                                                class="incomplete-button validity-button"
+                                                matTooltipClass="wide-tooltip">
+                                                <mat-icon class="incomplete-icon">build_circle</mat-icon>
+                                            </button>
+                                        } @else if (
+                                            entry.validity === InvariantValidity.INVALID_NOT_FINAL ||
+                                            entry.validity === InvariantValidity.INVALID_FINAL ||
+                                            entry.validity === InvariantValidity.INVALID_TRIVIAL
+                                        ) {
+                                            <button
+                                                mat-icon-button
+                                                class="invalid-button validity-button"
+                                                matTooltipClass="wide-tooltip">
+                                                <mat-icon color="warn">cancel</mat-icon>
+                                            </button>
+                                        }
+                                    </td>
+                                    <td class="invariant-notation-td">
+                                        {{ entry.notation }}
+                                    </td>
 
-                            <td class="delete-button-td">
-                                <button
-                                    mat-icon-button
-                                    color="warn"
-                                    (click)="onDeleteEntry(entry.id)"
-                                    class="delete-entry-button">
-                                    <mat-icon>delete</mat-icon>
-                                </button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            @if (diagram && !isExamMode()) {
-                <div class="invariants-progress-container">
-                    {{ 'INVARIANTS.FOUND_INVARIANTS' | translate }}:
-                    @for (found of validationService.foundMinInvariants(); track $index) {
-                        <span class="material-symbols-outlined progress-circle found-circle"
-                            ><mat-icon>check_circle</mat-icon></span
-                        >
-                    }
-                    @for (remaining of validationService.remainingMinInvariants(); track $index) {
-                        <span class="material-symbols-outlined progress-circle remaining-circle"
-                            ><mat-icon>circle</mat-icon></span
-                        >
-                    }
+                                    <td class="invariant-description-td">
+                                        @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
+                                            {{ 'INVARIANTS.VALID_MINIMAL' | translate }}
+                                        } @else if (entry.validity === InvariantValidity.VALID_NOT_MINIMAL) {
+                                            {{ 'INVARIANTS.VALID_NOT_MINIMAL' | translate }}
+                                        } @else if (entry.validity === InvariantValidity.INCOMPLETE) {
+                                            {{ 'INVARIANTS.INCOMPLETE' | translate: entry }}<br />
+                                            --- {{ 'INVARIANTS.PLACES_MISSING' | translate: entry }}
+                                            {{ entry.missingPlacesCount }}<br />
+                                            --- {{ 'INVARIANTS.WEIGHTS_MISSING' | translate: entry }}
+                                            {{ entry.missingWeightsCount }}
+                                        } @else if (entry.validity === InvariantValidity.INVALID_NOT_FINAL) {
+                                            {{ 'INVARIANTS.INVALID_NOT_FINAL' | translate }}
+                                        } @else if (entry.validity === InvariantValidity.INVALID_FINAL) {
+                                            {{ 'INVARIANTS.INVALID_FINAL' | translate }}
+                                        } @else if (entry.validity === InvariantValidity.INVALID_TRIVIAL) {
+                                            {{ 'INVARIANTS.INVALID_TRIVIAL' | translate }}
+                                        }
+                                    </td>
+
+                                    <td class="delete-button-td">
+                                        <button
+                                            mat-icon-button
+                                            color="warn"
+                                            (click)="onDeleteEntry(entry.id)"
+                                            class="delete-entry-button">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
+                @if (!isExamMode()) {
+                    <div class="progress-container">
+                        {{ 'INVARIANTS.FOUND_INVARIANTS' | translate }}:
+                        @for (found of validationService.foundMinInvariants(); track $index) {
+                            <span class="material-symbols-outlined progress-circle found-circle"
+                                ><mat-icon>check_circle</mat-icon></span
+                            >
+                        }
+                        @for (remaining of validationService.remainingMinInvariants(); track $index) {
+                            <span class="material-symbols-outlined progress-circle remaining-circle"
+                                ><mat-icon>circle</mat-icon></span
+                            >
+                        }
+                    </div>
+                }
             }
         </div>
-    </mat-expansion-panel>
+        <app-draw-toolbar
+            class="instruction-panel"
+            [headerTitle]="'INVARIANTS.INVARIANTS' | translate"
+            [helpTooltip]="'INVARIANTS.HELP_TOOLTIP' | translate"
+            [actions]="toolbarActions()"
+            [instructions]="toolbarInstructions()">
+        </app-draw-toolbar>
+    </div>
 </div>
