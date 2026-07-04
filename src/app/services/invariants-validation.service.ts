@@ -143,7 +143,8 @@ export class InvariantsValidationService {
 
         const isInvariant = this._isInvariant(vector);
         if (!isInvariant) {
-            entry.setValidity(InvariantValidity.INVALID);
+            if (isFinalValidation) entry.setValidity(InvariantValidity.INVALID_FINAL);
+            else entry.setValidity(InvariantValidity.INVALID_NOT_FINAL);
             return;
         }
 
