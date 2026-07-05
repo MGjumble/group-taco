@@ -1,13 +1,12 @@
 import { InvariantEntry, InvariantValidity } from './invariant-entry';
 
 describe('InvariantEntry', () => {
-    // ---- Testdaten ----
     const mockPlaces = ['p1', 'p2', 'p3'];
     const mockTransitions = ['t1', 't2'];
     const mockPlaceFlows = new Map<string, Map<string, number>>([
         ['p1', new Map([['t1', 1], ['t2', -1]])],
         ['p2', new Map([['t1', -1], ['t2', 1]])],
-        ['p3', new Map([['t1', 0], ['t2', 0]])], // Neutraler Platz
+        ['p3', new Map([['t1', 0], ['t2', 0]])],
     ]);
 
     let entry: InvariantEntry;
@@ -15,7 +14,7 @@ describe('InvariantEntry', () => {
     beforeEach(() => {
         entry = new InvariantEntry(
             1,
-            '', // notation (wird später getestet)
+            '', // notation
             undefined,
             undefined,
             undefined,
@@ -81,7 +80,6 @@ describe('InvariantEntry', () => {
         it('should update transition weights based on place flows', () => {
             entry.selectPlace('p1', 1);
             const transitionWeights = entry.transitionWeights();
-            // p1 hat Flow: t1=+1, t2=-1 → Gewichte werden entsprechend angepasst
             expect(transitionWeights.get('t1')).toBe(1);
             expect(transitionWeights.get('t2')).toBe(-1);
         });
@@ -110,15 +108,13 @@ describe('InvariantEntry', () => {
                 undefined,
                 undefined,
                 undefined,
-                ['p1'],      // 1 Platz
-                ['t1'],      // 1 Transition (irrelevant, da Flows leer)
-                emptyFlows   // ← Leere Map
+                ['p1'],
+                ['t1'],
+                emptyFlows
             );
 
-            entry.selectPlace('p1', 5);  // Gewichtsänderung
-            // Platzgewicht sollte sich ändern:
+            entry.selectPlace('p1', 5);
             expect(entry.placeWeights().get('p1')).toBe(5);
-            // Transitionen sollten UNVERÄNDERT bleiben (0):
             expect(entry.transitionWeights().get('t1')).toBe(0);
         });
     });
