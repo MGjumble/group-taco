@@ -104,16 +104,16 @@ export class InvariantsComponent implements OnInit, OnDestroy {
     protected readonly toolbarInstructions = computed<DrawToolbarInstruction[]>(() => {
         return [
             { label: 'INVARIANTS.GOAL', text: 'INVARIANTS.GOAL_TEXT' },
-            { label: 'INVARIANTS.TRANSITION_STATUS', text: 'INVARIANTS.TRANSITION_STATUS_TEXT' },
+            { label: 'INVARIANTS.TRANSITION_BALANCES', text: 'INVARIANTS.TRANSITION_BALANCES_TEXT' },
             { label: 'INVARIANTS.DIFFICULTY_LEVELS', text: 'INVARIANTS.DIFFICULTY_LEVELS_TEXT' },
         ];
     });
 
     protected readonly toolbarToggle = computed<DrawToolbarToggle | null>(() => ({
-        label: 'INVARIANTS.SHOW_TRANSITION_WEIGHTS',
-        tooltip: '', // Optional – falls kein Tooltip gebraucht wird
-        checked: this.entryService.showTransitionWeights(),
-        onChange: (checked: boolean) => this.entryService.showTransitionWeights.set(checked)
+        label: 'INVARIANTS.SHOW_TRANSITION_BALANCES',
+        tooltip: '',
+        checked: this.entryService.showTransitionBalances(),
+        onChange: (checked: boolean) => this.entryService.showTransitionBalances.set(checked)
     }));
 
     /**

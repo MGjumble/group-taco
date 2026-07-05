@@ -28,12 +28,12 @@
     </svg>
     @if (diagram()) {
         <div class="toggle-container">
-            <span class="toggle-label">{{ 'INVARIANTS.SHOW_TRANSITION_WEIGHTS' | translate }}</span>
+            <span class="toggle-label">{{ 'INVARIANTS.SHOW_TRANSITION_BALANCES' | translate }}</span>
             <label class="toggle-switch">
                 <input
                     type="checkbox"
-                    [checked]="entryService.showTransitionWeights()"
-                    (change)="entryService.showTransitionWeights.set($any($event.target).checked)" />
+                    [checked]="entryService.showTransitionBalances()"
+                    (change)="entryService.showTransitionBalances.set($any($event.target).checked)" />
                 <span class="toggle-slider"></span>
             </label>
         </div>

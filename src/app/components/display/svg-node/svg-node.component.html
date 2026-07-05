@@ -31,7 +31,7 @@
         stroke="black"
         stroke-width="2"
         pointer-events="auto"
-        (mousedown)="circleClick($event)"
+        (mousedown)="circleClick()"
         (contextmenu)="$event.preventDefault()" />
 
     <!-- Tokens visualization inside place -->
@@ -73,7 +73,7 @@
     }
 
     <!-- Place weight display -->
-    @if (shouldShowNodeWeight()) {
+    @if (shouldShowPlaceWeight()) {
         <svg:text
             class="place-weight"
             xmlns:svg="http://www.w3.org/2000/svg"
@@ -82,19 +82,19 @@
             text-anchor="middle"
             dominant-baseline="central"
             fill="black">
-            {{ nodeWeight() }}
+            {{ placeWeight() }}
         </svg:text>
     }
 
     @if (enablePlaceWeights()) {
-        @if (nodeWeight()) {
+        @if (placeWeight()) {
             <svg:g>
                 <svg:circle
                     class="change-place-weight-button"
                     xmlns:svg="http://www.w3.org/2000/svg"
                     [attr.cx]="circleX() - RADIUS + 5"
                     [attr.cy]="circleY() - RADIUS + 5"
-                    [attr.r]="8"
+                    [attr.r]="9"
                     fill="white"
                     stroke="darkblue"
                     stroke-width="1"
@@ -107,7 +107,7 @@
                     [attr.y]="circleY() - RADIUS + 5"
                     text-anchor="middle"
                     dominant-baseline="central"
-                    font-size="18"
+                    font-size="20"
                     fill="darkblue"
                     pointer-events="none">
                     ‒
@@ -120,7 +120,7 @@
                 xmlns:svg="http://www.w3.org/2000/svg"
                 [attr.cx]="circleX() + RADIUS - 5"
                 [attr.cy]="circleY() - RADIUS + 5"
-                [attr.r]="8"
+                [attr.r]="9"
                 fill="white"
                 stroke="darkblue"
                 stroke-width="1"
@@ -133,7 +133,7 @@
                 [attr.y]="circleY() - RADIUS + 6.5"
                 text-anchor="middle"
                 dominant-baseline="central"
-                font-size="18"
+                font-size="20"
                 fill="darkblue"
                 pointer-events="none">
                 +
@@ -182,7 +182,7 @@
         </svg:text>
     }
 
-    @if (shouldShowNodeWeight()) {
+    @if (shouldShowTransitionBalance()) {
         <svg:g>
             <svg:polygon
                 xmlns:svg="http://www.w3.org/2000/svg"
@@ -192,13 +192,10 @@
                 stroke-width="0.5" />
 
             <svg:text
+                class="transition-balance-text"
                 xmlns:svg="http://www.w3.org/2000/svg"
                 [attr.x]="rectX() + rectWidth() - 12"
-                [attr.y]="rectY() + 12"
-                text-anchor="middle"
-                dominant-baseline="central"
-                font-size="12"
-                fill="black">
+                [attr.y]="rectY() + 12">
                 {{ getTriangleText() }}
             </svg:text>
         </svg:g>

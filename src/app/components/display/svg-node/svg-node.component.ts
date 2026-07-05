@@ -103,7 +103,7 @@ export class SvgNodeComponent {
     });
 
     readonly placeFillColor = computed(() => {
-        const weight = this.nodeWeight();
+        const weight = this.placeWeight();
         if (this.enablePlaceWeights() && weight && weight !== 0) return '#CFE9FF';
         return this.fillColor();
     });
@@ -255,26 +255,34 @@ export class SvgNodeComponent {
     readonly isSelected = computed(() => !!this.selected());
     readonly selectionStrokeColor = computed(() => (this.isSelected() ? 'orange' : 'transparent'));
 
-    readonly nodeWeight = computed(() => {
+    readonly placeWeight = computed(() => {
         const entry = this._invariantsEntryService.currentEntry();
-        if (this.isPlace()) return entry?.placeWeights().get(this.displayLabel());
-        else if (this.isTransition()) return entry?.transitionWeights().get(this.displayLabel());
-        return undefined;
+        return entry?.placeWeights().get(this.displayLabel());
+    });
+
+    readonly transitionBalance = computed(() => {
+        const entry = this._invariantsEntryService.currentEntry();
+        return entry?.transitionBalances().get(this.displayLabel());
     });
 
     readonly shouldShowTokens = computed(() => {
         return this._tabStateService.currentTab() !== Tab.INVARIANTS;
     });
 
-    readonly shouldShowNodeWeight = computed(() => {
-        const weight = this.nodeWeight();
+    readonly shouldShowPlaceWeight = computed(() => {
+        const weight = this.placeWeight();
         if (!weight || weight === 0) return false;
-
-        if (this.isTransition() && !this._invariantsEntryService.showTransitionWeights()) {
-            return false;
-        }
-
         return this._tabStateService.currentTab() === Tab.INVARIANTS;
+    });
+
+    readonly shouldShowTransitionBalance = computed(() => {
+        const balance = this.transitionBalance();
+        return (
+            this._tabStateService.currentTab() === Tab.INVARIANTS &&
+            this._invariantsEntryService.showTransitionBalances() &&
+            balance !== undefined &&
+            balance !== 0
+        );
     });
 
     public click() {
@@ -282,7 +290,7 @@ export class SvgNodeComponent {
         if (node) this.clickNode.emit(node);
     }
 
-    public circleClick(event: MouseEvent) {
+    public circleClick() {
         const node = this.diagramNode();
         if (node) this.stateNodeClick.emit(node as StateNode);
     }
@@ -304,14 +312,14 @@ export class SvgNodeComponent {
 
     getTriangleFillColor(): string {
         if (this.isExamMode()) return '#eeeeee';
-        if (this.nodeWeight()! > 0) return '#aaffaa';
+        if (this.transitionBalance()! > 0) return '#aaffaa';
         return '#ffaaaa';
     }
 
     getTriangleText(): string {
-        if (this.isExamMode()) return "+‒";
-        const nodeWeight = this.nodeWeight() || 0;
-        if (nodeWeight > 0) return '+' + nodeWeight;
-        return String(nodeWeight);
+        if (this.isExamMode()) return "≠0";
+        const balance = this.transitionBalance() || 0;
+        if (balance > 0) return '+' + balance;
+        return String(balance);
     }
 }

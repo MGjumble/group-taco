@@ -33,8 +33,8 @@ describe('InvariantEntry', () => {
             expect(weights.get('p3')).toBe(0);
         });
 
-        it('should initialize transitionWeights with 0 for each transition', () => {
-            const weights = entry.transitionWeights();
+        it('should initialize transitionBalances with 0 for each transition', () => {
+            const weights = entry.transitionBalances();
             expect(weights.get('t1')).toBe(0);
             expect(weights.get('t2')).toBe(0);
         });
@@ -79,9 +79,9 @@ describe('InvariantEntry', () => {
 
         it('should update transition weights based on place flows', () => {
             entry.selectPlace('p1', 1);
-            const transitionWeights = entry.transitionWeights();
-            expect(transitionWeights.get('t1')).toBe(1);
-            expect(transitionWeights.get('t2')).toBe(-1);
+            const transitionBalances = entry.transitionBalances();
+            expect(transitionBalances.get('t1')).toBe(1);
+            expect(transitionBalances.get('t2')).toBe(-1);
         });
 
         it('should update notation after selecting a place', () => {
@@ -115,7 +115,7 @@ describe('InvariantEntry', () => {
 
             entry.selectPlace('p1', 5);
             expect(entry.placeWeights().get('p1')).toBe(5);
-            expect(entry.transitionWeights().get('t1')).toBe(0);
+            expect(entry.transitionBalances().get('t1')).toBe(0);
         });
     });
 

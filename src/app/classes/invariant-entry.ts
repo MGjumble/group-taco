@@ -18,10 +18,10 @@ export class InvariantEntry {
         public allTransitions: string[],
         public placeFlows: Map<string, Map<string, number>>,
         public placeWeights = signal<Map<string, number>>(new Map()),
-        public transitionWeights = signal<Map<string, number>>(new Map()),
+        public transitionBalances = signal<Map<string, number>>(new Map()),
     ) {
         this.placeWeights.set(new Map(this.allPlaces.map((label) => [label, 0])));
-        this.transitionWeights.set(new Map(this.allTransitions.map((label) => [label, 0])));
+        this.transitionBalances.set(new Map(this.allTransitions.map((label) => [label, 0])));
     }
 
     get labels(): string[] {
@@ -43,7 +43,7 @@ export class InvariantEntry {
 
     selectPlace(placeLabel: string, weightDiff: number): void {
         this._updatePlaceWeight(placeLabel, weightDiff);
-        this._updateTransitionWeights(placeLabel, weightDiff);
+        this._updateTransitionBalances(placeLabel, weightDiff);
         this._updateNotation();
     }
 
@@ -57,15 +57,15 @@ export class InvariantEntry {
         });
     }
 
-    private _updateTransitionWeights(placeLabel: string, weightDiff: number): void {
+    private _updateTransitionBalances(placeLabel: string, weightDiff: number): void {
         const flow = this.placeFlows.get(placeLabel);
         if (!flow) return;
 
-        this.transitionWeights.update((currentMap) => {
+        this.transitionBalances.update((currentMap) => {
             const newMap = new Map(currentMap);
             for (const [tranLabel, factor] of flow) {
-                const currentWeight = newMap.get(tranLabel) || 0;
-                newMap.set(tranLabel, currentWeight + factor * weightDiff);
+                const currentBalance = newMap.get(tranLabel) || 0;
+                newMap.set(tranLabel, currentBalance - factor * weightDiff);
             }
             return newMap;
         });

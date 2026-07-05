@@ -10,7 +10,7 @@ export class InvariantsEntryService {
     private _modeService = inject(ModeService);
     private _validationService = inject(InvariantsValidationService);
 
-    showTransitionWeights = signal<boolean>(true);
+    showTransitionBalances = signal<boolean>(true);
     currentEntry = signal<InvariantEntry | undefined>(undefined);
 
     private _idCounter = 0;
