@@ -43,6 +43,7 @@ import { InvariantsDisplayComponent } from './invariants-display/invariants-disp
     templateUrl: './invariants.component.html',
     styleUrl: './invariants.component.css',
 })
+
 export class InvariantsComponent implements OnInit, OnDestroy {
     private _sub?: Subscription;
 
