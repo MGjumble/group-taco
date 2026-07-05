@@ -156,22 +156,7 @@ export class InvariantsComponent implements OnInit, OnDestroy {
      */
     async onValidateEntries(): Promise<void> {
         if (!this.diagram) return;
-        const invalidEntries: ToastList[] = [];
-        for (const entry of this.inputEntries()) {
-            await this.validationService.validateEntry(entry, true);
-            if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: entry.notation });
-        }
-        if (invalidEntries.length === 0)
-            this._notificationService.showSuccess(
-                'TOASTER.HEADER.VALIDATION_COMPLETED',
-                'TOASTER.BODY.ALL_MIN_INVARIANTS_FOUND',
-            );
-        else
-            this._notificationService.showWarning(
-                'TOASTER.HEADER.VALIDATION_COMPLETED',
-                'TOASTER.BODY.INVALID_INVARIANT_ENTRIES',
-                { duration: 8000, list: invalidEntries },
-            );
+        this.validationService.validateAllEntries();
     }
 
     /**

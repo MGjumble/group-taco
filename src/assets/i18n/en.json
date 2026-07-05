@@ -202,6 +202,7 @@
             "RG_CHECK_MISSING_EDGES_LIST": "The following transitions are missing:",
             "SWITCH_BACK_TO_USER_GRAPH": "Please switch back to your self-created Graph to continue editing.",
             "ALL_MIN_INVARIANTS_FOUND": "All minimal invariants were found.",
+            "MIN_INVARIANTS_MISSING": "At least one (additional) minimal invariant has not been found yet.",
             "INVALID_INVARIANT_ENTRIES": "The following entries are not minimal or no invariants:"
         },
         "VALIDATION_MESSAGES": {
@@ -250,11 +251,7 @@
         "INVARIANTS": "Invariants",
         "HEADER_SUBTITLE_1": "TacoInv - Modification of Taco tool for invariants",
         "HEADER_SUBTITLE_2": "Bachelor Thesis, SoSe26, Marie G.",
-<<<<<<< HEAD
         "ACTIONS": "Actions",
-=======
-        "INVARIANTS_TABLE": "Invariants Table",
->>>>>>> origin/develop
         "HELP_TOOLTIP": "Click to open the usage guide",
         "NOTATION": "Notation",
         "DESCRIPTION": "Description",

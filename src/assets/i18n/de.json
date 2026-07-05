@@ -203,6 +203,7 @@
             "RG_CHECK_MISSING_EDGES_LIST": "Die folgenden Transitionen fehlen:",
             "SWITCH_BACK_TO_USER_GRAPH": "Bitte wechseln Sie zurück zum selbst erstellten Graphen, um fortzufahren.",
             "ALL_MIN_INVARIANTS_FOUND": "Alle minimalen Invarianten wurden gefunden.",
+            "MIN_INVARIANTS_MISSING": "Mindestens eine (weitere) minimale Invariante wurde noch nicht gefunden.",
             "INVALID_INVARIANT_ENTRIES": "Die folgenden Einträge sind nicht minimal oder keine Invarianten:"
         },
         "VALIDATION_MESSAGES": {

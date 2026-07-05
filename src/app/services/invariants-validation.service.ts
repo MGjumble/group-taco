@@ -8,6 +8,7 @@ import { InvariantEntry, InvariantValidity } from '../classes/invariant-entry';
 import { Tab } from '../classes/tabs';
 import { DiagramTransition } from '../classes/diagram/diagram-transition';
 import { PlaceInvariantsService } from './invariants-computing.service';
+import { ToastList } from '../classes/toast';
 
 @Injectable({ providedIn: 'root' })
 export class InvariantsValidationService {
@@ -149,6 +150,25 @@ export class InvariantsValidationService {
         }
 
         entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL);
+    }
+
+    async validateAllEntries(): Promise<void> {
+        const invalidEntries: ToastList[] = [];
+            for (const entry of this.inputEntries()) {
+                await this.validateEntry(entry, true);
+                if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: entry.notation });
+            }
+            if (this.remainingMinInvariants().length === 0)
+                this._notificationService.showSuccess(
+                    'TOASTER.HEADER.VALIDATION_COMPLETED',
+                    'TOASTER.BODY.ALL_MIN_INVARIANTS_FOUND',
+                );
+            else {
+                this._notificationService.showInfo(
+                    'TOASTER.HEADER.VALIDATION_COMPLETED',
+                    'TOASTER.BODY.MIN_INVARIANTS_MISSING',
+                );
+            }
     }
 
     private _areVectorsEqual(a: number[], b: number[]): boolean {
