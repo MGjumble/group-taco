@@ -20,7 +20,6 @@ import { ExampleMenuComponent } from '../example-menu/example-menu.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { TupleInputButtonComponent } from '../tab-toolbar/tuple-input-button/tuple-input-button.component';
 import { InvariantsComponent } from '../tab-toolbar/invariants/invariants.component';
-import { InvariantsTableComponent } from '../tab-toolbar/invariants/invariants-table/invariants-table.component';
 
 @Component({
     selector: 'app-main-tab',
@@ -31,8 +30,8 @@ import { InvariantsTableComponent } from '../tab-toolbar/invariants/invariants-t
         DrawComponent,
         PlayComponent,
         ReachabilityGraphComponent,
-        InvariantsTableComponent,
         ProcessNetComponent,
+        InvariantsComponent,
         SaveComponent,
         UploadComponent,
         ClearNetButtonComponent,
