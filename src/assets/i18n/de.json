@@ -274,7 +274,7 @@
         "GOAL": "Ziel",
         "GOAL_TEXT": "Kombiniere Stellen mit passenden Gewichtungen, bis alle Transitionen ausgeglichen sind. Durch Klicken von + und - an den Stellen können diese hinzugefügt oder entfernt werden.",
         "TRANSITION_BALANCES": "Transitionsgleichgewichte",
-        "TRANSITION_BALANCES_TEXT": "Nicht ausgeglichene Transitionen sind jeweils durch ein Dreieck oben rechts markiert (ausschaltbar).",
+        "TRANSITION_BALANCES_TEXT": "Nicht ausgeglichene Transitionen sind jeweils durch ein Dreieck oben rechts markiert (kann deaktiviert werden).",
         "DIFFICULTY_LEVELS": "Schwierigkeitsstufen",
         "DIFFICULTY_LEVELS_TEXT": "Lernmodus: Die Eingaben werden sofort validiert und gefundene minimale Invarianten direkt registriert. Prüfungsmodus: Alle Eingaben können gesammelt durch Klicken des Validierungs-Buttons geprüft werden."
     },
