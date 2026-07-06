@@ -1,5 +1,4 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 
 import { ToasterNotificationService } from './toaster-notification.service';
 import { ModeService } from './mode.service';
@@ -14,7 +13,6 @@ import { ToastList } from '../classes/toast';
 export class InvariantsValidationService {
     private _notificationService = inject(ToasterNotificationService);
     private _modeService = inject(ModeService);
-    private _translate = inject(TranslateService);
     private _computingService = inject(PlaceInvariantsService);
 
     private _EPSILON = 1e-10;
@@ -85,14 +83,14 @@ export class InvariantsValidationService {
 
             for (const { place, weight } of transition.getInputFlow()) {
                 const placeLabel = place.displayLabel;
-                const currentWeight = this._placeFlows.get(placeLabel)?.get(transitionLabel) || 0;
-                this._placeFlows.get(placeLabel)?.set(transitionLabel, currentWeight + weight);
+                const currentBalance = this._placeFlows.get(placeLabel)?.get(transitionLabel) || 0;
+                this._placeFlows.get(placeLabel)?.set(transitionLabel, currentBalance - weight);
             }
 
             for (const { place, weight } of transition.getOutputFlow()) {
                 const placeLabel = place.displayLabel;
-                const currentWeight = this._placeFlows.get(placeLabel)?.get(transitionLabel) || 0;
-                this._placeFlows.get(placeLabel)?.set(transitionLabel, currentWeight - weight);
+                const currentBalance = this._placeFlows.get(placeLabel)?.get(transitionLabel) || 0;
+                this._placeFlows.get(placeLabel)?.set(transitionLabel, currentBalance + weight);
             }
         }
     }
@@ -100,9 +98,8 @@ export class InvariantsValidationService {
     /**
      * Validates a firing entry input.
      * @param entry - The firing entry to be validated.
-     * @returns A promise that resolves when the validation is complete.
      */
-    async validateEntry(entry: InvariantEntry, isFinalValidation: boolean = false): Promise<void> {
+    validateEntry(entry: InvariantEntry, isFinalValidation: boolean = false): void {
         const vector = entry.vector;
         const isTrivial = vector.every((val) => val === 0);
         if (isTrivial) {
@@ -152,23 +149,18 @@ export class InvariantsValidationService {
         entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL);
     }
 
-    async validateAllEntries(): Promise<void> {
-        const invalidEntries: ToastList[] = [];
-            for (const entry of this.inputEntries()) {
-                await this.validateEntry(entry, true);
-                if (entry.validity !== InvariantValidity.VALID_MINIMAL) invalidEntries.push({ message: entry.notation });
-            }
-            if (this.remainingMinInvariants().length === 0)
-                this._notificationService.showSuccess(
-                    'TOASTER.HEADER.VALIDATION_COMPLETED',
-                    'TOASTER.BODY.ALL_MIN_INVARIANTS_FOUND',
-                );
-            else {
-                this._notificationService.showInfo(
-                    'TOASTER.HEADER.VALIDATION_COMPLETED',
-                    'TOASTER.BODY.MIN_INVARIANTS_MISSING',
-                );
-            }
+    validateAllEntries(): void {
+        if (this.remainingMinInvariants().length === 0)
+            this._notificationService.showSuccess(
+                'TOASTER.HEADER.VALIDATION_COMPLETED',
+                'TOASTER.BODY.ALL_MIN_INVARIANTS_FOUND',
+            );
+        else {
+            this._notificationService.showInfo(
+                'TOASTER.HEADER.VALIDATION_COMPLETED',
+                'TOASTER.BODY.MIN_INVARIANTS_MISSING',
+            );
+        }
     }
 
     private _areVectorsEqual(a: number[], b: number[]): boolean {
@@ -216,30 +208,6 @@ export class InvariantsValidationService {
         this._incidenceMatrix = this.createIncidenceMatrix(diagram);
         const allFoundInvariants = this._computingService.placeInvariants(this._incidenceMatrix);
         const minimalInvariants = this._computingService.calculateMinimalPIs(allFoundInvariants, this._incidenceMatrix);
-        this._printInvariantsAsTable(minimalInvariants, this._allPlaceLabels);
         this.computedMinInvariants.set(minimalInvariants);
-    }
-
-    private _printInvariantsAsTable(invariants: number[][], placeLabels: string[]): void {
-        if (invariants.length === 0) {
-            console.log('Keine Invarianten gefunden.');
-            return;
-        }
-
-        // Header-Zeile
-        let header = '#\t';
-        placeLabels.forEach((label) => {
-            header += `${label}\t`;
-        });
-        console.log(header.trim());
-
-        // Datenzeilen
-        invariants.forEach((invariant, index) => {
-            let row = `${index + 1}\t`;
-            invariant.forEach((coeff) => {
-                row += `${coeff}\t`;
-            });
-            console.log(row.trim());
-        });
     }
 }
