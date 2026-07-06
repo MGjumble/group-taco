@@ -312,7 +312,7 @@ export class SvgNodeComponent {
 
     getTriangleFillColor(): string {
         if (this.isExamMode()) return '#eeeeee';
-        if (this.transitionBalance()! > 0) return '#aaffaa';
+        if (this.transitionBalance()! > 0) return '#aad9ffff';
         return '#ffaaaa';
     }
 

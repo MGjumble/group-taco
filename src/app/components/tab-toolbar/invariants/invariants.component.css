@@ -1,6 +1,7 @@
 :host {
     display: flex;
     flex-direction: column;
+    font-family: Roboto, sans-serif;
     height: 100%;
     min-height: 0;
 }
@@ -205,20 +206,9 @@ app-draw-toolbar {
     justify-content: flex-end;
 }
 
-.progress-circle {
-    border: 1px solid lightgrey;
-    border-radius: 12px;
-    height: 24px;
-    width: 24px;
-    transition: all 0.3s ease;
-}
-
-.found-circle {
-    color: limegreen;
-}
-
-.remaining-circle {
-    color: white;
+.progress-icon {
+    height: 30px;
+    width: 30px;
 }
 
 .help-icon {

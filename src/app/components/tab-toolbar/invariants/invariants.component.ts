@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
-import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
+import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSliderModule } from '@angular/material/slider';
 import { TranslateModule } from '@ngx-translate/core';
@@ -16,12 +16,12 @@ import { DisplayService } from '../../../services/display.service';
 import { ModeService } from '../../../services/mode.service';
 import { InvariantsValidationService } from '../../../services/invariants-validation.service';
 import { InvariantsEntryService } from '../../../services/invariants-entry.service';
-import { ToasterNotificationService } from '../../../services/toaster-notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { InvariantsModalComponent } from './invariants-modal/invariants-modal.component';
 import { InvariantsConfirmDialogComponent } from './invariants-confirm-dialog/invariants-confirm-dialog.component';
 import { DrawToolbarAction, DrawToolbarComponent, DrawToolbarInstruction, DrawToolbarToggle } from '../../draw-toolbar/draw-toolbar.component';
 import { InvariantsDisplayComponent } from './invariants-display/invariants-display.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-invariants',
@@ -47,9 +47,10 @@ export class InvariantsComponent implements OnInit, OnDestroy {
     private _sub?: Subscription;
 
     modeService = inject(ModeService);
-    private _notificationService = inject(ToasterNotificationService);
     private _displayService = inject(DisplayService);
     private _dialog = inject(MatDialog);
+    private _matIconRegistry = inject(MatIconRegistry);
+    private _domSanitizer = inject(DomSanitizer);
     entryService = inject(InvariantsEntryService);
     validationService = inject(InvariantsValidationService);
     InvariantValidity = InvariantValidity;
@@ -76,6 +77,17 @@ export class InvariantsComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this._sub?.unsubscribe();
     }
+
+    constructor() {
+        this._matIconRegistry.addSvgIcon(
+            'empty-taco',
+            this._domSanitizer.bypassSecurityTrustResourceUrl('assets/images/empty-taco.svg'),
+        );
+        this._matIconRegistry.addSvgIcon(
+            'cropped-taco',
+            this._domSanitizer.bypassSecurityTrustResourceUrl('assets/images/cropped-taco.svg'),
+        );
+    }
     
     protected readonly toolbarActions = computed<DrawToolbarAction[]>(() => [
         {
@@ -97,7 +109,7 @@ export class InvariantsComponent implements OnInit, OnDestroy {
             tooltip: 'INVARIANTS.SHOW_INVARIANTS',
             color: 'primary',
             isActive: this.diagram !== undefined,
-            action: () => this.onShowInvariantsButton(),
+            action: () => this.onShowComputedInvariants(),
         },
     ]);
 
@@ -153,15 +165,28 @@ export class InvariantsComponent implements OnInit, OnDestroy {
     /**
      * Validates all firing sequences and shows a notification with the results.
      */
-    async onValidateEntries(): Promise<void> {
+    onValidateEntries(): void {
         if (!this.diagram) return;
         this.validationService.validateAllEntries();
     }
 
     /**
+     * Finds sequences when the "Find" button is clicked.
+     */
+    onShowComputedInvariants(): void {
+        const dialogRef = this._dialog.open(InvariantsConfirmDialogComponent);
+
+        dialogRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                this.showComputedInvariants();
+            }
+        });
+    }
+
+    /**
      * Finds firing sequences based on the current Petri net and user-defined limits.
      */
-    onShowInvariants(): void {
+    showComputedInvariants(): void {
         if (!this.diagram) return;
         const vectors = this.validationService.computedMinInvariants();
         const notations = [];
@@ -171,51 +196,6 @@ export class InvariantsComponent implements OnInit, OnDestroy {
         }
         this._dialog.open(InvariantsModalComponent, {
             data: { notations: notations },
-        });
-    }
-
-    /**
-     * Checks if buttons should be disabled (e.g., when no Petri net is loaded or a sequence is playing).
-     * @returns true if buttons should be disabled, false otherwise.
-     */
-    isButtonDisabled(): boolean {
-        return !this.diagram;
-    }
-
-    /**
-     * Adds a new firing entry when the "Add" button is clicked.
-     * @param panel - The expansion panel containing the button.
-     * @param event - The click event.
-     */
-    onAddButton(panel: MatExpansionPanel, event: Event): void {
-        event.stopPropagation();
-        if (!panel.expanded) panel.open();
-        this.onNewEntry();
-    }
-
-    /**
-     * Validates all sequences when the "Validate" button is clicked.
-     * @param panel - The expansion panel containing the button.
-     * @param event - The click event.
-     */
-    onValidateButton(panel: MatExpansionPanel, event: Event): void {
-        event.stopPropagation();
-        if (!panel.expanded) panel.open();
-        this.onValidateEntries().catch(console.error);
-    }
-
-    /**
-     * Finds sequences when the "Find" button is clicked.
-     * @param panel - The expansion panel containing the button.
-     * @param event - The click event.
-     */
-    onShowInvariantsButton(): void {
-        const dialogRef = this._dialog.open(InvariantsConfirmDialogComponent);
-
-        dialogRef.afterClosed().subscribe((result: boolean) => {
-            if (result) {
-                this.onShowInvariants();
-            }
         });
     }
 }

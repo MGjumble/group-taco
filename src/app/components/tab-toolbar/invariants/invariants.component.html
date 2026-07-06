@@ -107,14 +107,10 @@
                     <div class="progress-container">
                         {{ 'INVARIANTS.FOUND_INVARIANTS' | translate }}:
                         @for (found of validationService.foundMinInvariants(); track $index) {
-                            <span class="material-symbols-outlined progress-circle found-circle"
-                                ><mat-icon>check_circle</mat-icon></span
-                            >
+                            <mat-icon class="progress-icon" svgIcon="cropped-taco"></mat-icon>
                         }
                         @for (remaining of validationService.remainingMinInvariants(); track $index) {
-                            <span class="material-symbols-outlined progress-circle remaining-circle"
-                                ><mat-icon>circle</mat-icon></span
-                            >
+                            <mat-icon class="progress-icon" svgIcon="empty-taco"></mat-icon>
                         }
                     </div>
                 }
