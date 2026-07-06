@@ -27,22 +27,19 @@ export class InvariantsValidationService {
     computedMinInvariants = signal<number[][]>([]);
 
     foundMinInvariants = computed<number[][]>(() => {
-        const inputs = Array.from(this.inputEntries().map(entry => entry.vector));
-        return this.computedMinInvariants().filter(
-            comp => inputs.some(input => this._areVectorsEqual(input, comp))
+        const inputs = Array.from(this.inputEntries().map((entry) => entry.vector));
+        return this.computedMinInvariants().filter((comp) =>
+            inputs.some((input) => this._areVectorsEqual(input, comp)),
         );
     });
 
     remainingMinInvariants = computed<number[][]>(() => {
         const found = this.foundMinInvariants();
         const remaining = this.computedMinInvariants().filter(
-            comp => !found.some(found => this._areVectorsEqual(found, comp))
+            (comp) => !found.some((found) => this._areVectorsEqual(found, comp)),
         );
         if (remaining.length === 0 && !this._modeService.isExamMode(Tab.INVARIANTS)) {
-            this._notificationService.showSuccess(
-                'TOASTER.HEADER.SUCCESS',
-                'TOASTER.BODY.ALL_MIN_INVARIANTS_FOUND',
-            );
+            this._notificationService.showSuccess('TOASTER.HEADER.SUCCESS', 'TOASTER.BODY.ALL_MIN_INVARIANTS_FOUND');
         }
         return remaining;
     });
@@ -119,15 +116,13 @@ export class InvariantsValidationService {
         let computed = this.remainingMinInvariants();
         if (computed.length === 0) computed = this.computedMinInvariants();
 
-        const matchedInvariant = computed.find((inv) =>
-            vector.every((val, i) => inv[i] - val >= 0)
-        );
+        const matchedInvariant = computed.find((inv) => vector.every((val, i) => inv[i] - val >= 0));
 
         const isIncompleteInvariant = matchedInvariant !== undefined;
 
         if (isIncompleteInvariant) {
             const missingPerPlace = matchedInvariant.map((invVal, i) => invVal - vector[i]);
-            const missingPlacesCount = missingPerPlace.filter(diff => diff > 0).length;
+            const missingPlacesCount = missingPerPlace.filter((diff) => diff > 0).length;
             const missingWeightsTotal = missingPerPlace.reduce((sum, diff) => sum + diff, 0);
 
             entry.missingPlacesCount = missingPlacesCount;

@@ -4,9 +4,27 @@ describe('InvariantEntry', () => {
     const mockPlaces = ['p1', 'p2', 'p3'];
     const mockTransitions = ['t1', 't2'];
     const mockPlaceFlows = new Map<string, Map<string, number>>([
-        ['p1', new Map([['t1', 1], ['t2', -1]])],
-        ['p2', new Map([['t1', -1], ['t2', 1]])],
-        ['p3', new Map([['t1', 0], ['t2', 0]])],
+        [
+            'p1',
+            new Map([
+                ['t1', 1],
+                ['t2', -1],
+            ]),
+        ],
+        [
+            'p2',
+            new Map([
+                ['t1', -1],
+                ['t2', 1],
+            ]),
+        ],
+        [
+            'p3',
+            new Map([
+                ['t1', 0],
+                ['t2', 0],
+            ]),
+        ],
     ]);
 
     let entry: InvariantEntry;
@@ -20,7 +38,7 @@ describe('InvariantEntry', () => {
             undefined,
             mockPlaces,
             mockTransitions,
-            mockPlaceFlows
+            mockPlaceFlows,
         );
     });
 
@@ -102,16 +120,7 @@ describe('InvariantEntry', () => {
 
         it('should handle empty placeFlows (no transition updates)', () => {
             const emptyFlows = new Map<string, Map<string, number>>();
-            const entry = new InvariantEntry(
-                1,
-                '',
-                undefined,
-                undefined,
-                undefined,
-                ['p1'],
-                ['t1'],
-                emptyFlows
-            );
+            const entry = new InvariantEntry(1, '', undefined, undefined, undefined, ['p1'], ['t1'], emptyFlows);
 
             entry.selectPlace('p1', 5);
             expect(entry.placeWeights().get('p1')).toBe(5);
@@ -162,5 +171,4 @@ describe('InvariantEntry', () => {
             ]);
         });
     });
-
 });

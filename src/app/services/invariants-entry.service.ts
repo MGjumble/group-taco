@@ -25,6 +25,7 @@ export class InvariantsEntryService {
     }
 
     processPlaceClicked(place: DiagramPlace, weightDiff: number): void {
+        if (!place) return;
         let entry = this.getCurrentEntry();
         this.updateEntry(entry, place, weightDiff);
         if (this._isExamMode()) entry.setValidity(undefined);
@@ -34,7 +35,7 @@ export class InvariantsEntryService {
     /**
      * Clears all entries in the table.
      */
-    clearInputEntries(): void {
+    deleteAllEntries(): void {
         this._validationService.inputEntries.set([]);
         this.currentEntry.set(undefined);
     }
@@ -52,8 +53,9 @@ export class InvariantsEntryService {
     }
 
     updateEntry(entry: InvariantEntry, place: DiagramPlace, weightDiff: number): void {
+        if (!entry || !place) return;
         entry.selectPlace(place.displayLabel, weightDiff);
-        this._validationService.inputEntries.update(entries => [...entries]);
+        this._validationService.inputEntries.update((entries) => [...entries]);
     }
 
     activateEntry(id: number): void {

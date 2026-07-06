@@ -19,7 +19,12 @@ import { InvariantsEntryService } from '../../../services/invariants-entry.servi
 import { MatDialog } from '@angular/material/dialog';
 import { InvariantsModalComponent } from './invariants-modal/invariants-modal.component';
 import { InvariantsConfirmDialogComponent } from './invariants-confirm-dialog/invariants-confirm-dialog.component';
-import { DrawToolbarAction, DrawToolbarComponent, DrawToolbarInstruction, DrawToolbarToggle } from '../../draw-toolbar/draw-toolbar.component';
+import {
+    DrawToolbarAction,
+    DrawToolbarComponent,
+    DrawToolbarInstruction,
+    DrawToolbarToggle,
+} from '../../draw-toolbar/draw-toolbar.component';
 import { InvariantsDisplayComponent } from './invariants-display/invariants-display.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -42,7 +47,6 @@ import { DomSanitizer } from '@angular/platform-browser';
     templateUrl: './invariants.component.html',
     styleUrl: './invariants.component.css',
 })
-
 export class InvariantsComponent implements OnInit, OnDestroy {
     private _sub?: Subscription;
 
@@ -64,7 +68,7 @@ export class InvariantsComponent implements OnInit, OnDestroy {
             .pipe(
                 tap((_) => {
                     this.diagram = undefined;
-                    this.entryService.clearInputEntries();
+                    this.entryService.deleteAllEntries();
                 }),
                 filter((diagram): diagram is Diagram => diagram instanceof Diagram),
             )
@@ -88,7 +92,7 @@ export class InvariantsComponent implements OnInit, OnDestroy {
             this._domSanitizer.bypassSecurityTrustResourceUrl('assets/images/cropped-taco.svg'),
         );
     }
-    
+
     protected readonly toolbarActions = computed<DrawToolbarAction[]>(() => [
         {
             icon: 'add',
@@ -125,7 +129,7 @@ export class InvariantsComponent implements OnInit, OnDestroy {
         label: 'INVARIANTS.SHOW_TRANSITION_BALANCES',
         tooltip: '',
         checked: this.entryService.showTransitionBalances(),
-        onChange: (checked: boolean) => this.entryService.showTransitionBalances.set(checked)
+        onChange: (checked: boolean) => this.entryService.showTransitionBalances.set(checked),
     }));
 
     /**
@@ -137,18 +141,10 @@ export class InvariantsComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Deletes all firing entries and resets the diagram marking.
+     * Deletes all firing entries.
      */
     onDeleteAllEntries(): void {
-        this.entryService.clearInputEntries();
-        this._displayService.diagram$
-            .pipe(
-                take(1),
-                filter((diagram) => !!diagram && diagram instanceof Diagram),
-            )
-            .subscribe((diagram) => {
-                diagram.resetMarking();
-            });
+        this.entryService.deleteAllEntries();
     }
 
     /**

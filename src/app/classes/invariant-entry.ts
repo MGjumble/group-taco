@@ -74,7 +74,7 @@ export class InvariantEntry {
     private _updateNotation() {
         const labels = Array.from(this.placeWeights().keys());
         const vector = Array.from(this.placeWeights().values());
-        this.notation = InvariantEntry.toNotation(vector, labels)
+        this.notation = InvariantEntry.toNotation(vector, labels);
     }
 
     static toNotation(vector: number[], placeLabels: string[]): string {

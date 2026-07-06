@@ -1,4 +1,4 @@
-import { EntryError } from "./entry-error";
+import { EntryError } from './entry-error';
 
 /**
  * Representing a transition firing sequence in the Petri net.

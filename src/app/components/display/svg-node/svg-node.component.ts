@@ -317,7 +317,7 @@ export class SvgNodeComponent {
     }
 
     getTriangleText(): string {
-        if (this.isExamMode()) return "≠0";
+        if (this.isExamMode()) return '≠0';
         const balance = this.transitionBalance() || 0;
         if (balance > 0) return '+' + balance;
         return String(balance);
