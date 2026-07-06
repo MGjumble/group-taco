@@ -65,7 +65,7 @@ export class InvariantEntry {
             const newMap = new Map(currentMap);
             for (const [tranLabel, factor] of flow) {
                 const currentBalance = newMap.get(tranLabel) || 0;
-                newMap.set(tranLabel, currentBalance - factor * weightDiff);
+                newMap.set(tranLabel, currentBalance + factor * weightDiff);
             }
             return newMap;
         });
