@@ -194,8 +194,11 @@
             <svg:text
                 class="transition-balance-text"
                 xmlns:svg="http://www.w3.org/2000/svg"
-                [attr.x]="rectX() + rectWidth() - 12"
-                [attr.y]="rectY() + 12">
+                [attr.x]="getTriangleTextX()"
+                [attr.y]="getTriangleTextY()"
+                text-anchor="middle"
+                font-size="12"
+                dominant-baseline="central">
                 {{ getTriangleText() }}
             </svg:text>
         </svg:g>
