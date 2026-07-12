@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 
 import { ModeService } from './mode.service';
 import { InvariantEntry } from '../classes/invariant-entry';
@@ -17,6 +17,13 @@ export class InvariantsEntryService {
     activeEntry = signal<InvariantEntry | null>(null);
     overrideShowTransitionBalances = signal<boolean | null>(null);
     showTransitionBalances = computed(() => this.overrideShowTransitionBalances() ?? !this._isExamMode());
+
+    constructor() {
+        effect(() => {
+            this._isExamMode();
+            this.overrideShowTransitionBalances.set(null);
+        });
+    }
 
     /**
      * Returns a computed signal indicating whether the entry with the given ID is currently active.
