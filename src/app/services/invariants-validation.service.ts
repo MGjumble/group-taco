@@ -145,6 +145,7 @@ export class InvariantsValidationService {
     }
 
     validateAllEntries(): void {
+        for (let entry of this.inputEntries()) this.validateEntry(entry, true);
         if (this.remainingMinInvariants().length === 0)
             this._notificationService.showSuccess(
                 'TOASTER.HEADER.VALIDATION_COMPLETED',
