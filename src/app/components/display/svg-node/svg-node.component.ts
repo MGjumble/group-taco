@@ -314,13 +314,8 @@ export class SvgNodeComponent {
 
         const balance = this.transitionBalance() || 0;
 
-        if (balance > 0) {
-            // Dreieck mit Spitze nach oben
-            return `${x1},${y0} ${x0},${y1} ${x2},${y1}`;
-        } else {
-            // Dreieck mit Spitze nach unten
-            return `${x0},${y0} ${x2},${y0} ${x1},${y1}`;
-        }
+        if (balance > 0) return `${x1},${y0} ${x0},${y1} ${x2},${y1}`;
+        else return `${x0},${y0} ${x2},${y0} ${x1},${y1}`;
     }
 
     getTriangleTextX(): number {
@@ -329,13 +324,18 @@ export class SvgNodeComponent {
 
     getTriangleTextY(): number {
         const balance = this.transitionBalance() || 0;
-        if (balance > 0) return this.rectY() + this.rectWidth() / 6 + 2;
-        else return this.rectY() + this.rectWidth() / 6;
+        if (balance > 0) return this.rectY() + this.rectWidth() / 6 + 3;
+        else return this.rectY() + this.rectWidth() / 6 - 1;
     }
 
     getTriangleFillColor(): string {
         if (this.transitionBalance()! > 0) return '#daffd3ff';
         return '#ffc9c9ff';
+    }
+
+    getTriangleStrokeColor(): string {
+        if (this.transitionBalance()! > 0) return '#20bf00ff';
+        return '#d70000ff';
     }
 
     getTriangleText(): string {
