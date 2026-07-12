@@ -254,6 +254,434 @@ describe('InvariantsValidationService', () => {
             expect(matrix[0].length).toBe(1);
             expect(matrix[0][0]).toBe(0);
         });
+
+        it('should create correct incidence matrix for example.json', () => {
+            const p1 = new DiagramPlace('p1', 0, 'p1');
+            const p2 = new DiagramPlace('p2', 0, 'p2');
+            const p3 = new DiagramPlace('p3', 0, 'p3');
+            const p4 = new DiagramPlace('p4', 0, 'p4');
+            const p5 = new DiagramPlace('p5', 0, 'p5');
+            const p6 = new DiagramPlace('p6', 0, 'p6');
+            const p7 = new DiagramPlace('p7', 0, 'p7');
+            const p8 = new DiagramPlace('p8', 0, 'p8');
+
+            const arc1 = new DiagramArc('a1', 'p1', 't1', 1);
+            const arc2 = new DiagramArc('a2', 't1', 'p2', 1);
+            const arc3 = new DiagramArc('a3', 't1', 'p3', 2);
+            const arc4 = new DiagramArc('a4', 't1', 'p4', 1);
+            const arc5 = new DiagramArc('a5', 'p2', 't2', 1);
+            const arc6 = new DiagramArc('a6', 'p3', 't4', 1);
+            const arc7 = new DiagramArc('a7', 'p4', 't3', 1);
+            const arc8 = new DiagramArc('a8', 't4', 'p2', 1);
+            const arc9 = new DiagramArc('a9', 't2', 'p6', 1);
+            const arc10 = new DiagramArc('a10', 'p6', 't4', 1);
+            const arc11 = new DiagramArc('a11', 't4', 'p5', 1);
+            const arc12 = new DiagramArc('a12', 'p5', 't4', 1);
+            const arc13 = new DiagramArc('a13', 'p5', 't3', 1);
+            const arc14 = new DiagramArc('a14', 't3', 'p7', 1);
+            const arc15 = new DiagramArc('a15', 'p6', 't5', 1);
+            const arc16 = new DiagramArc('a16', 'p7', 't5', 1);
+            const arc17 = new DiagramArc('a17', 't5', 'p8', 1);
+
+            const t1 = new DiagramTransition('t1', 'A', [p1], [p2, p3, p4], [arc1], [arc2, arc3, arc4]);
+            const t2 = new DiagramTransition('t2', 'B', [p2], [p6], [arc5], [arc9]);
+            const t3 = new DiagramTransition('t3', 'C', [p4, p5], [p7], [arc7, arc13], [arc14]);
+            const t4 = new DiagramTransition('t4', '', [p3, p6, p5], [p2, p5], [arc6, arc10, arc12], [arc8, arc11]);
+            const t5 = new DiagramTransition('t5', 'D', [p6, p7], [p8], [arc15, arc16], [arc17]);
+
+            const diagram = new Diagram([p1, p2, p3, p4, p5, p6, p7, p8], [t1, t2, t3, t4, t5], 
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10, arc11, arc12, arc13, arc14, arc15, arc16, arc17]);
+
+            const matrix = service.createIncidenceMatrix(diagram);
+            expect(matrix.length).toBe(8);
+            expect(matrix[0].length).toBe(5);
+            
+            // Verify concrete values for example.json
+            // p1: only t1 input (-1)
+            expect(matrix[0]).toEqual([-1, 0, 0, 0, 0]);
+            // p2: t1 output (+1), t2 input (-1), t4 output (+1)
+            expect(matrix[1]).toEqual([1, -1, 0, 1, 0]);
+            // p3: t1 output (+2), t4 input (-1)
+            expect(matrix[2]).toEqual([2, 0, 0, -1, 0]);
+            // p4: t1 output (+1), t3 input (-1)
+            expect(matrix[3]).toEqual([1, 0, -1, 0, 0]);
+            // p5: t3 input (-1), t4 output (+1), t4 input (-1)
+            expect(matrix[4]).toEqual([0, 0, -1, 0, 0]);
+            // p6: t2 output (+1), t4 input (-1), t5 input (-1)
+            expect(matrix[5]).toEqual([0, 1, 0, -1, -1]);
+            // p7: t3 output (+1), t5 input (-1)
+            expect(matrix[6]).toEqual([0, 0, 1, 0, -1]);
+            // p8: t5 output (+1)
+            expect(matrix[7]).toEqual([0, 0, 0, 0, 1]);
+        });
+
+        it('should create correct incidence matrix for MK/task1.json', () => {
+            const p1 = new DiagramPlace('p1', 0, 'p1');
+            const p2 = new DiagramPlace('p2', 0, 'p2');
+            const p3 = new DiagramPlace('p3', 0, 'p3');
+            const p4 = new DiagramPlace('p4', 0, 'p4');
+
+            const arc1 = new DiagramArc('a1', 'p1', 't1', 1);
+            const arc2 = new DiagramArc('a2', 't1', 'p2', 1);
+            const arc3 = new DiagramArc('a3', 't1', 'p3', 1);
+            const arc4 = new DiagramArc('a4', 't3', 'p4', 1);
+            const arc5 = new DiagramArc('a5', 'p2', 't2', 1);
+            const arc6 = new DiagramArc('a6', 't2', 'p4', 2);
+            const arc7 = new DiagramArc('a7', 'p3', 't3', 1);
+
+            const t1 = new DiagramTransition('t1', 'A', [p1], [p2, p3], [arc1], [arc2, arc3]);
+            const t2 = new DiagramTransition('t2', 'B', [p2], [p4], [arc5], [arc6]);
+            const t3 = new DiagramTransition('t3', 'C', [p3], [p4], [arc7], [arc4]);
+
+            const diagram = new Diagram([p1, p2, p3, p4], [t1, t2, t3], 
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7]);
+
+            const matrix = service.createIncidenceMatrix(diagram);
+            expect(matrix.length).toBe(4);
+            expect(matrix[0].length).toBe(3);
+            
+            // Verify concrete values for MK/task1.json
+            // p1: t1 input (-1)
+            expect(matrix[0]).toEqual([-1, 0, 0]);
+            // p2: t1 output (+1), t2 input (-1)
+            expect(matrix[1]).toEqual([1, -1, 0]);
+            // p3: t1 output (+1), t3 input (-1)
+            expect(matrix[2]).toEqual([1, 0, -1]);
+            // p4: t2 output (+2), t3 output (+1)
+            expect(matrix[3]).toEqual([0, 2, 1]);
+        });
+
+        it('should create correct incidence matrix for MK/task2.json', () => {
+            const p1 = new DiagramPlace('p1', 0, 'p1');
+            const p2 = new DiagramPlace('p2', 0, 'p2');
+            const p3 = new DiagramPlace('p3', 0, 'p3');
+            const p4 = new DiagramPlace('p4', 0, 'p4');
+            const p5 = new DiagramPlace('p5', 0, 'p5');
+
+            const arc1 = new DiagramArc('a1', 't3', 'p1', 1);
+            const arc2 = new DiagramArc('a2', 'p5', 't3', 1);
+            const arc3 = new DiagramArc('a3', 'p1', 't1', 1);
+            const arc4 = new DiagramArc('a4', 't2', 'p5', 1);
+            const arc5 = new DiagramArc('a5', 't2', 'p4', 1);
+            const arc6 = new DiagramArc('a6', 'p4', 't4', 1);
+            const arc7 = new DiagramArc('a7', 't4', 'p2', 1);
+            const arc8 = new DiagramArc('a8', 'p2', 't1', 1);
+            const arc9 = new DiagramArc('a9', 't1', 'p3', 1);
+            const arc10 = new DiagramArc('a10', 'p3', 't2', 1);
+
+            const t1 = new DiagramTransition('t1', 'A', [p1, p2], [p3], [arc3, arc8], [arc9]);
+            const t2 = new DiagramTransition('t2', 'B', [p3], [p4, p5], [arc10], [arc4, arc5]);
+            const t3 = new DiagramTransition('t3', 'C', [p5], [p1], [arc2], [arc1]);
+            const t4 = new DiagramTransition('t4', 'D', [p4], [p2], [arc6], [arc7]);
+
+            const diagram = new Diagram([p1, p2, p3, p4, p5], [t1, t2, t3, t4], 
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10]);
+
+            const matrix = service.createIncidenceMatrix(diagram);
+            expect(matrix.length).toBe(5);
+            expect(matrix[0].length).toBe(4);
+            
+            // Verify concrete values for MK/task2.json
+            // Transition order: t1, t2, t3, t4
+            // p1: t1 input (-1), t3 output (+1)
+            expect(matrix[0]).toEqual([-1, 0, 1, 0]);
+            // p2: t1 input (-1), t4 output (+1)
+            expect(matrix[1]).toEqual([-1, 0, 0, 1]);
+            // p3: t1 output (+1), t2 input (-1)
+            expect(matrix[2]).toEqual([1, -1, 0, 0]);
+            // p4: t2 output (+1), t4 input (-1)
+            expect(matrix[3]).toEqual([0, 1, 0, -1]);
+            // p5: t2 output (+1), t3 input (-1)
+            expect(matrix[4]).toEqual([0, 1, -1, 0]);
+        });
+
+        it('should create correct incidence matrix for SS24/task1.json', () => {
+            const p1 = new DiagramPlace('p1', 0, 'p1');
+            const p2 = new DiagramPlace('p2', 0, 'p2');
+            const p3 = new DiagramPlace('p3', 0, 'p3');
+
+            const arc1 = new DiagramArc('a1', 'p1', 't1', 1);
+            const arc2 = new DiagramArc('a2', 't1', 'p1', 1);
+            const arc3 = new DiagramArc('a3', 't2', 'p2', 1);
+            const arc4 = new DiagramArc('a4', 'p3', 't2', 3);
+            const arc5 = new DiagramArc('a5', 't1', 'p2', 1);
+
+            const t1 = new DiagramTransition('t1', 'A', [p1], [p1, p2], [arc1], [arc2, arc5]);
+            const t2 = new DiagramTransition('t2', 'B', [p3], [p2], [arc4], [arc3]);
+
+            const diagram = new Diagram([p1, p2, p3], [t1, t2], 
+                [arc1, arc2, arc3, arc4, arc5]);
+
+            const matrix = service.createIncidenceMatrix(diagram);
+            expect(matrix.length).toBe(3);
+            expect(matrix[0].length).toBe(2);
+            
+            // Verify concrete values for SS24/task1.json
+            // Transition order: t1, t2
+            // p1: t1 input (-1 from arc1), t1 output (+1 from arc2) = 0
+            expect(matrix[0]).toEqual([0, 0]);
+            // p2: t1 output (+1 from arc5), t2 output (+1 from arc3) = +2? No, +1+1=2? No...
+            // Wait: t1 output to p2: arc5 (t1->p2, w=1), t2 output to p2: arc3 (t2->p2, w=1)
+            // But in the transition definitions:
+            // t1 outputs to [p1, p2] via [arc2, arc5]
+            // t2 outputs to [p2] via [arc3]
+            // So p2 gets: t1 output +1 (arc5), t2 output +1 (arc3) = +2? 
+            // No, let me recalculate based on the actual code logic
+            expect(matrix[1]).toEqual([1, 1]);
+            // p3: t2 input (-3 from arc4)
+            expect(matrix[2]).toEqual([0, -3]);
+        });
+
+        it('should create correct incidence matrix for SS24/task2.json', () => {
+            const p1 = new DiagramPlace('p1', 0, 'p1');
+            const p2 = new DiagramPlace('p2', 0, 'p2');
+            const p3 = new DiagramPlace('p3', 0, 'p3');
+            const p4 = new DiagramPlace('p4', 0, 'p4');
+            const p5 = new DiagramPlace('p5', 0, 'p5');
+
+            const arc1 = new DiagramArc('a1', 't1', 'p1', 1);
+            const arc2 = new DiagramArc('a2', 'p2', 't1', 1);
+            const arc3 = new DiagramArc('a3', 't4', 'p2', 1);
+            const arc4 = new DiagramArc('a4', 'p1', 't4', 1);
+            const arc5 = new DiagramArc('a5', 't4', 'p3', 1);
+            const arc6 = new DiagramArc('a6', 'p3', 't2', 1);
+            const arc7 = new DiagramArc('a7', 't2', 'p4', 1);
+            const arc8 = new DiagramArc('a8', 'p4', 't3', 1);
+            const arc9 = new DiagramArc('a9', 't3', 'p5', 1);
+            const arc10 = new DiagramArc('a10', 'p5', 't4', 1);
+
+            const t1 = new DiagramTransition('t1', 'A', [p2], [p1], [arc2], [arc1]);
+            const t2 = new DiagramTransition('t2', 'B', [p3], [p4], [arc6], [arc7]);
+            const t3 = new DiagramTransition('t3', 'C', [p4], [p5], [arc8], [arc9]);
+            const t4 = new DiagramTransition('t4', 'D', [p1, p5], [p2, p3], [arc4, arc10], [arc3, arc5]);
+
+            const diagram = new Diagram([p1, p2, p3, p4, p5], [t1, t2, t3, t4], 
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10]);
+
+            const matrix = service.createIncidenceMatrix(diagram);
+            expect(matrix.length).toBe(5);
+            expect(matrix[0].length).toBe(4);
+            
+            // Verify concrete values for SS24/task2.json
+            // Transition order: t1, t2, t3, t4
+            // p1: t1 output (+1), t4 input (-1)
+            expect(matrix[0]).toEqual([1, 0, 0, -1]);
+            // p2: t1 input (-1), t4 output (+1)
+            expect(matrix[1]).toEqual([-1, 0, 0, 1]);
+            // p3: t2 input (-1), t4 output (+1)
+            expect(matrix[2]).toEqual([0, -1, 0, 1]);
+            // p4: t2 output (+1), t3 input (-1)
+            expect(matrix[3]).toEqual([0, 1, -1, 0]);
+            // p5: t3 output (+1), t4 input (-1)
+            expect(matrix[4]).toEqual([0, 0, 1, -1]);
+        });
+
+        it('should create correct incidence matrix for WS24/task1.json', () => {
+            const p1 = new DiagramPlace('p1', 0, 'p1');
+            const p2 = new DiagramPlace('p2', 0, 'p2');
+            const p3 = new DiagramPlace('p3', 0, 'p3');
+            const p4 = new DiagramPlace('p4', 0, 'p4');
+
+            const arc1 = new DiagramArc('a1', 'p1', 't1', 1);
+            const arc2 = new DiagramArc('a2', 't1', 'p2', 2);
+            const arc3 = new DiagramArc('a3', 'p2', 't2', 2);
+            const arc4 = new DiagramArc('a4', 't2', 'p3', 1);
+            const arc5 = new DiagramArc('a5', 't2', 'p4', 1);
+            const arc6 = new DiagramArc('a6', 'p3', 't3', 1);
+            const arc7 = new DiagramArc('a7', 'p4', 't3', 1);
+            const arc8 = new DiagramArc('a8', 't3', 'p1', 1);
+
+            const t1 = new DiagramTransition('t1', 'A', [p1], [p2], [arc1], [arc2]);
+            const t2 = new DiagramTransition('t2', 'B', [p2], [p3, p4], [arc3], [arc4, arc5]);
+            const t3 = new DiagramTransition('t3', 'C', [p3, p4], [p1], [arc6, arc7], [arc8]);
+
+            const diagram = new Diagram([p1, p2, p3, p4], [t1, t2, t3], 
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8]);
+
+            const matrix = service.createIncidenceMatrix(diagram);
+            expect(matrix.length).toBe(4);
+            expect(matrix[0].length).toBe(3);
+            
+            // Verify concrete values for WS24/task1.json
+            // Transition order: t1, t2, t3
+            // p1: t1 input (-1), t3 output (+1)
+            expect(matrix[0]).toEqual([-1, 0, 1]);
+            // p2: t1 output (+2), t2 input (-2)
+            expect(matrix[1]).toEqual([2, -2, 0]);
+            // p3: t2 output (+1), t3 input (-1)
+            expect(matrix[2]).toEqual([0, 1, -1]);
+            // p4: t2 output (+1), t3 input (-1)
+            expect(matrix[3]).toEqual([0, 1, -1]);
+        });
+
+        it('should create correct incidence matrix for WS24/task2.json', () => {
+            const p1 = new DiagramPlace('p1', 0, 'p1');
+            const p2 = new DiagramPlace('p2', 0, 'p2');
+            const p3 = new DiagramPlace('p3', 0, 'p3');
+            const g1 = new DiagramPlace('g1', 0, 'g1');
+            const g2 = new DiagramPlace('g2', 0, 'g2');
+            const g3 = new DiagramPlace('g3', 0, 'g3');
+
+            const arc1 = new DiagramArc('a1', 'g1', 't5', 1);
+            const arc2 = new DiagramArc('a2', 'g1', 't1', 1);
+            const arc3 = new DiagramArc('a3', 'g3', 't5', 1);
+            const arc4 = new DiagramArc('a4', 'g3', 't3', 1);
+            const arc5 = new DiagramArc('a5', 'g2', 't3', 1);
+            const arc6 = new DiagramArc('a6', 'g2', 't1', 1);
+            const arc7 = new DiagramArc('a7', 't1', 'p1', 1);
+            const arc8 = new DiagramArc('a8', 'p1', 't2', 1);
+            const arc9 = new DiagramArc('a9', 't5', 'p3', 1);
+            const arc10 = new DiagramArc('a10', 'p3', 't6', 1);
+            const arc11 = new DiagramArc('a11', 't3', 'p2', 1);
+            const arc12 = new DiagramArc('a12', 'p2', 't4', 1);
+            const arc13 = new DiagramArc('a13', 't4', 'g3', 1);
+            const arc14 = new DiagramArc('a14', 't6', 'g3', 1);
+            const arc15 = new DiagramArc('a15', 't6', 'g1', 1);
+            const arc16 = new DiagramArc('a16', 't2', 'g1', 1);
+            const arc17 = new DiagramArc('a17', 't4', 'g2', 1);
+            const arc18 = new DiagramArc('a18', 't2', 'g2', 1);
+
+            const t1 = new DiagramTransition('t1', 'A', [g1, g2], [p1], [arc2, arc6], [arc7]);
+            const t2 = new DiagramTransition('t2', 'B', [p1], [g1, g2], [arc8], [arc16, arc18]);
+            const t3 = new DiagramTransition('t3', 'C', [g2, g3], [p2], [arc5, arc4], [arc11]);
+            const t4 = new DiagramTransition('t4', 'D', [p2], [g2, g3], [arc12], [arc13, arc17]);
+            const t5 = new DiagramTransition('t5', 'E', [g1, g3], [p3], [arc1, arc3], [arc9]);
+            const t6 = new DiagramTransition('t6', 'F', [p3], [g1, g3], [arc10], [arc14, arc15]);
+
+            const diagram = new Diagram([p1, p2, p3, g1, g2, g3], [t1, t2, t3, t4, t5, t6], 
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10, arc11, arc12, arc13, arc14, arc15, arc16, arc17, arc18]);
+
+            const matrix = service.createIncidenceMatrix(diagram);
+            expect(matrix.length).toBe(6);
+            expect(matrix[0].length).toBe(6);
+            
+            // Verify concrete values for WS24/task2.json
+            // Transition order: t1, t2, t3, t4, t5, t6
+            // Places order: p1, p2, p3, g1, g2, g3
+            // p1: t1 output (+1), t2 input (-1)
+            expect(matrix[0]).toEqual([1, -1, 0, 0, 0, 0]);
+            // p2: t3 output (+1), t4 input (-1)
+            expect(matrix[1]).toEqual([0, 0, 1, -1, 0, 0]);
+            // p3: t5 output (+1), t6 input (-1)
+            expect(matrix[2]).toEqual([0, 0, 0, 0, 1, -1]);
+            // g1: t1 input (-1), t2 output (+1), t5 input (-1), t6 output (+1)
+            expect(matrix[3]).toEqual([-1, 1, 0, 0, -1, 1]);
+            // g2: t1 input (-1), t3 input (-1), t2 output (+1), t4 output (+1)
+            expect(matrix[4]).toEqual([-1, 1, -1, 1, 0, 0]);
+            // g3: t3 input (-1 via arc4), t4 input (-1 via arc? no), t5 input (-1 via arc3), t4 output (+1 via arc13), t6 output (+1 via arc14)
+            // Actually: t3 inputs from g3 (arc4: g3->t3, w=1), t4 has no input from g3, t5 inputs from g3 (arc3: g3->t5, w=1)
+            // t4 outputs to g3 (arc13: t4->g3, w=1), t6 outputs to g3 (arc14: t6->g3, w=1)
+            // Also: t1: 0, t2: 0, t3: -1, t4: +1, t5: -1, t6: +1
+            expect(matrix[5]).toEqual([0, 0, -1, 1, -1, 1]);
+        });
+
+        it('should create correct incidence matrix for SS25/task1.json', () => {
+            const p1 = new DiagramPlace('p1', 0, 'p1');
+            const p2 = new DiagramPlace('p2', 0, 'p2');
+            const p3 = new DiagramPlace('p3', 0, 'p3');
+            const p4 = new DiagramPlace('p4', 0, 'p4');
+
+            const arc1 = new DiagramArc('a1', 'p1', 't1', 1);
+            const arc2 = new DiagramArc('a2', 't1', 'p2', 1);
+            const arc3 = new DiagramArc('a3', 'p2', 't2', 1);
+            const arc4 = new DiagramArc('a4', 't2', 'p1', 1);
+            const arc5 = new DiagramArc('a5', 't1', 'p3', 1);
+            const arc6 = new DiagramArc('a6', 'p3', 't2', 1);
+            const arc7 = new DiagramArc('a7', 'p3', 't3', 3);
+            const arc8 = new DiagramArc('a8', 't3', 'p4', 1);
+
+            const t1 = new DiagramTransition('t1', 'A', [p1], [p2, p3], [arc1], [arc2, arc5]);
+            const t2 = new DiagramTransition('t2', 'B', [p2, p3], [p1], [arc3, arc6], [arc4]);
+            const t3 = new DiagramTransition('t3', 'C', [p3], [p4], [arc7], [arc8]);
+
+            const diagram = new Diagram([p1, p2, p3, p4], [t1, t2, t3], 
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8]);
+
+            const matrix = service.createIncidenceMatrix(diagram);
+            expect(matrix.length).toBe(4);
+            expect(matrix[0].length).toBe(3);
+            
+            // Verify concrete values for SS25/task1.json
+            // Transition order: t1, t2, t3
+            // p1: t1 input (-1), t2 output (+1)
+            expect(matrix[0]).toEqual([-1, 1, 0]);
+            // p2: t1 output (+1), t2 input (-1)
+            expect(matrix[1]).toEqual([1, -1, 0]);
+            // p3: t1 output (+1), t2 input (-1), t3 input (-3)
+            expect(matrix[2]).toEqual([1, -1, -3]);
+            // p4: t3 output (+1)
+            expect(matrix[3]).toEqual([0, 0, 1]);
+        });
+
+        it('should create correct incidence matrix for SS25/task2.json', () => {
+            const p1 = new DiagramPlace('p1', 0, 'p1');
+            const p2 = new DiagramPlace('p2', 0, 'p2');
+            const p3 = new DiagramPlace('p3', 0, 'p3');
+            const p4 = new DiagramPlace('p4', 0, 'p4');
+            const p5 = new DiagramPlace('p5', 0, 'p5');
+            const p6 = new DiagramPlace('p6', 0, 'p6');
+            const p7 = new DiagramPlace('p7', 0, 'p7');
+            const p8 = new DiagramPlace('p8', 0, 'p8');
+            const p9 = new DiagramPlace('p9', 0, 'p9');
+
+            const arc1 = new DiagramArc('a1', 'p1', 't1', 1);
+            const arc2 = new DiagramArc('a2', 't1', 'p2', 1);
+            const arc3 = new DiagramArc('a3', 'p2', 't2', 1);
+            const arc4 = new DiagramArc('a4', 't3', 'p2', 1);
+            const arc5 = new DiagramArc('a5', 't1', 'p3', 2);
+            const arc6 = new DiagramArc('a6', 'p3', 't3', 1);
+            const arc7 = new DiagramArc('a7', 't3', 'p5', 1);
+            const arc8 = new DiagramArc('a8', 'p5', 't3', 1);
+            const arc9 = new DiagramArc('a9', 'p5', 't4', 1);
+            const arc10 = new DiagramArc('a10', 't1', 'p4', 1);
+            const arc11 = new DiagramArc('a11', 'p4', 't5', 1);
+            const arc12 = new DiagramArc('a12', 'p4', 't4', 1);
+            const arc13 = new DiagramArc('a13', 't5', 'p6', 1);
+            const arc14 = new DiagramArc('a14', 'p6', 't6', 1);
+            const arc15 = new DiagramArc('a15', 't4', 'p8', 1);
+            const arc16 = new DiagramArc('a16', 'p8', 't7', 1);
+            const arc17 = new DiagramArc('a17', 't6', 'p8', 1);
+            const arc18 = new DiagramArc('a18', 'p7', 't3', 1);
+            const arc19 = new DiagramArc('a19', 'p7', 't7', 1);
+            const arc20 = new DiagramArc('a20', 't2', 'p7', 1);
+            const arc21 = new DiagramArc('a21', 't7', 'p9', 1);
+
+            const t1 = new DiagramTransition('t1', 'reg', [p1], [p2, p3, p4], [arc1], [arc2, arc5, arc10]);
+            const t2 = new DiagramTransition('t2', 'ask', [p2], [p7], [arc3], [arc20]);
+            const t3 = new DiagramTransition('t3', 'more', [p3, p7, p5], [p2, p5], [arc6, arc8, arc18], [arc4, arc7]);
+            const t4 = new DiagramTransition('t4', 'stop', [p4, p5], [p8], [arc9, arc12], [arc15]);
+            const t5 = new DiagramTransition('t5', 'save', [p4], [p6], [arc11], [arc13]);
+            const t6 = new DiagramTransition('t6', 'apply', [p6], [p8], [arc14], [arc17]);
+            const t7 = new DiagramTransition('t7', 'check', [p8, p7], [p9], [arc16, arc19], [arc21]);
+
+            const diagram = new Diagram([p1, p2, p3, p4, p5, p6, p7, p8, p9], [t1, t2, t3, t4, t5, t6, t7], 
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10, arc11, arc12, arc13, arc14, arc15, arc16, arc17, arc18, arc19, arc20, arc21]);
+
+            const matrix = service.createIncidenceMatrix(diagram);
+            expect(matrix.length).toBe(9);
+            expect(matrix[0].length).toBe(7);
+            
+            // Verify concrete values for SS25/task2.json
+            // Transition order: t1, t2, t3, t4, t5, t6, t7
+            // p1: t1 input (-1)
+            expect(matrix[0]).toEqual([-1, 0, 0, 0, 0, 0, 0]);
+            // p2: t1 output (+1), t2 input (-1), t3 output (+1)
+            expect(matrix[1]).toEqual([1, -1, 1, 0, 0, 0, 0]);
+            // p3: t1 output (+2), t3 input (-1)
+            expect(matrix[2]).toEqual([2, 0, -1, 0, 0, 0, 0]);
+            // p4: t1 output (+1), t5 input (-1), t4 input (-1)
+            expect(matrix[3]).toEqual([1, 0, 0, -1, -1, 0, 0]);
+            // p5: t3 output (+1), t3 input (-1), t4 input (-1)
+            expect(matrix[4]).toEqual([0, 0, 0, -1, 0, 0, 0]);
+            // p6: t5 output (+1), t6 input (-1)
+            expect(matrix[5]).toEqual([0, 0, 0, 0, 1, -1, 0]);
+            // p7: t2 output (+1), t3 input (-1), t7 input (-1)
+            expect(matrix[6]).toEqual([0, 1, -1, 0, 0, 0, -1]);
+            // p8: t4 output (+1), t6 output (+1), t7 input (-1)
+            expect(matrix[7]).toEqual([0, 0, 0, 1, 0, 1, -1]);
+            // p9: t7 output (+1)
+            expect(matrix[8]).toEqual([0, 0, 0, 0, 0, 0, 1]);
+        });
     });
 
     // #endregion

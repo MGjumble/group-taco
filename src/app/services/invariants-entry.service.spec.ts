@@ -86,8 +86,8 @@ describe('InvariantsEntryService', () => {
             expect(service.showTransitionBalances()).toBeTrue();
         });
 
-        it('should have activeEntry as undefined by default', () => {
-            expect(service.activeEntry()).toBeUndefined();
+        it('should have activeEntry as null by default', () => {
+            expect(service.activeEntry()).toBeNull();
         });
 
         it('should have _idCounter starting at 0', () => {
@@ -118,11 +118,11 @@ describe('InvariantsEntryService', () => {
                 expect(service.activeEntry()).toBe(entry);
             });
 
-            it('should be undefined after setting undefined', () => {
+            it('should be null after setting null', () => {
                 const entry = createTestInvariantEntry(1);
                 service.activeEntry.set(entry);
                 service.activeEntry.set(null);
-                expect(service.activeEntry()).toBeUndefined();
+                expect(service.activeEntry()).toBeNull();
             });
         });
     });
@@ -294,7 +294,7 @@ describe('InvariantsEntryService', () => {
             expect(result).toBe(existingEntry);
         });
 
-        it('should create and return new entry when activeEntry is undefined', () => {
+        it('should create and return new entry when activeEntry is null', () => {
             const result = service.getActiveEntry();
 
             expect(result).toBeDefined();
@@ -307,7 +307,7 @@ describe('InvariantsEntryService', () => {
             expect(service.activeEntry()).toBe(result);
         });
 
-        it('should add new entry to inputEntries when activeEntry was undefined', () => {
+        it('should add new entry to inputEntries when activeEntry was null', () => {
             const result = service.getActiveEntry();
             expect(mockValidationService.inputEntries()).toContain(result);
         });
@@ -337,7 +337,7 @@ describe('InvariantsEntryService', () => {
             mockValidationService.placeFlows = new Map();
         });
 
-        it('should create new entry if activeEntry is undefined', () => {
+        it('should create new entry if activeEntry is null', () => {
             service.processPlaceClicked(place, 1);
 
             expect(service.activeEntry()).toBeDefined();
@@ -492,13 +492,13 @@ describe('InvariantsEntryService', () => {
             expect(mockValidationService.inputEntries()).toContain(entry2);
         });
 
-        it('should set activeEntry to undefined if deleted entry was active', () => {
+        it('should set activeEntry to null if deleted entry was active', () => {
             service.activeEntry.set(entry1);
             expect(service.activeEntry()).toBe(entry1);
 
             service.deleteEntry(entry1.id);
 
-            expect(service.activeEntry()).toBeUndefined();
+            expect(service.activeEntry()).toBeNull();
         });
 
         it('should keep activeEntry unchanged if deleted entry was not active', () => {
@@ -509,14 +509,14 @@ describe('InvariantsEntryService', () => {
             expect(service.activeEntry()).toBe(entry2);
         });
 
-        it('should set activeEntry to undefined if inputEntries becomes empty', () => {
+        it('should set activeEntry to null if inputEntries becomes empty', () => {
             service.activeEntry.set(entry2);
             expect(mockValidationService.inputEntries().length).toBe(2);
 
             service.deleteEntry(entry1.id);
             service.deleteEntry(entry2.id);
 
-            expect(service.activeEntry()).toBeUndefined();
+            expect(service.activeEntry()).toBeNull();
         });
 
         it('should handle deleting non-existent entry', () => {
@@ -550,19 +550,19 @@ describe('InvariantsEntryService', () => {
             expect(mockValidationService.inputEntries().length).toBe(0);
         });
 
-        it('should set activeEntry to undefined', () => {
+        it('should set activeEntry to null', () => {
             const entry = service.addEmptyEntry();
             service.activeEntry.set(entry);
 
             service.deleteAllEntries();
 
-            expect(service.activeEntry()).toBeUndefined();
+            expect(service.activeEntry()).toBeNull();
         });
 
         it('should handle clearing empty list', () => {
             service.deleteAllEntries(); // Clear when already empty
             expect(mockValidationService.inputEntries().length).toBe(0);
-            expect(service.activeEntry()).toBeUndefined();
+            expect(service.activeEntry()).toBeNull();
         });
     });
 
@@ -588,9 +588,9 @@ describe('InvariantsEntryService', () => {
             expect(service.activeEntry()).toBe(entry1);
         });
 
-        it('should set activeEntry to undefined if entry not found', () => {
+        it('should set activeEntry to null if entry not found', () => {
             service.activateEntry(999); // Non-existent ID
-            expect(service.activeEntry()).toBeUndefined();
+            expect(service.activeEntry()).toBeNull();
         });
 
         it('should activate correct entry by ID', () => {
@@ -629,7 +629,7 @@ describe('InvariantsEntryService', () => {
             service.deleteEntry(entryId);
             service.activateEntry(entryId);
 
-            expect(service.activeEntry()).toBeUndefined();
+            expect(service.activeEntry()).toBeNull();
         });
 
         it('should handle processPlaceClicked with undefined place', () => {
@@ -655,7 +655,7 @@ describe('InvariantsEntryService', () => {
         it('should reset activeEntry when adding new entry after clearing', () => {
             service.addEmptyEntry();
             service.deleteAllEntries();
-            expect(service.activeEntry()).toBeUndefined();
+            expect(service.activeEntry()).toBeNull();
 
             const newEntry = service.addEmptyEntry();
             expect(service.activeEntry()).toBe(newEntry);
