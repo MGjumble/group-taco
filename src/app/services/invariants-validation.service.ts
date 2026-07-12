@@ -64,6 +64,12 @@ export class InvariantsValidationService {
         return this._placeFlows;
     }
 
+    /**
+     * Initializes the service with the given Petri net diagram.
+     * Sets up place/transition labels, place flows, and computes the minimal invariants.
+     *
+     * @param diagram - The Petri net diagram to initialize with.
+     */
     initialize(diagram: Diagram): void {
         this._allPlaceLabels = diagram.getPlaceLabels();
         this._allTransitionLabels = diagram.getTransitionLabels();
@@ -71,30 +77,14 @@ export class InvariantsValidationService {
         this._computeMinimalInvariants(diagram);
     }
 
-    setPlaceFlows(transitions: DiagramTransition[]) {
-        this._allPlaceLabels.forEach((label) => {
-            this._placeFlows.set(label, new Map());
-        });
-        for (const transition of transitions) {
-            const transitionLabel = transition.displayLabel;
-
-            for (const { place, weight } of transition.getInputFlow()) {
-                const placeLabel = place.displayLabel;
-                const currentBalance = this._placeFlows.get(placeLabel)?.get(transitionLabel) || 0;
-                this._placeFlows.get(placeLabel)?.set(transitionLabel, currentBalance - weight);
-            }
-
-            for (const { place, weight } of transition.getOutputFlow()) {
-                const placeLabel = place.displayLabel;
-                const currentBalance = this._placeFlows.get(placeLabel)?.get(transitionLabel) || 0;
-                this._placeFlows.get(placeLabel)?.set(transitionLabel, currentBalance + weight);
-            }
-        }
-    }
-
     /**
-     * Validates a firing entry input.
-     * @param entry - The firing entry to be validated.
+     * Validates an invariant entry and sets its validity status.
+     * Checks for triviality, exact matches with computed invariants, incompleteness,
+     * and whether the vector satisfies the invariant condition (yᵀ · C = 0).
+     *
+     * @param entry - The invariant entry to validate.
+     * @param isFinalValidation - If true, sets final validity status (e.g., INVALID_FINAL).
+     *                            If false, sets intermediate status (e.g., INCOMPLETE, INVALID_NOT_FINAL).
      */
     validateEntry(entry: InvariantEntry, isFinalValidation: boolean = false): void {
         const vector = entry.vector;
@@ -144,8 +134,14 @@ export class InvariantsValidationService {
         entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL);
     }
 
+    /**
+     * Validates all invariant entries in the input list.
+     * Shows a success notification if all minimal invariants are found,
+     * or an info notification if some are missing.
+     */
     validateAllEntries(): void {
         for (let entry of this.inputEntries()) this.validateEntry(entry, true);
+
         if (this.remainingMinInvariants().length === 0)
             this._notificationService.showSuccess(
                 'TOASTER.HEADER.VALIDATION_COMPLETED',
@@ -159,15 +155,56 @@ export class InvariantsValidationService {
         }
     }
 
+    /**
+     * Sets up the place flow mappings for all transitions in the Petri net.
+     * For each transition, calculates the net flow (output - input) for each connected place.
+     * This is used to efficiently compute transition balances during invariant validation.
+     *
+     * @param transitions - Array of all transitions in the Petri net.
+     */
+    protected setPlaceFlows(transitions: DiagramTransition[]): void {
+        this._allPlaceLabels.forEach((label) => {
+            this._placeFlows.set(label, new Map());
+        });
+        for (const transition of transitions) {
+            const transitionLabel = transition.displayLabel;
+
+            for (const { place, weight } of transition.getInputFlow()) {
+                const placeLabel = place.displayLabel;
+                const currentBalance = this._placeFlows.get(placeLabel)?.get(transitionLabel) || 0;
+                this._placeFlows.get(placeLabel)?.set(transitionLabel, currentBalance - weight);
+            }
+
+            for (const { place, weight } of transition.getOutputFlow()) {
+                const placeLabel = place.displayLabel;
+                const currentBalance = this._placeFlows.get(placeLabel)?.get(transitionLabel) || 0;
+                this._placeFlows.get(placeLabel)?.set(transitionLabel, currentBalance + weight);
+            }
+        }
+    }
+
+    /**
+     * Checks if two vectors are equal within a small epsilon tolerance.
+     * Used to compare invariant vectors with floating-point precision in mind.
+     *
+     * @param a - First vector to compare.
+     * @param b - Second vector to compare.
+     * @returns true if all corresponding elements in a and b are equal (within epsilon), false otherwise.
+     */
     private _areVectorsEqual(a: number[], b: number[]): boolean {
         if (a.length !== b.length) return false;
         return a.every((val, i) => Math.abs(val - b[i]) < this._EPSILON);
     }
 
     /**
-     * Checks if all labels correspond to existing transitions in the diagram.
-     * @param entry - The firing entry to be validated.
-     * @returns true if all labels correnspond to existing transitions, false otherwise.
+     * Checks if a given vector is a valid invariant for the Petri net.
+     * A vector is a valid invariant if it satisfies yᵀ · C = 0 for the incidence matrix C.
+     *
+     * @param vector - The vector to check (place weights).
+     * @returns true if the vector is a valid invariant, false otherwise.
+     *
+     * @note
+     * Uses `_EPSILON` to account for floating-point precision errors.
      */
     private _isInvariant(vector: number[]): boolean {
         for (let j = 0; j < this._incidenceMatrix[0].length; j++) {
@@ -180,7 +217,17 @@ export class InvariantsValidationService {
         return true;
     }
 
-    createIncidenceMatrix(diagram: Diagram): number[][] {
+    /**
+     * Creates the incidence matrix for the given Petri net diagram.
+     * The matrix has dimensions |P| × |T|, where P is the set of places and T is the set of transitions.
+     * Each entry C[p][t] represents the net change in place p when transition t fires:
+     *   - Negative for input arcs (consumes tokens).
+     *   - Positive for output arcs (produces tokens).
+     *
+     * @param diagram - The Petri net diagram to create the matrix for.
+     * @returns The incidence matrix as a 2D array of numbers.
+     */
+    protected createIncidenceMatrix(diagram: Diagram): number[][] {
         const places = diagram.places;
         const transitions = diagram.transitions;
         const matrix: number[][] = Array.from({ length: places.length }, () => Array(transitions.length).fill(0));
@@ -200,6 +247,12 @@ export class InvariantsValidationService {
         return matrix;
     }
 
+    /**
+     * Computes the minimal place invariants for the given Petri net diagram.
+     * Uses the incidence matrix to calculate invariants and then filters for minimality.
+     *
+     * @param diagram - The Petri net diagram to compute invariants for.
+     */
     private _computeMinimalInvariants(diagram: Diagram): void {
         this._incidenceMatrix = this.createIncidenceMatrix(diagram);
         const allFoundInvariants = this._computingService.placeInvariants(this._incidenceMatrix);

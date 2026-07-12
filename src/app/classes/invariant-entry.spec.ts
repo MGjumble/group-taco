@@ -104,7 +104,7 @@ describe('InvariantEntry', () => {
 
         it('should update notation after selecting a place', () => {
             entry.selectPlace('p1', 1);
-            expect(entry.notation).toBe('p1'); // 1*p1 → "p1"
+            expect(entry.notation).toBe('p1');
         });
 
         it('should handle weightDiff = 0 (no-op)', () => {
@@ -115,7 +115,7 @@ describe('InvariantEntry', () => {
 
         it('should ignore unknown place labels', () => {
             entry.selectPlace('unknown', 1);
-            expect(entry.placeWeights().get('p1')).toBe(0); // Unverändert
+            expect(entry.placeWeights().get('p1')).toBe(0);
         });
 
         it('should handle empty placeFlows (no transition updates)', () => {

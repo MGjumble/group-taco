@@ -7,8 +7,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, Subscription, take, tap } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
+import { filter, Subscription, tap } from 'rxjs';
+
 import { Diagram } from '../../../classes/diagram/diagram';
 import { InvariantEntry, InvariantValidity } from '../../../classes/invariant-entry';
 import { Tab } from '../../../classes/tabs';
@@ -16,17 +19,14 @@ import { DisplayService } from '../../../services/display.service';
 import { ModeService } from '../../../services/mode.service';
 import { InvariantsValidationService } from '../../../services/invariants-validation.service';
 import { InvariantsEntryService } from '../../../services/invariants-entry.service';
-import { MatDialog } from '@angular/material/dialog';
 import { InvariantsModalComponent } from './invariants-modal/invariants-modal.component';
 import { InvariantsConfirmDialogComponent } from './invariants-confirm-dialog/invariants-confirm-dialog.component';
 import {
     DrawToolbarAction,
     DrawToolbarComponent,
     DrawToolbarInstruction,
-    DrawToolbarToggle,
 } from '../../draw-toolbar/draw-toolbar.component';
 import { InvariantsDisplayComponent } from './invariants-display/invariants-display.component';
-import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-invariants',
@@ -50,18 +50,18 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class InvariantsComponent implements OnInit, OnDestroy {
     private _sub?: Subscription;
 
-    modeService = inject(ModeService);
     private _displayService = inject(DisplayService);
     private _dialog = inject(MatDialog);
     private _matIconRegistry = inject(MatIconRegistry);
     private _domSanitizer = inject(DomSanitizer);
-    entryService = inject(InvariantsEntryService);
-    validationService = inject(InvariantsValidationService);
-    InvariantValidity = InvariantValidity;
+    protected modeService = inject(ModeService);
+    protected entryService = inject(InvariantsEntryService);
+    protected validationService = inject(InvariantsValidationService);
+    protected InvariantValidity = InvariantValidity;
 
-    inputEntries = this.validationService.inputEntries;
-    diagram: Diagram | undefined;
-    isExamMode = computed(() => this.modeService.isExamMode(Tab.INVARIANTS));
+    protected diagram: Diagram | undefined;
+    protected inputEntries = this.validationService.inputEntries;
+    protected isExamMode = computed(() => this.modeService.isExamMode(Tab.INVARIANTS));
 
     ngOnInit(): void {
         this._sub = this._displayService.diagram$
@@ -100,21 +100,21 @@ export class InvariantsComponent implements OnInit, OnDestroy {
             tooltip: 'INVARIANTS.NEW_ENTRY',
             color: 'primary',
             isActive: this.diagram !== undefined,
-            action: () => this.onNewEntry(),
+            action: () => this._onNewEntry(),
         },
         {
             icon: 'checklist',
             tooltip: 'INVARIANTS.VALIDATE_ENTRIES',
             color: 'primary',
             isActive: this.inputEntries().length > 0,
-            action: () => this.onValidateEntries(),
+            action: () => this._onValidateEntries(),
         },
         {
             icon: 'remove_red_eye',
             tooltip: 'INVARIANTS.SHOW_INVARIANTS',
             color: 'primary',
             isActive: this.diagram !== undefined,
-            action: () => this.onShowComputedInvariants(),
+            action: () => this._onShowComputedInvariants(),
         },
     ]);
 
@@ -127,56 +127,61 @@ export class InvariantsComponent implements OnInit, OnDestroy {
     });
 
     /**
-     * Deletes a firing entry by its ID.
-     * @param id - The ID of the entry to delete.
+     * Deletes an invariant entry by its ID.
+     * @param id - The ID of the invariant entry to delete.
      */
-    onDeleteEntry(id: number): void {
+    protected onDeleteEntry(id: number): void {
         this.entryService.deleteEntry(id);
     }
 
     /**
-     * Deletes all firing entries.
+     * Deletes all invariant entries.
      */
-    onDeleteAllEntries(): void {
+    protected onDeleteAllEntries(): void {
         this.entryService.deleteAllEntries();
     }
 
     /**
-     * Creates a new firing entry.
+     * Activates a specific invariant entry by its ID.
+     * @param id - The ID of the invariant entry to activate.
      */
-    onNewEntry(): void {
-        if (this.diagram) this.entryService.addEmptyEntry();
-    }
-
-    onActivateEntry(id: number): void {
+    protected onActivateEntry(id: number): void {
         this.entryService.activateEntry(id);
     }
 
     /**
-     * Validates all firing sequences and shows a notification with the results.
+     * Creates a new empty invariant entry.
      */
-    onValidateEntries(): void {
-        if (!this.diagram) return;
-        this.validationService.validateAllEntries();
+    private _onNewEntry(): void {
+        if (this.diagram) this.entryService.addEmptyEntry();
     }
 
     /**
-     * Finds sequences when the "Find" button is clicked.
+     * Validates all invariant entries.
      */
-    onShowComputedInvariants(): void {
+    private _onValidateEntries(): void {
+        if (this.diagram) this.validationService.validateAllEntries();
+    }
+
+    /**
+     * Opens a confirmation dialog to compute and display the minimal invariants of the Petri net.
+     * If confirmed, calls the method to compute and show the results.
+     */
+    private _onShowComputedInvariants(): void {
         const dialogRef = this._dialog.open(InvariantsConfirmDialogComponent);
 
         dialogRef.afterClosed().subscribe((result: boolean) => {
             if (result) {
-                this.showComputedInvariants();
+                this._showComputedInvariants();
             }
         });
     }
 
     /**
-     * Finds firing sequences based on the current Petri net and user-defined limits.
+     * Computes the minimal invariants for the current Petri net and displays them in a modal dialog.
+     * Converts each invariant vector to its notation (e.g., "p1 + p2 - p3") for user-friendly display.
      */
-    showComputedInvariants(): void {
+    private _showComputedInvariants(): void {
         if (!this.diagram) return;
         const vectors = this.validationService.computedMinInvariants();
         const notations = [];

@@ -9,5 +9,5 @@ import { TranslateModule } from '@ngx-translate/core';
     styleUrl: './invariants-modal.component.css',
 })
 export class InvariantsModalComponent {
-    data = inject(MAT_DIALOG_DATA);
+    protected data = inject(MAT_DIALOG_DATA);
 }

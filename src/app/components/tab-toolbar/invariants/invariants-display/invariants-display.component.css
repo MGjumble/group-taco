@@ -1,8 +1,8 @@
 /* Styles inherited from DisplayComponent */
 .canvas {
     width: 100%;
-    height: 600px; /* Align height with drawing canvas */
-    border: 1px dashed lightgrey; /* subtler border */
+    height: 600px;
+    border: 1px dashed lightgrey;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -28,8 +28,8 @@
     bottom: 10px;
     right: 10px;
     padding: 4px 8px;
-    z-index: 10; /* Über dem SVG */
-    margin: 0; /* Überschreibt mögliche Margin-Einstellungen */
+    z-index: 10;
+    margin: 0;
 }
 
 .toggle-label {

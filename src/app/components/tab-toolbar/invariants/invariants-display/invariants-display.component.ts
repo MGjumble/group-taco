@@ -13,8 +13,7 @@ import { InvariantsValidationService } from 'src/app/services/invariants-validat
     styleUrl: './invariants-display.component.css',
 })
 export class InvariantsDisplayComponent extends DisplayComponent {
-    entryService = inject(InvariantsEntryService);
-    validationService = inject(InvariantsValidationService);
-
-    inputEntries = this.validationService.inputEntries;
+    protected entryService = inject(InvariantsEntryService);
+    protected validationService = inject(InvariantsValidationService);
+    protected inputEntries = this.validationService.inputEntries;
 }

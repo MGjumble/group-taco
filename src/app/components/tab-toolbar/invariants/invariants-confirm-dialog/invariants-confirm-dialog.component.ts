@@ -12,11 +12,11 @@ import { TranslateModule } from '@ngx-translate/core';
 export class InvariantsConfirmDialogComponent {
     constructor(private dialogRef: MatDialogRef<InvariantsConfirmDialogComponent>) {}
 
-    confirm(): void {
+    protected confirm(): void {
         this.dialogRef.close(true);
     }
 
-    cancel(): void {
+    protected cancel(): void {
         this.dialogRef.close(false);
     }
 }

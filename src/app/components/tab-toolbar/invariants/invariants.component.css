@@ -154,7 +154,7 @@ app-draw-toolbar {
 }
 
 .entry-row[active] {
-    background-color: aliceblue; /* Hellblau */
+    background-color: aliceblue;
     font-weight: bold;
 }
 

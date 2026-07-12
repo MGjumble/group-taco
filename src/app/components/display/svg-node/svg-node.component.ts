@@ -256,12 +256,12 @@ export class SvgNodeComponent {
     readonly selectionStrokeColor = computed(() => (this.isSelected() ? 'orange' : 'transparent'));
 
     readonly placeWeight = computed(() => {
-        const entry = this._invariantsEntryService.currentEntry();
+        const entry = this._invariantsEntryService.activeEntry();
         return entry?.placeWeights().get(this.displayLabel());
     });
 
     readonly transitionBalance = computed(() => {
-        const entry = this._invariantsEntryService.currentEntry();
+        const entry = this._invariantsEntryService.activeEntry();
         return entry?.transitionBalances().get(this.displayLabel());
     });
 
@@ -295,6 +295,12 @@ export class SvgNodeComponent {
         if (node) this.stateNodeClick.emit(node as StateNode);
     }
 
+    /**
+     * Handles a place weight change event by delegating to the invariants entry service.
+     * Updates the weight of the selected place in the current invariant entry by the specified difference.
+     *
+     * @param weightDiff - The difference to apply to the place's weight (+1 to increase, -1 to decrease).
+     */
     onChangePlaceWeight(weightDiff: number): void {
         const node = this.diagramNode();
         if (node instanceof DiagramPlace) {
@@ -302,6 +308,17 @@ export class SvgNodeComponent {
         }
     }
 
+    /**
+     * Computes the SVG `points` attribute for a triangle that visually represents the balance state
+     * of a transition in a Petri net invariant calculation.
+     *
+     * The triangle points upward if the transition balance is positive (indicating a surplus of input arcs
+     * over output arcs for the current invariant weights) and points downward if the balance is
+     * non-positive (indicating a deficit or balance of zero).
+     *
+     * @returns A string in SVG `points` attribute format (e.g., "x0,y0 x1,y1 x2,y2"),
+     *          representing the three vertices of the triangle.
+     */
     getTrianglePoints(): string {
         const x = this.rectX();
         const y = this.rectY();
@@ -314,18 +331,10 @@ export class SvgNodeComponent {
 
         const balance = this.transitionBalance() || 0;
 
+        // Upward-facing triangle (apex at top) for positive balance
         if (balance > 0) return `${x1},${y0} ${x0},${y1} ${x2},${y1}`;
+        // Downward-facing triangle (apex at bottom) for non-positive balance
         else return `${x0},${y0} ${x2},${y0} ${x1},${y1}`;
-    }
-
-    getTriangleTextX(): number {
-        return this.rectX() + this.rectWidth() / 2; // x1
-    }
-
-    getTriangleTextY(): number {
-        const balance = this.transitionBalance() || 0;
-        if (balance > 0) return this.rectY() + this.rectWidth() / 6 + 3;
-        else return this.rectY() + this.rectWidth() / 6 - 1;
     }
 
     getTriangleFillColor(): string {
@@ -342,5 +351,15 @@ export class SvgNodeComponent {
         const balance = this.transitionBalance() || 0;
         if (balance > 0) return '+' + balance;
         return String(balance);
+    }
+
+    getTriangleTextX(): number {
+        return this.rectX() + this.rectWidth() / 2;
+    }
+
+    getTriangleTextY(): number {
+        const balance = this.transitionBalance() || 0;
+        if (balance > 0) return this.rectY() + this.rectWidth() / 6 + 3;
+        else return this.rectY() + this.rectWidth() / 6 - 1;
     }
 }
