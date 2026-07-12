@@ -10,11 +10,12 @@ export class InvariantsEntryService {
     private _modeService = inject(ModeService);
     private _validationService = inject(InvariantsValidationService);
 
-    showTransitionBalances = signal<boolean>(true);
     currentEntry = signal<InvariantEntry | undefined>(undefined);
 
     private _idCounter = 0;
     private _isExamMode = computed(() => this._modeService.isExamMode(Tab.INVARIANTS));
+    overrideShowTransitionBalances = signal<boolean | null>(null);
+    showTransitionBalances = computed(() => this.overrideShowTransitionBalances() ?? !this._isExamMode());
 
     isEntryActive = (id: number) => computed(() => this.currentEntry()?.id === id);
 

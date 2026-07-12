@@ -33,7 +33,7 @@
                 <input
                     type="checkbox"
                     [checked]="entryService.showTransitionBalances()"
-                    (change)="entryService.showTransitionBalances.set($any($event.target).checked)" />
+                    (change)="entryService.overrideShowTransitionBalances.set($any($event.target).checked)" />
                 <span class="toggle-slider"></span>
             </label>
         </div>
