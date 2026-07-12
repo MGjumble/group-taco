@@ -156,13 +156,43 @@ export class InvariantsValidationService {
     }
 
     /**
+     * Creates the incidence matrix for the given Petri net diagram.
+     * The matrix has dimensions |P| × |T|, where P is the set of places and T is the set of transitions.
+     * Each entry C[p][t] represents the net change in place p when transition t fires:
+     *   - Negative for input arcs (consumes tokens).
+     *   - Positive for output arcs (produces tokens).
+     *
+     * @param diagram - The Petri net diagram to create the matrix for.
+     * @returns The incidence matrix as a 2D array of numbers.
+     */
+    createIncidenceMatrix(diagram: Diagram): number[][] {
+        const places = diagram.places;
+        const transitions = diagram.transitions;
+        const matrix: number[][] = Array.from({ length: places.length }, () => Array(transitions.length).fill(0));
+        for (let i = 0; i < transitions.length; i++) {
+            const inputFlows = transitions[i].getInputFlow();
+            const outputFlows = transitions[i].getOutputFlow();
+            inputFlows.forEach(({ place, weight }) => {
+                const pIndex = places.findIndex((p) => p.id === place.id);
+                matrix[pIndex][i] -= weight;
+            });
+
+            outputFlows.forEach(({ place, weight }) => {
+                const pIndex = places.findIndex((p) => p.id === place.id);
+                matrix[pIndex][i] += weight;
+            });
+        }
+        return matrix;
+    }
+
+    /**
      * Sets up the place flow mappings for all transitions in the Petri net.
      * For each transition, calculates the net flow (output - input) for each connected place.
      * This is used to efficiently compute transition balances during invariant validation.
      *
      * @param transitions - Array of all transitions in the Petri net.
      */
-    protected setPlaceFlows(transitions: DiagramTransition[]): void {
+    setPlaceFlows(transitions: DiagramTransition[]): void {
         this._allPlaceLabels.forEach((label) => {
             this._placeFlows.set(label, new Map());
         });
@@ -215,36 +245,6 @@ export class InvariantsValidationService {
             if (Math.abs(sum) > this._EPSILON) return false;
         }
         return true;
-    }
-
-    /**
-     * Creates the incidence matrix for the given Petri net diagram.
-     * The matrix has dimensions |P| × |T|, where P is the set of places and T is the set of transitions.
-     * Each entry C[p][t] represents the net change in place p when transition t fires:
-     *   - Negative for input arcs (consumes tokens).
-     *   - Positive for output arcs (produces tokens).
-     *
-     * @param diagram - The Petri net diagram to create the matrix for.
-     * @returns The incidence matrix as a 2D array of numbers.
-     */
-    protected createIncidenceMatrix(diagram: Diagram): number[][] {
-        const places = diagram.places;
-        const transitions = diagram.transitions;
-        const matrix: number[][] = Array.from({ length: places.length }, () => Array(transitions.length).fill(0));
-        for (let i = 0; i < transitions.length; i++) {
-            const inputFlows = transitions[i].getInputFlow();
-            const outputFlows = transitions[i].getOutputFlow();
-            inputFlows.forEach(({ place, weight }) => {
-                const pIndex = places.findIndex((p) => p.id === place.id);
-                matrix[pIndex][i] -= weight;
-            });
-
-            outputFlows.forEach(({ place, weight }) => {
-                const pIndex = places.findIndex((p) => p.id === place.id);
-                matrix[pIndex][i] += weight;
-            });
-        }
-        return matrix;
     }
 
     /**
