@@ -250,7 +250,7 @@
     },
     "INVARIANTS": {
         "INVARIANTS": "Invarianten",
-        "HEADER_SUBTITLE_1": "TacoInv - Erweiterung des Taco-Tools um das Thema Invarianten",
+        "HEADER_SUBTITLE_1": "TacoInv - Erweiterung des Taco-Tools um die Bestimmung von Invarianten",
         "HEADER_SUBTITLE_2": "Bachelorarbeit, SoSe26, Marie G.",
         "ACTIONS": "Aktionen",
         "HELP_TOOLTIP": "Klicken Sie hier, um die Bedienungsanleitung anzuzeigen",
@@ -270,13 +270,13 @@
         "WEIGHTS_MISSING": "Fehlende Gewichte insgesamt:",
         "INVALID_NOT_FINAL": "Keine Invariante --- Min. ein Gewicht ist zu hoch",
         "INVALID_FINAL": "Keine Invariante",
-        "INVALID_TRIVIAL": "Triviale Invariante --- Der Null-Vektor zählt als ungültig, da er keine Aussagen über das Petri-Netz macht",
+        "INVALID_TRIVIAL": "Keine Invariante --- Der Null-Vektor ist trivial und liefert keine Information über das Petri-Netz",
         "GOAL": "Ziel",
         "GOAL_TEXT": "Kombiniere Stellen mit passenden Gewichtungen, bis alle Transitionen ausgeglichen sind. Durch Klicken von + und - an den Stellen können diese hinzugefügt oder entfernt werden.",
         "TRANSITION_BALANCES": "Transitionsgleichgewichte",
-        "TRANSITION_BALANCES_TEXT": "Nicht ausgeglichene Transitionen sind jeweils durch ein Dreieck oben rechts markiert (kann deaktiviert werden).",
+        "TRANSITION_BALANCES_TEXT": "Nicht ausgeglichene Transitionen sind durch ein Dreieck über dem Label markiert (kann deaktiviert werden). Beispiele: Nach oben zeigendes Dreieck mit +1 => Die Transition gibt netto 1 Token an die Umwelt ab. Nach unten zeigendes Dreieck mit -2 => Die Transition nimmt netto 2 Tokens aus der Umwelt auf.",
         "DIFFICULTY_LEVELS": "Schwierigkeitsstufen",
-        "DIFFICULTY_LEVELS_TEXT": "Lernmodus: Die Eingaben werden sofort validiert und gefundene minimale Invarianten direkt registriert. Prüfungsmodus: Alle Eingaben können gesammelt durch Klicken des Validierungs-Buttons geprüft werden."
+        "DIFFICULTY_LEVELS_TEXT": "Lernmodus: Die Eingaben werden sofort validiert. Prüfungsmodus: Alle Eingaben können gesammelt durch Klicken des Validierungs-Buttons geprüft werden."
     },
     "EXAMPLE_MENU": {
         "TOOLTIP": "Klausuraufgaben öffnen",
