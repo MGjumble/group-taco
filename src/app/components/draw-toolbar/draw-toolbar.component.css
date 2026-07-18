@@ -61,6 +61,7 @@
     color: #666;
     font-size: 13px;
     line-height: 1.4;
+    white-space: pre-line;
 }
 
 .pn-toggle-container {
