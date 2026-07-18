@@ -337,16 +337,6 @@ export class SvgNodeComponent {
         else return `${x0},${y0} ${x2},${y0} ${x1},${y1}`;
     }
 
-    getTriangleFillColor(): string {
-        if (this.transitionBalance()! > 0) return '#daffd3ff';
-        return '#ffc9c9ff';
-    }
-
-    getTriangleStrokeColor(): string {
-        if (this.transitionBalance()! > 0) return '#20bf00ff';
-        return '#d70000ff';
-    }
-
     getTriangleText(): string {
         const balance = this.transitionBalance() || 0;
         if (balance > 0) return '+' + balance;
