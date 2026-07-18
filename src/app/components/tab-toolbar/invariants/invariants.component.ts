@@ -27,6 +27,7 @@ import {
     DrawToolbarInstruction,
 } from '../../draw-toolbar/draw-toolbar.component';
 import { InvariantsDisplayComponent } from './invariants-display/invariants-display.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-invariants',
@@ -40,6 +41,7 @@ import { InvariantsDisplayComponent } from './invariants-display/invariants-disp
         MatIcon,
         MatSliderModule,
         MatExpansionModule,
+        MatTooltipModule,
         TranslateModule,
         InvariantsDisplayComponent,
         DrawToolbarComponent,

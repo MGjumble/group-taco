@@ -31,6 +31,8 @@
                             @for (entry of inputEntries(); track entry.id) {
                                 <tr
                                     class="entry-row"
+                                    matTooltip="{{ 'EDIT' | translate }}"
+                                    matTooltipPosition="before"
                                     [attr.active]="entryService.isEntryActive(entry.id)() ? '' : null"
                                     (click)="onActivateEntry(entry.id)">
                                     <td class="validity-td">
@@ -45,7 +47,10 @@
                                                 matTooltipClass="wide-tooltip">
                                                 <mat-icon class="not-minimal-icon">check_circle</mat-icon>
                                             </button>
-                                        } @else if (entry.validity === InvariantValidity.INCOMPLETE) {
+                                        } @else if (
+                                            entry.validity === InvariantValidity.INCOMPLETE_MINIMAL ||
+                                            entry.validity === InvariantValidity.INCOMPLETE_NOT_MINIMAL
+                                        ) {
                                             <button
                                                 mat-icon-button
                                                 class="incomplete-button validity-button"
@@ -53,8 +58,7 @@
                                                 <mat-icon class="incomplete-icon">build_circle</mat-icon>
                                             </button>
                                         } @else if (
-                                            entry.validity === InvariantValidity.INVALID_NOT_FINAL ||
-                                            entry.validity === InvariantValidity.INVALID_FINAL ||
+                                            entry.validity === InvariantValidity.INVALID ||
                                             entry.validity === InvariantValidity.INVALID_TRIVIAL
                                         ) {
                                             <button
@@ -69,21 +73,21 @@
                                         {{ entry.notation }}
                                     </td>
 
-                                    <td class="entry-description-td">
+                                    <td class="entry-status-td">
                                         @if (entry.validity === InvariantValidity.VALID_MINIMAL) {
                                             {{ 'INVARIANTS.VALID_MINIMAL' | translate }}
                                         } @else if (entry.validity === InvariantValidity.VALID_NOT_MINIMAL) {
                                             {{ 'INVARIANTS.VALID_NOT_MINIMAL' | translate }}
-                                        } @else if (entry.validity === InvariantValidity.INCOMPLETE) {
-                                            {{ 'INVARIANTS.INCOMPLETE' | translate: entry }}<br />
-                                            --- {{ 'INVARIANTS.PLACES_MISSING' | translate: entry }}
+                                        } @else if (entry.validity === InvariantValidity.INCOMPLETE_MINIMAL) {
+                                            {{ 'INVARIANTS.INCOMPLETE_MINIMAL' | translate }}<br />
+                                            --- {{ 'INVARIANTS.PLACES_MISSING' | translate }}
                                             {{ entry.missingPlacesCount }}<br />
-                                            --- {{ 'INVARIANTS.WEIGHTS_MISSING' | translate: entry }}
+                                            --- {{ 'INVARIANTS.WEIGHTS_MISSING' | translate }}
                                             {{ entry.missingWeightsCount }}
-                                        } @else if (entry.validity === InvariantValidity.INVALID_NOT_FINAL) {
-                                            {{ 'INVARIANTS.INVALID_NOT_FINAL' | translate }}
-                                        } @else if (entry.validity === InvariantValidity.INVALID_FINAL) {
-                                            {{ 'INVARIANTS.INVALID_FINAL' | translate }}
+                                        } @else if (entry.validity === InvariantValidity.INCOMPLETE_NOT_MINIMAL) {
+                                            {{ 'INVARIANTS.INCOMPLETE_NOT_MINIMAL' | translate }}
+                                        } @else if (entry.validity === InvariantValidity.INVALID) {
+                                            {{ 'INVARIANTS.INVALID' | translate }} {{ entry.invalidPlaces }}
                                         } @else if (entry.validity === InvariantValidity.INVALID_TRIVIAL) {
                                             {{ 'INVARIANTS.INVALID_TRIVIAL' | translate }}
                                         }

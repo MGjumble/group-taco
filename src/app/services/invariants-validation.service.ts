@@ -83,8 +83,7 @@ export class InvariantsValidationService {
      * and whether the vector satisfies the invariant condition (yᵀ · C = 0).
      *
      * @param entry - The invariant entry to validate.
-     * @param isFinalValidation - If true, sets final validity status (e.g., INVALID_FINAL).
-     *                            If false, sets intermediate status (e.g., INCOMPLETE, INVALID_NOT_FINAL).
+     * @param isFinalValidation - If true, sets status of empty inputs to invalid.
      */
     validateEntry(entry: InvariantEntry, isFinalValidation: boolean = false): void {
         const vector = entry.vector;
@@ -108,30 +107,36 @@ export class InvariantsValidationService {
 
         const matchedInvariant = computed.find((inv) => vector.every((val, i) => inv[i] - val >= 0));
 
-        const isIncompleteInvariant = matchedInvariant !== undefined;
+        const incompleteMinimal = matchedInvariant !== undefined;
 
-        if (isIncompleteInvariant) {
+        if (incompleteMinimal) {
             const missingPerPlace = matchedInvariant.map((invVal, i) => invVal - vector[i]);
             const missingPlacesCount = missingPerPlace.filter((diff) => diff > 0).length;
             const missingWeightsTotal = missingPerPlace.reduce((sum, diff) => sum + diff, 0);
 
             entry.missingPlacesCount = missingPlacesCount;
             entry.missingWeightsCount = missingWeightsTotal;
-        }
 
-        if (isIncompleteInvariant && !isFinalValidation) {
-            entry.setValidity(InvariantValidity.INCOMPLETE);
+            entry.setValidity(InvariantValidity.INCOMPLETE_MINIMAL);
             return;
         }
 
         const isInvariant = this._isInvariant(vector);
-        if (!isInvariant) {
-            if (isFinalValidation) entry.setValidity(InvariantValidity.INVALID_FINAL);
-            else entry.setValidity(InvariantValidity.INVALID_NOT_FINAL);
+        if (isInvariant) {
+            entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL);
             return;
         }
 
-        entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL);
+        entry.invalidPlaces = this._getInvalidPlaces(vector);
+
+        const incompleteNonMinimal = entry.invalidPlaces.length === 0 && !incompleteMinimal;
+
+        if (incompleteNonMinimal) {
+            entry.setValidity(InvariantValidity.INCOMPLETE_NOT_MINIMAL);
+            return;
+        }
+
+        entry.setValidity(InvariantValidity.INVALID);
     }
 
     /**
@@ -258,5 +263,18 @@ export class InvariantsValidationService {
         const allFoundInvariants = this._computingService.placeInvariants(this._incidenceMatrix);
         const minimalInvariants = this._computingService.calculateMinimalPIs(allFoundInvariants, this._incidenceMatrix);
         this.computedMinInvariants.set(minimalInvariants);
+    }
+
+    private _getInvalidPlaces(vector: number[]): string[] {
+        const invalidPlaces: string[] = [];
+        vector.forEach((val, placeIndex) => {
+            if (val !== 0) {
+                const isPlaceInAnyInvariant = this.computedMinInvariants().some(inv => inv[placeIndex] !== 0);
+                if (!isPlaceInAnyInvariant) {
+                    invalidPlaces.push(this._allPlaceLabels[placeIndex]);
+                }
+            }
+        });
+        return invalidPlaces;
     }
 }
