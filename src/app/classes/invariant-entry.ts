@@ -13,6 +13,7 @@ export class InvariantEntry {
      * @param validity - Current validity status of the invariant (default: undefined).
      * @param missingPlacesCount - Number of places missing from the invariant (default: undefined).
      * @param missingWeightsCount - Number of places with missing weights (default: undefined).
+     * @param invalidPlaces - Labels of invalid places (that are not part of any invariant).
      * @param allPlaces - Array of all place labels in the Petri net.
      * @param allTransitions - Array of all transition labels in the Petri net.
      * @param placeFlows - Map of place labels to their flow maps (place → transition → weight).
@@ -25,6 +26,7 @@ export class InvariantEntry {
         public validity: InvariantValidity | undefined = undefined,
         public missingPlacesCount: number | undefined = undefined,
         public missingWeightsCount: number | undefined = undefined,
+        public invalidPlaces: string[] = [],
         public allPlaces: string[],
         public allTransitions: string[],
         public placeFlows: Map<string, Map<string, number>>,
@@ -145,8 +147,8 @@ export class InvariantEntry {
 export enum InvariantValidity {
     VALID_MINIMAL = 'VALID_MINIMAL', // Matches a calculated minimal invariant
     VALID_NOT_MINIMAL = 'VALID_NOT_MINIMAL', // Is a linear combination of min. invariants
-    INVALID_NOT_FINAL = 'INVALID_NOT_FINAL', // Invalid, not finally validated/ likely to be corrected
-    INVALID_FINAL = 'INVALID_FINAL', // Invalid after final validation
+    INCOMPLETE_MINIMAL = 'INCOMPLETE_MINIMAL', // Invalid, but can be completed to become a min.invariant
+    INCOMPLETE_NOT_MINIMAL = 'INCOMPLETE_NOT_MINIMAL', // Invalid, but can be completed to become a non minimal invariant
+    INVALID = 'INVALID', // Invalid, can not be completed to become an invariant
     INVALID_TRIVIAL = 'INVALID_TRIVIAL', // Invalid zero vector
-    INCOMPLETE = 'INCOMPLETE', // Invalid, but the weights are a subset of a computed invariant/ likely to be completed
 }

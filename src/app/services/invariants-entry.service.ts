@@ -98,6 +98,7 @@ export class InvariantsEntryService {
             undefined,
             undefined,
             undefined,
+            [],
             this._validationService.allPlaceLabels,
             this._validationService.allTransitionLabels,
             this._validationService.placeFlows,
