@@ -248,13 +248,13 @@
         "INSTRUCTION_AUTO_FIRING_TEXT": "In learn mode, clicking activated transitions in the Petri net automatically builds the process net."
     },
     "INVARIANTS": {
+        "INVARIANT": "Invariant",
         "INVARIANTS": "Invariants",
         "HEADER_SUBTITLE_1": "TacoInv - Taco tool extension for invariant analysis",
         "HEADER_SUBTITLE_2": "Bachelor's Thesis, SoSe26, Marie G.",
         "ACTIONS": "Actions",
         "HELP_TOOLTIP": "Click to open the usage guide",
-        "NOTATION": "Notation",
-        "DESCRIPTION": "Description",
+        "STATUS": "Status",
         "NEW_ENTRY": "New Entry",
         "VALIDATE_ENTRIES": "Validate Entries",
         "SHOW_INVARIANTS": "Show Computed Invariants",

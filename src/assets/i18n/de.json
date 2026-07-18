@@ -249,14 +249,14 @@
         "INSTRUCTION_AUTO_FIRING_TEXT": "Im Lernmodus erstellt das Klicken auf aktivierte Transitionen im Petrinetz automatisch das Prozessnetz."
     },
     "INVARIANTS": {
+        "INVARIANT": "Invariante",
         "INVARIANTS": "Invarianten",
         "HEADER_SUBTITLE_1": "TacoInv - Erweiterung des Taco-Tools um die Bestimmung von Invarianten",
         "HEADER_SUBTITLE_2": "Bachelorarbeit, SoSe26, Marie G.",
         "ACTIONS": "Aktionen",
         "HELP_TOOLTIP": "Klicken Sie hier, um die Bedienungsanleitung anzuzeigen",
         "HELP": "Kombiniere Stellen mit passenden Gewichtungen, bis alle Transitionen ausgeglichen sind.",
-        "NOTATION": "Notation",
-        "DESCRIPTION": "Beschreibung",
+        "STATUS": "Status",
         "NEW_ENTRY": "Neuer Eintrag",
         "VALIDATE_ENTRIES": "Einträge validieren",
         "SHOW_INVARIANTS": "Berechnete Invarianten anzeigen",
