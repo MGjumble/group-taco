@@ -11,7 +11,7 @@
  *               und nur im Rahmen des Urheberrechtsgesetzes (UrhG).
  *
  * Mit Genehmigung der FernUniversität in Hagen verwendet und für das
- * "I love Petri Nets"-Tool Invaco angepasst ("GEÄNDERT" im Kommentar).
+ * "I love Petri Nets"-Tool TacoInv angepasst ("GEÄNDERT" im Kommentar).
  * Nicht verwendete Elemente wurden auskommentiert.
  */
 
