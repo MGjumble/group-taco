@@ -10,7 +10,7 @@ module.exports = tseslint.config(
             '**/dist/**',
             '**/.angular/cache/**',
             '**/test-out/**',
-            'src/app/services/invariants-computing.service.ts', // 👈 Spezifische Datei ignorieren
+            'src/app/services/invariants-computing.service.ts',
         ],
     },
     {
