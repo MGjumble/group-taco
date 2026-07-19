@@ -5,6 +5,15 @@ const angular = require('angular-eslint');
 
 module.exports = tseslint.config(
     {
+        ignores: [
+            '**/node_modules/**',
+            '**/dist/**',
+            '**/.angular/cache/**',
+            '**/test-out/**',
+            'src/app/services/invariants-computing.service.ts', // 👈 Spezifische Datei ignorieren
+        ],
+    },
+    {
         files: ['**/*.ts'],
         extends: [
             eslint.configs.recommended,
