@@ -40,7 +40,7 @@ export class InvariantsEntryService {
      */
     processPlaceClicked(place: DiagramPlace, weightDiff: number): void {
         if (!place) return;
-        let entry = this.getActiveEntry();
+        const entry = this.getActiveEntry();
         this.updateEntry(entry, place, weightDiff);
         if (this._isExamMode()) entry.setValidity(undefined);
         else this._validationService.validateEntry(entry);
@@ -80,7 +80,7 @@ export class InvariantsEntryService {
      * @returns The active invariant entry (or a new one if none was active).
      */
     getActiveEntry(): InvariantEntry {
-        let activeEntry = this.activeEntry() || this.addEmptyEntry();
+        const activeEntry = this.activeEntry() || this.addEmptyEntry();
         this.activeEntry.set(activeEntry);
         return activeEntry;
     }

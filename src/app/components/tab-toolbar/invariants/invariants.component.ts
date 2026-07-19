@@ -10,7 +10,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { filter, Subscription, tap } from 'rxjs';
+import { filter } from 'rxjs';
 
 import { Diagram } from '../../../classes/diagram/diagram';
 import { InvariantEntry, InvariantValidity } from '../../../classes/invariant-entry';
@@ -182,7 +182,7 @@ export class InvariantsComponent {
         if (!this.diagram()) return;
         const vectors = this.validationService.computedMinInvariants();
         const notations = [];
-        for (let vector of vectors) {
+        for (const vector of vectors) {
             const notation = InvariantEntry.toNotation(vector, this.diagram()!.getPlaceLabels());
             notations.push(notation);
         }

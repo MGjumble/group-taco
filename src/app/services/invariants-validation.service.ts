@@ -7,7 +7,6 @@ import { InvariantEntry, InvariantValidity } from '../classes/invariant-entry';
 import { Tab } from '../classes/tabs';
 import { DiagramTransition } from '../classes/diagram/diagram-transition';
 import { PlaceInvariantsService } from './invariants-computing.service';
-import { ToastList } from '../classes/toast';
 
 @Injectable({ providedIn: 'root' })
 export class InvariantsValidationService {
@@ -19,7 +18,7 @@ export class InvariantsValidationService {
 
     private _allPlaceLabels: string[] = [];
     private _allTransitionLabels: string[] = [];
-    private _placeFlows: Map<string, Map<string, number>> = new Map();
+    private _placeFlows = new Map<string, Map<string, number>>();
     private _incidenceMatrix: number[][] = [];
 
     inputEntries = signal<InvariantEntry[]>([]);
@@ -85,7 +84,7 @@ export class InvariantsValidationService {
      * @param entry - The invariant entry to validate.
      * @param isFinalValidation - If true, sets status of empty inputs to invalid.
      */
-    validateEntry(entry: InvariantEntry, isFinalValidation: boolean = false): void {
+    validateEntry(entry: InvariantEntry, isFinalValidation = false): void {
         const vector = entry.vector;
         const isTrivial = vector.every((val) => val === 0);
         if (isTrivial) {
@@ -102,9 +101,7 @@ export class InvariantsValidationService {
             return;
         }
 
-        let computed = this.computedMinInvariants();
-
-        const matchedInvariant = computed.find((inv) => vector.every((val, i) => inv[i] - val >= 0));
+        const matchedInvariant = computedInvariants.find((inv) => vector.every((val, i) => inv[i] - val >= 0));
 
         const incompleteMinimal = matchedInvariant !== undefined;
 
@@ -144,7 +141,7 @@ export class InvariantsValidationService {
      * or an info notification if some are missing.
      */
     validateAllEntries(): void {
-        for (let entry of this.inputEntries()) this.validateEntry(entry, true);
+        for (const entry of this.inputEntries()) this.validateEntry(entry, true);
 
         if (this.remainingMinInvariants().length === 0)
             this._notificationService.showSuccess(

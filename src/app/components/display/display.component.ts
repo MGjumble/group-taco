@@ -19,7 +19,6 @@ import { StateNode } from '../../classes/reachability-graph.model';
 import { GRAPH_FILENAMES, GRAPH_IDS, GraphId } from './display.constants';
 import { ProcessNetFiringService } from '../../services/process-net-firing.service';
 import { ToasterNotificationService } from '../../services/toaster-notification.service';
-import { DiagramPlace } from '../../classes/diagram/diagram-place';
 import { InvariantsEntryService } from '../../services/invariants-entry.service';
 
 @Component({

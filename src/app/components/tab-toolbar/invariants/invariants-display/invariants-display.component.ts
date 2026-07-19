@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, inject, ViewChild } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DisplayComponent } from 'src/app/components/display/display.component';
 import { SvgArcComponent } from 'src/app/components/display/svg-arc/svg-arc.component';

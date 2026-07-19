@@ -24,7 +24,7 @@ class MockModeService {
 class MockInvariantsValidationService {
     allPlaceLabels: string[] = [];
     allTransitionLabels: string[] = [];
-    placeFlows: Map<string, Map<string, number>> = new Map();
+    placeFlows = new Map<string, Map<string, number>>();
     inputEntries = signal<InvariantEntry[]>([]);
 
     validateEntry = jasmine.createSpy('validateEntry');
@@ -42,7 +42,7 @@ function createTestInvariantEntry(
     id: number,
     placeLabels: string[] = ['P1', 'P2'],
     transitionLabels: string[] = ['T1'],
-    placeFlows: Map<string, Map<string, number>> = new Map(),
+    placeFlows = new Map<string, Map<string, number>>(),
 ): InvariantEntry {
     return new InvariantEntry(id, placeLabels, transitionLabels, placeFlows);
 }
@@ -51,8 +51,10 @@ function createTestInvariantEntry(
 
 describe('InvariantsEntryService', () => {
     let service: InvariantsEntryService;
-    let mockModeService: MockModeService;
-    let mockValidationService: MockInvariantsValidationService;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let mockModeService: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let mockValidationService: any;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -64,10 +66,10 @@ describe('InvariantsEntryService', () => {
         });
 
         service = TestBed.inject(InvariantsEntryService);
-        mockModeService = TestBed.inject(ModeService) as unknown as MockModeService;
-        mockValidationService = TestBed.inject(
-            InvariantsValidationService,
-        ) as unknown as MockInvariantsValidationService;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        mockModeService = TestBed.inject(ModeService) as any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        mockValidationService = TestBed.inject(InvariantsValidationService) as any;
 
         // Reset mock state
         mockModeService.setExamModeForTab(null);
@@ -143,7 +145,7 @@ describe('InvariantsEntryService', () => {
 
             it('should return false when entry is not active', () => {
                 const entry1 = createTestInvariantEntry(1);
-                const entry2 = createTestInvariantEntry(2);
+                createTestInvariantEntry(2);
                 service.activeEntry.set(entry1);
 
                 const isActive = service.isEntryActive(2);
@@ -313,7 +315,7 @@ describe('InvariantsEntryService', () => {
         });
 
         it('should not add duplicate entry when called multiple times with existing activeEntry', () => {
-            const initialEntry = service.addEmptyEntry();
+            service.addEmptyEntry();
             const initialCount = mockValidationService.inputEntries().length;
 
             service.getActiveEntry();
@@ -345,9 +347,6 @@ describe('InvariantsEntryService', () => {
         });
 
         it('should update existing activeEntry', () => {
-            const entry = service.addEmptyEntry();
-            const initialPlaceWeights = entry.placeWeights();
-
             service.processPlaceClicked(place, 1);
 
             const updatedPlaceWeights = service.activeEntry()!.placeWeights();
