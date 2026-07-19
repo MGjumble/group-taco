@@ -10,7 +10,6 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { filter } from 'rxjs';
 
 import { Diagram } from '../../../classes/diagram/diagram';
 import { InvariantEntry, InvariantValidity } from '../../../classes/invariant-entry';
@@ -60,10 +59,7 @@ export class InvariantsComponent {
     protected validationService = inject(InvariantsValidationService);
     protected InvariantValidity = InvariantValidity;
 
-    protected readonly diagram = toSignal(
-        this._displayService.diagram$.pipe(filter((diagram): diagram is Diagram => diagram instanceof Diagram)),
-        { initialValue: undefined },
-    );
+    protected readonly diagram = toSignal(this._displayService.diagram$, { initialValue: undefined });
 
     protected inputEntries = this.validationService.inputEntries;
     protected isExamMode = computed(() => this.modeService.isExamMode(Tab.INVARIANTS));
@@ -72,10 +68,11 @@ export class InvariantsComponent {
         effect(() => {
             const diagram = this.diagram();
 
-            if (diagram === undefined) {
+            if (diagram instanceof Diagram) this.validationService.initialize(diagram);
+            else {
                 this.entryService.deleteAllEntries();
                 this.entryService.overrideShowTransitionBalances.set(null);
-            } else this.validationService.initialize(diagram);
+            }
         });
 
         this._matIconRegistry.addSvgIcon(
@@ -179,11 +176,12 @@ export class InvariantsComponent {
      * Converts each invariant vector to its notation (e.g., "p1 + p2 - p3") for user-friendly display.
      */
     private _showComputedInvariants(): void {
-        if (!this.diagram()) return;
+        const diagram = this.diagram();
+        if (!diagram || !(diagram instanceof Diagram)) return;
         const vectors = this.validationService.computedMinInvariants();
         const notations = [];
         for (const vector of vectors) {
-            const notation = InvariantEntry.toNotation(vector, this.diagram()!.getPlaceLabels());
+            const notation = InvariantEntry.toNotation(vector, diagram.getPlaceLabels());
             notations.push(notation);
         }
         this._dialog.open(InvariantsModalComponent, {
