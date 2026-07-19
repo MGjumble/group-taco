@@ -1,0 +1,9 @@
+<div class="modal-container">
+    <p class="modal-header">{{ 'INVARIANTS.COMPUTED_INVARIANTS' | translate }}</p>
+    @for (notation of data.notations; track notation; let i = $index) {
+        <div class="modal-entry">{{ notation }}</div>
+    }
+    @if (data.notations.length === 0) {
+        <div class="modal-entry">{{ 'INVARIANTS.NO_INVARIANTS' | translate }}</div>
+    }
+</div>

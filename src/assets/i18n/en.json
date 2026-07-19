@@ -6,6 +6,7 @@
     "TAB_PLAY": "Play",
     "TAB_REACHABILITY": "Reachability Graph",
     "TAB_PROCESS": "Process Net",
+    "TAB_INVARIANTS": "Invariants",
     "REACHABILITY_GRAPH": {
         "TOGGLE_VIEW": "Toggle View Mode",
         "BUTTON_VALIDATE_NET": "Validate Reachability Graph",
@@ -32,8 +33,11 @@
         "TITLE": "Switch Mode",
         "MESSAGE_DRAW": "Do you want to keep the current drawing?",
         "MESSAGE_DEFAULT": "Do you want to keep the current content?",
+        "MESSAGE_SHOW_INVARIANTS": "Do you really want to see all minimal invariants?",
         "KEEP": "Keep",
-        "DISCARD": "Discard"
+        "DISCARD": "Discard",
+        "CANCEL": "Cancel",
+        "CONFIRM": "Confirm"
     },
     "RGMARKING_DIALOG": {
         "TITLE": "Input Marking",
@@ -59,6 +63,7 @@
     "DELETE": "Delete",
     "DELETE_ALL": "Delete all",
     "STOP": "Stop",
+    "EDIT": "Edit",
     "EXPORT_PETRI_NET": "Export Petri Net",
     "EXPORT_REACHABILITY_GRAPH": "Export Reachability Graph",
     "EXPORT_PROCESS_NET": "Export Process Net",
@@ -196,7 +201,10 @@
             "RG_CHECK_SUCCESS": "The created reachability graph is complete and correct.",
             "RG_CHECK_MISSING_EDGES": "Missing transitions: {{edges}}",
             "RG_CHECK_MISSING_EDGES_LIST": "The following transitions are missing:",
-            "SWITCH_BACK_TO_USER_GRAPH": "Please switch back to your self-created Graph to continue editing."
+            "SWITCH_BACK_TO_USER_GRAPH": "Please switch back to your self-created Graph to continue editing.",
+            "ALL_MIN_INVARIANTS_FOUND": "All minimal invariants were found.",
+            "MIN_INVARIANTS_MISSING": "At least one (additional) minimal invariant has not been found yet.",
+            "INVALID_INVARIANT_ENTRIES": "The following entries are not minimal or no invariants:"
         },
         "VALIDATION_MESSAGES": {
             "TRANSITION_NO_MATCH": "❌ Transition {{label}} has no matching label in the Petri net.",
@@ -239,6 +247,36 @@
         "INSTRUCTION_VALIDATE_TOAST": "Click the checklist button to validate the process net.",
         "INSTRUCTION_AUTO_FIRING": "Auto Creation",
         "INSTRUCTION_AUTO_FIRING_TEXT": "In learn mode, clicking activated transitions in the Petri net automatically builds the process net."
+    },
+    "INVARIANTS": {
+        "INVARIANT": "Invariant",
+        "INVARIANTS": "Invariants",
+        "HEADER_SUBTITLE_1": "TacoInv - Taco tool extension for invariant analysis",
+        "HEADER_SUBTITLE_2": "Bachelor's Thesis, SoSe26, Marie Gabrielsen",
+        "ACTIONS": "Actions",
+        "HELP_TOOLTIP": "Usage Guide",
+        "STATUS": "Status",
+        "NEW_ENTRY": "New Entry",
+        "VALIDATE_ENTRIES": "Validate Entries",
+        "SHOW_INVARIANTS": "Show Computed Invariants",
+        "NO_INVARIANTS": "This net has no invariants",
+        "COMPUTED_INVARIANTS": "Computed minimal invariants",
+        "FOUND_INVARIANTS": "Found Minimal Invariants",
+        "SHOW_TRANSITION_BALANCES": "Show Transition Balances",
+        "VALID_MINIMAL": "Invariant --- Minimal",
+        "VALID_NOT_MINIMAL": "Invariant --- Not minimal (linear combination of minimal invariants)",
+        "INCOMPLETE_MINIMAL": "Can be extended to a minimal invariant",
+        "INCOMPLETE_NOT_MINIMAL": "Can be extended to an invariant (not minimal)",
+        "PLACES_MISSING": "Missing places:",
+        "WEIGHTS_MISSING": "Total missing weights:",
+        "INVALID": "Not a valid invariant\n--- These places are not part of any invariant:",
+        "INVALID_TRIVIAL": "Not a valid invariant\n--- The zero vector is trivial and provides no information about the Petri net",
+        "GOAL": "Goal",
+        "GOAL_TEXT": "Combine places with appropriate weights until all transitions are balanced.\nPlaces can be added or removed by clicking + or -.\nTry to find all minimal invariants.",
+        "TRANSITION_BALANCES": "Transition Balances",
+        "TRANSITION_BALANCES_TEXT": "Unbalanced transitions are marked with a triangle (can be disabled). Examples:\n+1 (↑): Transition outputs 1 token. Add a place weight to its preset to balance.\n-2 (↓): Transition consumes 2 tokens. Add two place weights to its postset to balance",
+        "DIFFICULTY_LEVELS": "Difficulty Levels",
+        "DIFFICULTY_LEVELS_TEXT": "Learning Mode: Inputs are validated immediately.\nExam Mode: Validate all entries in bulk by clicking the validation button."
     },
     "EXAMPLE_MENU": {
         "TOOLTIP": "Open exam files",

@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { DrawComponent } from './draw.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('DrawComponent', () => {
     let component: DrawComponent;
@@ -10,7 +11,7 @@ describe('DrawComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [DrawComponent],
+            imports: [DrawComponent, TranslateModule.forRoot()],
             providers: [provideHttpClient(), provideHttpClientTesting()],
         }).compileComponents();
 

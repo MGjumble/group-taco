@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ModeToggleComponent } from './mode-toggle.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('ModeToggleComponent', () => {
     let component: ModeToggleComponent;
@@ -8,7 +11,8 @@ describe('ModeToggleComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ModeToggleComponent],
+            imports: [ModeToggleComponent, TranslateModule.forRoot()],
+            providers: [provideHttpClient(), provideHttpClientTesting()],
         }).compileComponents();
 
         fixture = TestBed.createComponent(ModeToggleComponent);

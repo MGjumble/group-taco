@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { ReachabilityGraphComponent } from './reachability-graph.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('ReachabilityGraphComponent', () => {
     let component: ReachabilityGraphComponent;
@@ -10,7 +11,7 @@ describe('ReachabilityGraphComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ReachabilityGraphComponent],
+            imports: [ReachabilityGraphComponent, TranslateModule.forRoot()],
             providers: [provideHttpClient(), provideHttpClientTesting()],
         }).compileComponents();
 

@@ -6,6 +6,7 @@
     "TAB_PLAY": "Schalten",
     "TAB_REACHABILITY": "Erreichbarkeitsgraph",
     "TAB_PROCESS": "Prozessnetz",
+    "TAB_INVARIANTS": "Invarianten",
     "REACHABILITY_GRAPH": {
         "TOGGLE_VIEW": "Ansichtsmodus umschalten",
         "BUTTON_VALIDATE_NET": "Erreichbarkeitsgraph validieren",
@@ -32,8 +33,11 @@
         "TITLE": "Modus wechseln",
         "MESSAGE_DRAW": "Möchten Sie die aktuelle Zeichnung behalten?",
         "MESSAGE_DEFAULT": "Möchten Sie den aktuellen Inhalt behalten?",
+        "MESSAGE_SHOW_INVARIANTS": "Sollen wirklich alle minimalen Invarianten angezeigt werden?",
         "KEEP": "Behalten",
-        "DISCARD": "Verwerfen"
+        "DISCARD": "Verwerfen",
+        "CANCEL": "Abbrechen",
+        "CONFIRM": "Bestätigen"
     },
     "RGMARKING_DIALOG": {
         "TITLE": "Markierung eingeben",
@@ -59,6 +63,7 @@
     "DELETE": "Löschen",
     "DELETE_ALL": "Alle löschen",
     "STOP": "Stopp",
+    "EDIT": "Bearbeiten",
     "EXPORT_PETRI_NET": "Petri-Netz exportieren",
     "EXPORT_REACHABILITY_GRAPH": "Erreichbarkeitsgraph exportieren",
     "EXPORT_PROCESS_NET": "Prozessnetz exportieren",
@@ -197,7 +202,10 @@
             "RG_CHECK_SUCCESS": "Der erstellte Erreichbarkeitsgraph ist vollständig und korrekt.",
             "RG_CHECK_MISSING_EDGES": "Fehlende Transitionen: {{edges}}",
             "RG_CHECK_MISSING_EDGES_LIST": "Die folgenden Transitionen fehlen:",
-            "SWITCH_BACK_TO_USER_GRAPH": "Bitte wechseln Sie zurück zum selbst erstellten Graphen, um fortzufahren."
+            "SWITCH_BACK_TO_USER_GRAPH": "Bitte wechseln Sie zurück zum selbst erstellten Graphen, um fortzufahren.",
+            "ALL_MIN_INVARIANTS_FOUND": "Alle minimalen Invarianten wurden gefunden.",
+            "MIN_INVARIANTS_MISSING": "Mindestens eine (weitere) minimale Invariante wurde noch nicht gefunden.",
+            "INVALID_INVARIANT_ENTRIES": "Die folgenden Einträge sind nicht minimal oder keine Invarianten:"
         },
         "VALIDATION_MESSAGES": {
             "TRANSITION_NO_MATCH": "❌ Transition {{label}} hat keine passende Beschriftung im Petri-Netz.",
@@ -240,6 +248,37 @@
         "INSTRUCTION_VALIDATE_TOAST": "Klicken Sie auf Validieren Schaltfläche, um Ihr Prozessnetz zu überprüfen.",
         "INSTRUCTION_AUTO_FIRING": "Automatische Erstellung",
         "INSTRUCTION_AUTO_FIRING_TEXT": "Im Lernmodus erstellt das Klicken auf aktivierte Transitionen im Petrinetz automatisch das Prozessnetz."
+    },
+    "INVARIANTS": {
+        "INVARIANT": "Invariante",
+        "INVARIANTS": "Invarianten",
+        "HEADER_SUBTITLE_1": "TacoInv - Erweiterung des Taco-Tools um die Bestimmung von Invarianten",
+        "HEADER_SUBTITLE_2": "Bachelorarbeit, SoSe26, Marie Gabrielsen",
+        "ACTIONS": "Aktionen",
+        "HELP_TOOLTIP": "Bedienungsanleitung",
+        "HELP": "Kombiniere Stellen mit passenden Gewichtungen, bis alle Transitionen ausgeglichen sind.",
+        "STATUS": "Status",
+        "NEW_ENTRY": "Neuer Eintrag",
+        "VALIDATE_ENTRIES": "Einträge validieren",
+        "SHOW_INVARIANTS": "Berechnete Invarianten anzeigen",
+        "NO_INVARIANTS": "Dieses Netz besitzt keine Invarianten",
+        "COMPUTED_INVARIANTS": "Berechnete minimale Invarianten",
+        "FOUND_INVARIANTS": "Gefundene minimale Invarianten",
+        "SHOW_TRANSITION_BALANCES": "Transitionsgleichgewichte anzeigen",
+        "VALID_MINIMAL": "Invariante --- Minimal",
+        "VALID_NOT_MINIMAL": "Invariante --- Nicht minimal (Linearkombination minimaler Invarianten)",
+        "INCOMPLETE_MINIMAL": "Kann zu einer minimalen Invariante ergänzt werden",
+        "INCOMPLETE_NOT_MINIMAL": "Kann zu einer Invariante ergänzt werden (nicht minimal)",
+        "PLACES_MISSING": "Fehlende Stellen:",
+        "WEIGHTS_MISSING": "Fehlende Gewichte insgesamt:",
+        "INVALID": "Keine Invariante\n--- Diese Stellen gehören zu keiner Invariante:",
+        "INVALID_TRIVIAL": "Keine Invariante\n--- Der Null-Vektor ist trivial und liefert keine Information über das Petri-Netz",
+        "GOAL": "Ziel",
+        "GOAL_TEXT": "Kombiniere Stellen mit passenden Gewichtungen, bis alle Transitionen ausgeglichen sind.\nDurch Klicken von + und - an den Stellen können diese hinzugefügt oder entfernt werden.\nVersuche, alle minimalen Invarianten zu finden.",
+        "TRANSITION_BALANCES": "Transitionsgleichgewichte",
+        "TRANSITION_BALANCES_TEXT": "Nicht ausgeglichene Transitionen sind durch ein Dreieck markiert (deaktivierbar). Beispiele:\n+1 (↑) => Die Transition gibt netto 1 Token an die Umwelt ab. Füge zum Ausgleich ein Stellengewicht im Vorbereich der Transition hinzu.\n-2 (↓) => Die Transition nimmt netto 2 Tokens aus der Umwelt auf. Füge zum Ausgleich zwei Stellengewichte im Nachbereich der Transition hinzu.",
+        "DIFFICULTY_LEVELS": "Schwierigkeitsstufen",
+        "DIFFICULTY_LEVELS_TEXT": "Lernmodus: Die Eingaben werden sofort validiert.\nPrüfungsmodus: Alle Eingaben können gesammelt durch Klicken des Validierungs-Buttons geprüft werden."
     },
     "EXAMPLE_MENU": {
         "TOOLTIP": "Klausuraufgaben öffnen",

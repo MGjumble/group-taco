@@ -19,7 +19,7 @@ export class ModeService {
     >();
 
     constructor() {
-        const tabs: Tab[] = [Tab.DRAW, Tab.PLAY, Tab.REACHABILITY_GRAPH, Tab.PROCESS_NET];
+        const tabs: Tab[] = [Tab.DRAW, Tab.PLAY, Tab.REACHABILITY_GRAPH, Tab.PROCESS_NET, Tab.INVARIANTS];
         tabs.forEach((tab) => {
             this._tabModeSignals.set(tab, {
                 mode: signal<AppMode>(AppMode.LEARN),

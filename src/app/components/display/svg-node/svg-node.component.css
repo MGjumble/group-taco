@@ -53,3 +53,27 @@
     font-weight: bold;
     pointer-events: none;
 }
+
+.place-weight {
+    font-size: 18px;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.transition-balance-text {
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-family: Roboto, sans-serif;
+    fill: black;
+}
+
+.change-place-weight-button {
+    cursor: pointer;
+    z-index: 3;
+}
+
+.change-place-weight-button:hover {
+    fill: gainsboro;
+    stroke-width: 1.5;
+}

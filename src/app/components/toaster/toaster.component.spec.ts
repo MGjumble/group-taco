@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 
 import { ToasterComponent } from './toaster.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('ToasterComponent', () => {
     let component: ToasterComponent;
@@ -9,7 +10,7 @@ describe('ToasterComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ToasterComponent],
+            imports: [ToasterComponent, TranslateModule.forRoot()],
             providers: [
                 {
                     provide: MatSnackBarRef,

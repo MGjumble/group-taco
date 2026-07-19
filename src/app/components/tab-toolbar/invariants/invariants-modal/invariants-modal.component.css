@@ -1,0 +1,12 @@
+.modal-container {
+    padding: 10px;
+}
+
+.modal-header {
+    font-weight: bold;
+    margin: 20px;
+}
+
+.modal-entry {
+    padding: 20px;
+}

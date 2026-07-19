@@ -1,0 +1,12 @@
+<mat-dialog-content>
+    {{ 'CONFIRM_DIALOG.MESSAGE_SHOW_INVARIANTS' | translate }}
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cancel()">
+        {{ 'CONFIRM_DIALOG.CANCEL' | translate }}
+    </button>
+    <button mat-raised-button color="primary" (click)="confirm()">
+        {{ 'CONFIRM_DIALOG.CONFIRM' | translate }}
+    </button>
+</mat-dialog-actions>

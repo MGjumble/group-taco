@@ -1,0 +1,95 @@
+/* Styles inherited from DisplayComponent */
+.canvas {
+    width: 100%;
+    height: 600px;
+    border: 1px dashed lightgrey;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    background-color: #fcfcfc;
+}
+
+:host {
+    display: block;
+}
+
+.display-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+    background-color: #fcfcfc;
+    gap: 10px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    z-index: 10;
+    margin: 0;
+}
+
+.toggle-label {
+    font-family: Roboto, sans-serif;
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: '';
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #1976d2;
+}
+
+.toggle-switch input:focus + .toggle-slider {
+    box-shadow: 0 0 1px #1976d2;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.toggle-switch:hover .toggle-slider {
+    box-shadow: 0 0 8px rgba(25, 118, 210, 0.3);
+}

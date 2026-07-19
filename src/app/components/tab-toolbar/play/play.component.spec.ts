@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { PlayComponent } from './play.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('PlayComponent', () => {
     let component: PlayComponent;
@@ -10,7 +11,7 @@ describe('PlayComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [PlayComponent],
+            imports: [PlayComponent, TranslateModule.forRoot()],
             providers: [provideHttpClient(), provideHttpClientTesting()],
         }).compileComponents();
 

@@ -1,3 +1,5 @@
+import { EntryError } from './entry-error';
+
 /**
  * Representing a transition firing sequence in the Petri net.
  */
@@ -12,7 +14,7 @@ export class FiringEntry {
         public isClosed: boolean,
         public isValid: boolean | undefined,
         public isPlaying = false,
-        public error: FiringSequenceError | null = null,
+        public error: EntryError | null = null,
     ) {}
 
     /**
@@ -39,7 +41,7 @@ export class FiringEntry {
      * @param isValid - The validity status.
      * @param error - Error details, if the sequence is invalid.
      */
-    setValidity(isValid: boolean | undefined, error: FiringSequenceError | null) {
+    setValidity(isValid: boolean | undefined, error: EntryError | null) {
         this.isValid = isValid;
         this.error = error;
     }
@@ -55,14 +57,4 @@ export class FiringEntry {
             .map(([key, value]) => (value === 1 ? key : `${value}*${key}`))
             .join(' + ');
     }
-}
-
-/**
- * Represents an error in a firing sequence, including the translatable error type (e.g., 'PLAY.NOT_ACTIVATED'),
- * the invalid label, and the sequence context (visited labels until the error occured).
- */
-export interface FiringSequenceError {
-    type: string;
-    invalidLabel: string;
-    visitedLabels: string[];
 }

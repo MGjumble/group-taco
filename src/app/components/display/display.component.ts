@@ -14,11 +14,12 @@ import { Diagram } from '../../classes/diagram/diagram';
 import { PanningService } from '../../services/panning.service';
 import { ImageExportService } from '../../services/image-export.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ReachabilityGraphService } from 'src/app/reachability-graph.service';
+import { ReachabilityGraphService } from '../../reachability-graph.service';
 import { StateNode } from '../../classes/reachability-graph.model';
 import { GRAPH_FILENAMES, GRAPH_IDS, GraphId } from './display.constants';
 import { ProcessNetFiringService } from '../../services/process-net-firing.service';
 import { ToasterNotificationService } from '../../services/toaster-notification.service';
+import { InvariantsEntryService } from '../../services/invariants-entry.service';
 
 @Component({
     selector: 'app-display',
@@ -41,6 +42,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     private _elementRef = inject(ElementRef);
     protected _reachabilityGraphService = inject(ReachabilityGraphService);
     protected _processNetFiringService = inject(ProcessNetFiringService);
+    protected _invariantsEntryService = inject(InvariantsEntryService);
     private _notificationService = inject(ToasterNotificationService);
 
     readonly viewBox = this._panningService.viewBoxAsString;
@@ -51,7 +53,8 @@ export class DisplayComponent implements OnInit, OnDestroy {
         () =>
             this._tabStateService.currentTab() === Tab.PLAY ||
             this._tabStateService.currentTab() === Tab.REACHABILITY_GRAPH ||
-            this._tabStateService.currentTab() === Tab.PROCESS_NET,
+            this._tabStateService.currentTab() === Tab.PROCESS_NET ||
+            this._tabStateService.currentTab() === Tab.INVARIANTS,
     );
     readonly isReachabilityGraphEnabled = computed(() => this._tabStateService.currentTab() === Tab.REACHABILITY_GRAPH);
     readonly isProcessNetEnabled = computed(() => this._tabStateService.currentTab() === Tab.PROCESS_NET);
