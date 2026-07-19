@@ -47,15 +47,19 @@
                                                 matTooltipClass="wide-tooltip">
                                                 <mat-icon class="not-minimal-icon">check_circle</mat-icon>
                                             </button>
-                                        } @else if (
-                                            entry.validity === InvariantValidity.INCOMPLETE_MINIMAL ||
-                                            entry.validity === InvariantValidity.INCOMPLETE_NOT_MINIMAL
-                                        ) {
+                                        } @else if (entry.validity === InvariantValidity.INCOMPLETE_MINIMAL) {
                                             <button
                                                 mat-icon-button
-                                                class="incomplete-button validity-button"
+                                                class="incomplete-min-button validity-button"
                                                 matTooltipClass="wide-tooltip">
-                                                <mat-icon class="incomplete-icon">build_circle</mat-icon>
+                                                <mat-icon class="incomplete-min-icon">build_circle</mat-icon>
+                                            </button>
+                                        } @else if (entry.validity === InvariantValidity.INCOMPLETE_NOT_MINIMAL) {
+                                            <button
+                                                mat-icon-button
+                                                class="incomplete-not-min-button validity-button"
+                                                matTooltipClass="wide-tooltip">
+                                                <mat-icon class="incomplete-not-min-icon">build_circle</mat-icon>
                                             </button>
                                         } @else if (
                                             entry.validity === InvariantValidity.INVALID ||

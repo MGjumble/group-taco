@@ -192,8 +192,12 @@ app-draw-toolbar {
     color: rgb(238, 202, 0);
 }
 
-.incomplete-icon {
+.incomplete-min-icon {
     color: rgb(0, 144, 192);
+}
+
+.incomplete-not-min-icon {
+    color: darkgray;
 }
 
 .entry-status-td {
