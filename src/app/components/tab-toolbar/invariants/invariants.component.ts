@@ -66,13 +66,10 @@ export class InvariantsComponent {
 
     constructor() {
         effect(() => {
+            this.entryService.deleteAllEntries();
+            this.entryService.overrideShowTransitionBalances.set(null);
             const diagram = this.diagram();
-
             if (diagram instanceof Diagram) this.validationService.initialize(diagram);
-            else {
-                this.entryService.deleteAllEntries();
-                this.entryService.overrideShowTransitionBalances.set(null);
-            }
         });
 
         this._matIconRegistry.addSvgIcon(
