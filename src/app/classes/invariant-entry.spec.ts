@@ -30,12 +30,7 @@ describe('InvariantEntry', () => {
     let entry: InvariantEntry;
 
     beforeEach(() => {
-        entry = new InvariantEntry(
-            1,
-            mockPlaces,
-            mockTransitions,
-            mockPlaceFlows,
-        );
+        entry = new InvariantEntry(1, mockPlaces, mockTransitions, mockPlaceFlows);
     });
 
     // ---- Constructor ----

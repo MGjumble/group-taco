@@ -325,7 +325,7 @@ export class SvgNodeComponent {
         const width = this.rectWidth();
         const x0 = x + width / 6;
         const x1 = x + width / 2;
-        const x2 = x + 5 * width / 6;
+        const x2 = x + (5 * width) / 6;
         const y0 = y + 1;
         const y1 = y + width / 3;
 

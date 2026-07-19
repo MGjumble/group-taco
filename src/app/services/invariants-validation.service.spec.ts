@@ -84,12 +84,7 @@ function createInvariantEntry(
     transitionLabels: string[],
     placeFlows: Map<string, Map<string, number>>,
 ): InvariantEntry {
-    const entry = new InvariantEntry(
-        id,
-        placeLabels,
-        transitionLabels,
-        placeFlows,
-    );
+    const entry = new InvariantEntry(id, placeLabels, transitionLabels, placeFlows);
 
     const placeWeights = new Map<string, number>();
     vector.forEach((weight, index) => {
@@ -285,13 +280,34 @@ describe('InvariantsValidationService', () => {
             const t4 = new DiagramTransition('t4', '', [p3, p6, p5], [p2, p5], [arc6, arc10, arc12], [arc8, arc11]);
             const t5 = new DiagramTransition('t5', 'D', [p6, p7], [p8], [arc15, arc16], [arc17]);
 
-            const diagram = new Diagram([p1, p2, p3, p4, p5, p6, p7, p8], [t1, t2, t3, t4, t5], 
-                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10, arc11, arc12, arc13, arc14, arc15, arc16, arc17]);
+            const diagram = new Diagram(
+                [p1, p2, p3, p4, p5, p6, p7, p8],
+                [t1, t2, t3, t4, t5],
+                [
+                    arc1,
+                    arc2,
+                    arc3,
+                    arc4,
+                    arc5,
+                    arc6,
+                    arc7,
+                    arc8,
+                    arc9,
+                    arc10,
+                    arc11,
+                    arc12,
+                    arc13,
+                    arc14,
+                    arc15,
+                    arc16,
+                    arc17,
+                ],
+            );
 
             const matrix = service.createIncidenceMatrix(diagram);
             expect(matrix.length).toBe(8);
             expect(matrix[0].length).toBe(5);
-            
+
             // Verify concrete values for example.json
             // p1: only t1 input (-1)
             expect(matrix[0]).toEqual([-1, 0, 0, 0, 0]);
@@ -329,13 +345,12 @@ describe('InvariantsValidationService', () => {
             const t2 = new DiagramTransition('t2', 'B', [p2], [p4], [arc5], [arc6]);
             const t3 = new DiagramTransition('t3', 'C', [p3], [p4], [arc7], [arc4]);
 
-            const diagram = new Diagram([p1, p2, p3, p4], [t1, t2, t3], 
-                [arc1, arc2, arc3, arc4, arc5, arc6, arc7]);
+            const diagram = new Diagram([p1, p2, p3, p4], [t1, t2, t3], [arc1, arc2, arc3, arc4, arc5, arc6, arc7]);
 
             const matrix = service.createIncidenceMatrix(diagram);
             expect(matrix.length).toBe(4);
             expect(matrix[0].length).toBe(3);
-            
+
             // Verify concrete values for MK/task1.json
             // p1: t1 input (-1)
             expect(matrix[0]).toEqual([-1, 0, 0]);
@@ -370,13 +385,16 @@ describe('InvariantsValidationService', () => {
             const t3 = new DiagramTransition('t3', 'C', [p5], [p1], [arc2], [arc1]);
             const t4 = new DiagramTransition('t4', 'D', [p4], [p2], [arc6], [arc7]);
 
-            const diagram = new Diagram([p1, p2, p3, p4, p5], [t1, t2, t3, t4], 
-                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10]);
+            const diagram = new Diagram(
+                [p1, p2, p3, p4, p5],
+                [t1, t2, t3, t4],
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10],
+            );
 
             const matrix = service.createIncidenceMatrix(diagram);
             expect(matrix.length).toBe(5);
             expect(matrix[0].length).toBe(4);
-            
+
             // Verify concrete values for MK/task2.json
             // Transition order: t1, t2, t3, t4
             // p1: t1 input (-1), t3 output (+1)
@@ -405,13 +423,12 @@ describe('InvariantsValidationService', () => {
             const t1 = new DiagramTransition('t1', 'A', [p1], [p1, p2], [arc1], [arc2, arc5]);
             const t2 = new DiagramTransition('t2', 'B', [p3], [p2], [arc4], [arc3]);
 
-            const diagram = new Diagram([p1, p2, p3], [t1, t2], 
-                [arc1, arc2, arc3, arc4, arc5]);
+            const diagram = new Diagram([p1, p2, p3], [t1, t2], [arc1, arc2, arc3, arc4, arc5]);
 
             const matrix = service.createIncidenceMatrix(diagram);
             expect(matrix.length).toBe(3);
             expect(matrix[0].length).toBe(2);
-            
+
             // Verify concrete values for SS24/task1.json
             expect(matrix[1]).toEqual([1, 1]);
             // p3: t2 input (-3 from arc4)
@@ -441,13 +458,16 @@ describe('InvariantsValidationService', () => {
             const t3 = new DiagramTransition('t3', 'C', [p4], [p5], [arc8], [arc9]);
             const t4 = new DiagramTransition('t4', 'D', [p1, p5], [p2, p3], [arc4, arc10], [arc3, arc5]);
 
-            const diagram = new Diagram([p1, p2, p3, p4, p5], [t1, t2, t3, t4], 
-                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10]);
+            const diagram = new Diagram(
+                [p1, p2, p3, p4, p5],
+                [t1, t2, t3, t4],
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10],
+            );
 
             const matrix = service.createIncidenceMatrix(diagram);
             expect(matrix.length).toBe(5);
             expect(matrix[0].length).toBe(4);
-            
+
             // Verify concrete values for SS24/task2.json
             // Transition order: t1, t2, t3, t4
             // p1: t1 output (+1), t4 input (-1)
@@ -481,13 +501,16 @@ describe('InvariantsValidationService', () => {
             const t2 = new DiagramTransition('t2', 'B', [p2], [p3, p4], [arc3], [arc4, arc5]);
             const t3 = new DiagramTransition('t3', 'C', [p3, p4], [p1], [arc6, arc7], [arc8]);
 
-            const diagram = new Diagram([p1, p2, p3, p4], [t1, t2, t3], 
-                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8]);
+            const diagram = new Diagram(
+                [p1, p2, p3, p4],
+                [t1, t2, t3],
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8],
+            );
 
             const matrix = service.createIncidenceMatrix(diagram);
             expect(matrix.length).toBe(4);
             expect(matrix[0].length).toBe(3);
-            
+
             // Verify concrete values for WS24/task1.json
             // Transition order: t1, t2, t3
             // p1: t1 input (-1), t3 output (+1)
@@ -534,13 +557,35 @@ describe('InvariantsValidationService', () => {
             const t5 = new DiagramTransition('t5', 'E', [g1, g3], [p3], [arc1, arc3], [arc9]);
             const t6 = new DiagramTransition('t6', 'F', [p3], [g1, g3], [arc10], [arc14, arc15]);
 
-            const diagram = new Diagram([p1, p2, p3, g1, g2, g3], [t1, t2, t3, t4, t5, t6], 
-                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10, arc11, arc12, arc13, arc14, arc15, arc16, arc17, arc18]);
+            const diagram = new Diagram(
+                [p1, p2, p3, g1, g2, g3],
+                [t1, t2, t3, t4, t5, t6],
+                [
+                    arc1,
+                    arc2,
+                    arc3,
+                    arc4,
+                    arc5,
+                    arc6,
+                    arc7,
+                    arc8,
+                    arc9,
+                    arc10,
+                    arc11,
+                    arc12,
+                    arc13,
+                    arc14,
+                    arc15,
+                    arc16,
+                    arc17,
+                    arc18,
+                ],
+            );
 
             const matrix = service.createIncidenceMatrix(diagram);
             expect(matrix.length).toBe(6);
             expect(matrix[0].length).toBe(6);
-            
+
             // Verify concrete values for WS24/task2.json
             // Transition order: t1, t2, t3, t4, t5, t6
             // Places order: p1, p2, p3, g1, g2, g3
@@ -577,13 +622,16 @@ describe('InvariantsValidationService', () => {
             const t2 = new DiagramTransition('t2', 'B', [p2, p3], [p1], [arc3, arc6], [arc4]);
             const t3 = new DiagramTransition('t3', 'C', [p3], [p4], [arc7], [arc8]);
 
-            const diagram = new Diagram([p1, p2, p3, p4], [t1, t2, t3], 
-                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8]);
+            const diagram = new Diagram(
+                [p1, p2, p3, p4],
+                [t1, t2, t3],
+                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8],
+            );
 
             const matrix = service.createIncidenceMatrix(diagram);
             expect(matrix.length).toBe(4);
             expect(matrix[0].length).toBe(3);
-            
+
             // Verify concrete values for SS25/task1.json
             // Transition order: t1, t2, t3
             // p1: t1 input (-1), t2 output (+1)
@@ -637,13 +685,38 @@ describe('InvariantsValidationService', () => {
             const t6 = new DiagramTransition('t6', 'apply', [p6], [p8], [arc14], [arc17]);
             const t7 = new DiagramTransition('t7', 'check', [p8, p7], [p9], [arc16, arc19], [arc21]);
 
-            const diagram = new Diagram([p1, p2, p3, p4, p5, p6, p7, p8, p9], [t1, t2, t3, t4, t5, t6, t7], 
-                [arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9, arc10, arc11, arc12, arc13, arc14, arc15, arc16, arc17, arc18, arc19, arc20, arc21]);
+            const diagram = new Diagram(
+                [p1, p2, p3, p4, p5, p6, p7, p8, p9],
+                [t1, t2, t3, t4, t5, t6, t7],
+                [
+                    arc1,
+                    arc2,
+                    arc3,
+                    arc4,
+                    arc5,
+                    arc6,
+                    arc7,
+                    arc8,
+                    arc9,
+                    arc10,
+                    arc11,
+                    arc12,
+                    arc13,
+                    arc14,
+                    arc15,
+                    arc16,
+                    arc17,
+                    arc18,
+                    arc19,
+                    arc20,
+                    arc21,
+                ],
+            );
 
             const matrix = service.createIncidenceMatrix(diagram);
             expect(matrix.length).toBe(9);
             expect(matrix[0].length).toBe(7);
-            
+
             // Verify concrete values for SS25/task2.json
             // Transition order: t1, t2, t3, t4, t5, t6, t7
             // p1: t1 input (-1)
@@ -878,7 +951,7 @@ describe('InvariantsValidationService', () => {
                 placeFlows3.set('P1', new Map([['T1', -1]]));
                 placeFlows3.set('P2', new Map([['T1', 1]]));
                 placeFlows3.set('P3', new Map());
-                
+
                 const entry = createInvariantEntry(1, [1, 0, 1], ['P1', 'P2', 'P3'], ['T1'], placeFlows3);
 
                 service.validateEntry(entry, false);
@@ -892,7 +965,7 @@ describe('InvariantsValidationService', () => {
                 placeFlows3.set('P1', new Map([['T1', -1]]));
                 placeFlows3.set('P2', new Map([['T1', 1]]));
                 placeFlows3.set('P3', new Map());
-                
+
                 const entry = createInvariantEntry(1, [1, 0, 1], ['P1', 'P2', 'P3'], ['T1'], placeFlows3);
 
                 service.validateEntry(entry, true);
@@ -905,7 +978,7 @@ describe('InvariantsValidationService', () => {
                 placeFlows3.set('P1', new Map([['T1', -1]]));
                 placeFlows3.set('P2', new Map([['T1', 1]]));
                 placeFlows3.set('P3', new Map());
-                
+
                 const entry = createInvariantEntry(1, [1, 0, 1], ['P1', 'P2', 'P3'], ['T1'], placeFlows3);
 
                 service.validateEntry(entry, false);

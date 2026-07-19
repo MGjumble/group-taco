@@ -51,7 +51,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
     styleUrl: './invariants.component.css',
 })
 export class InvariantsComponent {
-
     private _displayService = inject(DisplayService);
     private _dialog = inject(MatDialog);
     private _matIconRegistry = inject(MatIconRegistry);
@@ -62,10 +61,8 @@ export class InvariantsComponent {
     protected InvariantValidity = InvariantValidity;
 
     protected readonly diagram = toSignal(
-        this._displayService.diagram$.pipe(
-            filter((diagram): diagram is Diagram => diagram instanceof Diagram),
-        ),
-        { initialValue: undefined }
+        this._displayService.diagram$.pipe(filter((diagram): diagram is Diagram => diagram instanceof Diagram)),
+        { initialValue: undefined },
     );
 
     protected inputEntries = this.validationService.inputEntries;

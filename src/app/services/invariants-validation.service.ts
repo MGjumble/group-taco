@@ -268,7 +268,7 @@ export class InvariantsValidationService {
         const invalidPlaces: string[] = [];
         vector.forEach((val, placeIndex) => {
             if (val !== 0) {
-                const isPlaceInAnyInvariant = this.computedMinInvariants().some(inv => inv[placeIndex] !== 0);
+                const isPlaceInAnyInvariant = this.computedMinInvariants().some((inv) => inv[placeIndex] !== 0);
                 if (!isPlaceInAnyInvariant) {
                     invalidPlaces.push(this._allPlaceLabels[placeIndex]);
                 }

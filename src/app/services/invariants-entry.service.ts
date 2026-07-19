@@ -46,7 +46,6 @@ export class InvariantsEntryService {
         else this._validationService.validateEntry(entry);
     }
 
-
     /**
      * Deletes an invariant entry by its ID from the input entries list.
      * If the deleted entry was the current entry or the list is empty afterward, resets the active entry.
