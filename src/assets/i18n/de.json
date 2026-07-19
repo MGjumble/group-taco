@@ -261,6 +261,7 @@
         "NEW_ENTRY": "Neuer Eintrag",
         "VALIDATE_ENTRIES": "Einträge validieren",
         "SHOW_INVARIANTS": "Berechnete Invarianten anzeigen",
+        "NO_INVARIANTS": "Dieses Netz besitzt keine Invarianten",
         "COMPUTED_INVARIANTS": "Berechnete minimale Invarianten",
         "FOUND_INVARIANTS": "Gefundene minimale Invarianten",
         "SHOW_TRANSITION_BALANCES": "Transitionsgleichgewichte anzeigen",

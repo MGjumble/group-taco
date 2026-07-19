@@ -1,12 +1,12 @@
-.invariants-modal-container {
+.modal-container {
     padding: 10px;
 }
 
-.invariants-modal-header {
+.modal-header {
     font-weight: bold;
     margin: 20px;
 }
 
-.notation {
+.modal-entry {
     padding: 20px;
 }

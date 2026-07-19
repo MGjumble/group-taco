@@ -259,6 +259,7 @@
         "NEW_ENTRY": "New Entry",
         "VALIDATE_ENTRIES": "Validate Entries",
         "SHOW_INVARIANTS": "Show Computed Invariants",
+        "NO_INVARIANTS": "This net has no invariants",
         "COMPUTED_INVARIANTS": "Computed minimal invariants",
         "FOUND_INVARIANTS": "Found Minimal Invariants",
         "SHOW_TRANSITION_BALANCES": "Show Transition Balances",
