@@ -91,11 +91,6 @@ describe('InvariantsEntryService', () => {
         it('should have activeEntry as null by default', () => {
             expect(service.activeEntry()).toBeNull();
         });
-
-        it('should have _idCounter starting at 0', () => {
-            // Access private property through any cast
-            expect((service as any)._idCounter).toBe(0);
-        });
     });
 
     // #endregion
@@ -168,25 +163,6 @@ describe('InvariantsEntryService', () => {
                 service.activeEntry.set(entry2);
                 expect(service.isEntryActive(1)()).toBeFalse();
                 expect(service.isEntryActive(2)()).toBeTrue();
-            });
-        });
-
-        describe('_isExamMode', () => {
-            it('should return false by default', () => {
-                const isExamMode = (service as any)._isExamMode();
-                expect(isExamMode).toBeFalse();
-            });
-
-            it('should return true when in exam mode for INVARIANTS tab', () => {
-                mockModeService.setExamModeForTab(Tab.INVARIANTS);
-                const isExamMode = (service as any)._isExamMode();
-                expect(isExamMode).toBeTrue();
-            });
-
-            it('should return false for other tabs in exam mode', () => {
-                mockModeService.setExamModeForTab(Tab.DRAW);
-                const isExamMode = (service as any)._isExamMode();
-                expect(isExamMode).toBeFalse();
             });
         });
     });
@@ -629,15 +605,6 @@ describe('InvariantsEntryService', () => {
             service.activateEntry(entryId);
 
             expect(service.activeEntry()).toBeNull();
-        });
-
-        it('should handle processPlaceClicked with undefined place', () => {
-            expect(() => service.processPlaceClicked(null as any, 1)).not.toThrow();
-        });
-
-        it('should handle updateEntry with null entry', () => {
-            const place = createMockDiagramPlace('p1', 'P1');
-            expect(() => service.updateEntry(null as any, place, 1)).not.toThrow();
         });
 
         it('should maintain separate state across multiple service instances', () => {

@@ -767,7 +767,7 @@ describe('InvariantsValidationService', () => {
         beforeEach(() => {
             const diagram = createSimpleDiagram();
             service.initialize(diagram);
-            method = (service as any)._areVectorsEqual.bind(service);
+            method = service.areVectorsEqual.bind(service);
         });
 
         it('should return true for equal vectors', () => {
@@ -802,7 +802,7 @@ describe('InvariantsValidationService', () => {
         beforeEach(() => {
             const diagram = createSimpleDiagram();
             service.initialize(diagram);
-            method = (service as any)._isInvariant.bind(service);
+            method = service.isInvariant.bind(service);
         });
 
         it('should return true for valid invariant vector', () => {
@@ -943,7 +943,7 @@ describe('InvariantsValidationService', () => {
                 service.computedMinInvariants.set([[1, 1, 0]]);
                 service.allPlaceLabels = ['P1', 'P2', 'P3'];
                 service.allTransitionLabels = ['T1'];
-                (service as any)._incidenceMatrix = [[-1], [1], [0]];
+                service.incidenceMatrix = [[-1], [1], [0]];
             });
 
             it('should set INVALID for non-invariant with invalid places on non-final validation', () => {
@@ -1004,7 +1004,7 @@ describe('InvariantsValidationService', () => {
             service.allPlaceLabels = diagram.getPlaceLabels();
             service.allTransitionLabels = diagram.getTransitionLabels();
             service.setPlaceFlows(diagram.transitions);
-            (service as any)._incidenceMatrix = service.createIncidenceMatrix(diagram);
+            service.incidenceMatrix = service.createIncidenceMatrix(diagram);
 
             placeLabels = diagram.getPlaceLabels();
             transitionLabels = diagram.getTransitionLabels();
@@ -1265,7 +1265,7 @@ describe('InvariantsValidationService', () => {
         });
 
         it('should handle large vectors', () => {
-            const method = (service as any)._areVectorsEqual.bind(service);
+            const method = service.areVectorsEqual.bind(service);
             const largeVector1 = Array(100)
                 .fill(0)
                 .map((_, i) => i);

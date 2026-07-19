@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { MainTabComponent } from './main-tab.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('MainTabComponent', () => {
     let component: MainTabComponent;
@@ -10,7 +11,7 @@ describe('MainTabComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [MainTabComponent],
+            imports: [MainTabComponent, TranslateModule.forRoot()],
             providers: [provideHttpClient(), provideHttpClientTesting()],
         }).compileComponents();
 

@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { FiringTableComponent } from './firing-table.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('FiringTableComponent', () => {
     let component: FiringTableComponent;
@@ -10,7 +11,7 @@ describe('FiringTableComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [FiringTableComponent],
+            imports: [FiringTableComponent, TranslateModule.forRoot()],
             providers: [provideHttpClient(), provideHttpClientTesting()],
         }).compileComponents();
 

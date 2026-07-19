@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { ProcessNetComponent } from './process-net.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('ProcessNetComponent', () => {
     let component: ProcessNetComponent;
@@ -10,7 +11,7 @@ describe('ProcessNetComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ProcessNetComponent],
+            imports: [ProcessNetComponent, TranslateModule.forRoot()],
             providers: [provideHttpClient(), provideHttpClientTesting()],
         }).compileComponents();
 

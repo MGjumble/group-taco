@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LanguageButtonComponent } from './language-button.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('LanguageButtonComponent', () => {
     let component: LanguageButtonComponent;
@@ -8,7 +9,7 @@ describe('LanguageButtonComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [LanguageButtonComponent],
+            imports: [LanguageButtonComponent, TranslateModule.forRoot()],
         }).compileComponents();
 
         fixture = TestBed.createComponent(LanguageButtonComponent);

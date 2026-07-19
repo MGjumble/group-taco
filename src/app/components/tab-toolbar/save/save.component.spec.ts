@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SaveComponent } from './save.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('SaveComponent', () => {
     let component: SaveComponent;
@@ -8,7 +9,7 @@ describe('SaveComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [SaveComponent],
+            imports: [SaveComponent, TranslateModule.forRoot()],
         }).compileComponents();
 
         fixture = TestBed.createComponent(SaveComponent);

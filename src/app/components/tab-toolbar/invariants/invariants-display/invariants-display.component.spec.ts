@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InvariantsDisplayComponent } from './invariants-display.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('InvariantsDisplayComponent', () => {
     let component: InvariantsDisplayComponent;
@@ -9,6 +11,7 @@ describe('InvariantsDisplayComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [InvariantsDisplayComponent],
+            providers: [provideHttpClient(), provideHttpClientTesting()],
         }).compileComponents();
 
         fixture = TestBed.createComponent(InvariantsDisplayComponent);

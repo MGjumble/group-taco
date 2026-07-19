@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReachabilityGraphDisplayComponent } from './reachability-graph-display.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('ReachabilityGraphDisplayComponent', () => {
     let component: ReachabilityGraphDisplayComponent;
@@ -9,6 +11,7 @@ describe('ReachabilityGraphDisplayComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [ReachabilityGraphDisplayComponent],
+            providers: [provideHttpClient(), provideHttpClientTesting()],
         }).compileComponents();
 
         fixture = TestBed.createComponent(ReachabilityGraphDisplayComponent);
