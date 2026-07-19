@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -28,6 +28,7 @@ import {
 } from '../../draw-toolbar/draw-toolbar.component';
 import { InvariantsDisplayComponent } from './invariants-display/invariants-display.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-invariants',
@@ -49,8 +50,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     templateUrl: './invariants.component.html',
     styleUrl: './invariants.component.css',
 })
-export class InvariantsComponent implements OnInit, OnDestroy {
-    private _sub?: Subscription;
+export class InvariantsComponent {
 
     private _displayService = inject(DisplayService);
     private _dialog = inject(MatDialog);
@@ -61,31 +61,26 @@ export class InvariantsComponent implements OnInit, OnDestroy {
     protected validationService = inject(InvariantsValidationService);
     protected InvariantValidity = InvariantValidity;
 
-    protected diagram: Diagram | undefined;
+    protected readonly diagram = toSignal(
+        this._displayService.diagram$.pipe(
+            filter((diagram): diagram is Diagram => diagram instanceof Diagram),
+        ),
+        { initialValue: undefined }
+    );
+
     protected inputEntries = this.validationService.inputEntries;
     protected isExamMode = computed(() => this.modeService.isExamMode(Tab.INVARIANTS));
 
-    ngOnInit(): void {
-        this._sub = this._displayService.diagram$
-            .pipe(
-                tap((_) => {
-                    this.diagram = undefined;
-                    this.entryService.deleteAllEntries();
-                    this.entryService.overrideShowTransitionBalances.set(null);
-                }),
-                filter((diagram): diagram is Diagram => diagram instanceof Diagram),
-            )
-            .subscribe((diagram: Diagram) => {
-                this.diagram = diagram;
-                this.validationService.initialize(diagram);
-            });
-    }
-
-    ngOnDestroy(): void {
-        this._sub?.unsubscribe();
-    }
-
     constructor() {
+        effect(() => {
+            const diagram = this.diagram();
+
+            if (diagram === undefined) {
+                this.entryService.deleteAllEntries();
+                this.entryService.overrideShowTransitionBalances.set(null);
+            } else this.validationService.initialize(diagram);
+        });
+
         this._matIconRegistry.addSvgIcon(
             'empty-taco',
             this._domSanitizer.bypassSecurityTrustResourceUrl('assets/images/empty-taco.svg'),
@@ -96,29 +91,32 @@ export class InvariantsComponent implements OnInit, OnDestroy {
         );
     }
 
-    protected readonly toolbarActions = computed<DrawToolbarAction[]>(() => [
-        {
-            icon: 'add',
-            tooltip: 'INVARIANTS.NEW_ENTRY',
-            color: 'primary',
-            isActive: this.diagram !== undefined,
-            action: () => this._onNewEntry(),
-        },
-        {
-            icon: 'checklist',
-            tooltip: 'INVARIANTS.VALIDATE_ENTRIES',
-            color: 'primary',
-            isActive: this.inputEntries().length > 0,
-            action: () => this._onValidateEntries(),
-        },
-        {
-            icon: 'remove_red_eye',
-            tooltip: 'INVARIANTS.SHOW_INVARIANTS',
-            color: 'primary',
-            isActive: this.diagram !== undefined,
-            action: () => this._onShowComputedInvariants(),
-        },
-    ]);
+    protected readonly toolbarActions = computed<DrawToolbarAction[]>(() => {
+        const diagram = this.diagram();
+        return [
+            {
+                icon: 'add',
+                tooltip: 'INVARIANTS.NEW_ENTRY',
+                color: 'primary',
+                isActive: diagram !== undefined,
+                action: () => this._onNewEntry(),
+            },
+            {
+                icon: 'checklist',
+                tooltip: 'INVARIANTS.VALIDATE_ENTRIES',
+                color: 'primary',
+                isActive: diagram !== undefined,
+                action: () => this._onValidateEntries(),
+            },
+            {
+                icon: 'remove_red_eye',
+                tooltip: 'INVARIANTS.SHOW_INVARIANTS',
+                color: 'primary',
+                isActive: diagram !== undefined,
+                action: () => this._onShowComputedInvariants(),
+            },
+        ];
+    });
 
     protected readonly toolbarInstructions = computed<DrawToolbarInstruction[]>(() => {
         return [
@@ -155,14 +153,14 @@ export class InvariantsComponent implements OnInit, OnDestroy {
      * Creates a new empty invariant entry.
      */
     private _onNewEntry(): void {
-        if (this.diagram) this.entryService.addEmptyEntry();
+        if (this.diagram()) this.entryService.addEmptyEntry();
     }
 
     /**
      * Validates all invariant entries.
      */
     private _onValidateEntries(): void {
-        if (this.diagram) this.validationService.validateAllEntries();
+        if (this.diagram()) this.validationService.validateAllEntries();
     }
 
     /**
@@ -184,11 +182,11 @@ export class InvariantsComponent implements OnInit, OnDestroy {
      * Converts each invariant vector to its notation (e.g., "p1 + p2 - p3") for user-friendly display.
      */
     private _showComputedInvariants(): void {
-        if (!this.diagram) return;
+        if (!this.diagram()) return;
         const vectors = this.validationService.computedMinInvariants();
         const notations = [];
         for (let vector of vectors) {
-            const notation = InvariantEntry.toNotation(vector, this.diagram.getPlaceLabels());
+            const notation = InvariantEntry.toNotation(vector, this.diagram()!.getPlaceLabels());
             notations.push(notation);
         }
         this._dialog.open(InvariantsModalComponent, {
