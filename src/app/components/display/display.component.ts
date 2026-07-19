@@ -94,7 +94,6 @@ export class DisplayComponent implements OnInit, OnDestroy {
     }
 
     public processNodeClick(node: DisplayableNode) {
-        const currentTab = this._tabStateService.currentTab();
         const diagram = this.diagram();
         if (
             !this.isPlayingEnabled() ||
@@ -103,6 +102,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
             !(node instanceof DiagramTransition)
         )
             return;
+        const currentTab = this._tabStateService.currentTab();
         if (currentTab === Tab.PLAY) {
             this._playService.processTransitionClicked(diagram, node, true, true, false);
             return;
