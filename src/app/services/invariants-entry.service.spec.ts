@@ -633,7 +633,6 @@ describe('InvariantsEntryService', () => {
         });
 
         it('should handle processPlaceClicked with undefined place', () => {
-            // This should not throw, but may not do much useful
             expect(() => service.processPlaceClicked(null as any, 1)).not.toThrow();
         });
 

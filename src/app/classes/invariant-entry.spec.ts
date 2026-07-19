@@ -160,10 +160,10 @@ describe('InvariantEntry', () => {
             expect(Object.values(InvariantValidity)).toEqual([
                 InvariantValidity.VALID_MINIMAL,
                 InvariantValidity.VALID_NOT_MINIMAL,
-                InvariantValidity.INVALID_NOT_FINAL,
-                InvariantValidity.INVALID_FINAL,
+                InvariantValidity.INCOMPLETE_MINIMAL,
+                InvariantValidity.INCOMPLETE_NOT_MINIMAL,
+                InvariantValidity.INVALID,
                 InvariantValidity.INVALID_TRIVIAL,
-                InvariantValidity.INCOMPLETE,
             ]);
         });
     });

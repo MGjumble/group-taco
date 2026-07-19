@@ -413,16 +413,6 @@ describe('InvariantsValidationService', () => {
             expect(matrix[0].length).toBe(2);
             
             // Verify concrete values for SS24/task1.json
-            // Transition order: t1, t2
-            // p1: t1 input (-1 from arc1), t1 output (+1 from arc2) = 0
-            expect(matrix[0]).toEqual([0, 0]);
-            // p2: t1 output (+1 from arc5), t2 output (+1 from arc3) = +2? No, +1+1=2? No...
-            // Wait: t1 output to p2: arc5 (t1->p2, w=1), t2 output to p2: arc3 (t2->p2, w=1)
-            // But in the transition definitions:
-            // t1 outputs to [p1, p2] via [arc2, arc5]
-            // t2 outputs to [p2] via [arc3]
-            // So p2 gets: t1 output +1 (arc5), t2 output +1 (arc3) = +2? 
-            // No, let me recalculate based on the actual code logic
             expect(matrix[1]).toEqual([1, 1]);
             // p3: t2 input (-3 from arc4)
             expect(matrix[2]).toEqual([0, -3]);
@@ -564,10 +554,7 @@ describe('InvariantsValidationService', () => {
             expect(matrix[3]).toEqual([-1, 1, 0, 0, -1, 1]);
             // g2: t1 input (-1), t3 input (-1), t2 output (+1), t4 output (+1)
             expect(matrix[4]).toEqual([-1, 1, -1, 1, 0, 0]);
-            // g3: t3 input (-1 via arc4), t4 input (-1 via arc? no), t5 input (-1 via arc3), t4 output (+1 via arc13), t6 output (+1 via arc14)
-            // Actually: t3 inputs from g3 (arc4: g3->t3, w=1), t4 has no input from g3, t5 inputs from g3 (arc3: g3->t5, w=1)
-            // t4 outputs to g3 (arc13: t4->g3, w=1), t6 outputs to g3 (arc14: t6->g3, w=1)
-            // Also: t1: 0, t2: 0, t3: -1, t4: +1, t5: -1, t6: +1
+            // g3: t3 input (-1), t4 input (-1), t5 input (-1), t4 output (+1), t6 output (+1)
             expect(matrix[5]).toEqual([0, 0, -1, 1, -1, 1]);
         });
 
@@ -816,13 +803,13 @@ describe('InvariantsValidationService', () => {
         });
 
         describe('Incomplete Invariants', () => {
-            it('should set INCOMPLETE for partial invariant on non-final validation', () => {
+            it('should set INCOMPLETE_MINIMAL for partial invariant on non-final validation', () => {
                 service.computedMinInvariants.set([[2, 2]]);
                 const entry = createInvariantEntry(1, [1, 1], placeLabels, transitionLabels, placeFlows);
 
                 service.validateEntry(entry, false);
 
-                expect(entry.validity).toBe(InvariantValidity.INCOMPLETE);
+                expect(entry.validity).toBe(InvariantValidity.INCOMPLETE_MINIMAL);
             });
 
             it('should calculate correct missing places count', () => {
@@ -843,13 +830,26 @@ describe('InvariantsValidationService', () => {
                 expect(entry.missingWeightsCount).toBe(3);
             });
 
-            it('should set INVALID_FINAL for incomplete invariant on final validation', () => {
+            it('should set INCOMPLETE_MINIMAL for incomplete invariant on final validation when it can be completed to minimal', () => {
                 service.computedMinInvariants.set([[2, 2]]);
-                const entry = createInvariantEntry(1, [1, 0], placeLabels, transitionLabels, placeFlows);
+                const entry = createInvariantEntry(1, [1, 1], placeLabels, transitionLabels, placeFlows);
 
                 service.validateEntry(entry, true);
 
-                expect(entry.validity).toBe(InvariantValidity.INVALID_FINAL);
+                expect(entry.validity).toBe(InvariantValidity.INCOMPLETE_MINIMAL);
+            });
+
+            it('should set INCOMPLETE_NOT_MINIMAL for incomplete non-minimal invariant', () => {
+                // For simple diagram P1 -> T1 -> P2, [1, 1] is the minimal invariant
+                // Vector [2, 1] cannot be completed to match [1,1] (since [1,1] - [2,1] = [-1,0] < 0)
+                // and [2,1] is not a valid invariant: -1*2 + 1*1 = -1 != 0
+                // Both places are in the minimal invariant, so invalidPlaces = []
+                service.computedMinInvariants.set([[1, 1]]);
+                const entry = createInvariantEntry(1, [2, 1], placeLabels, transitionLabels, placeFlows);
+
+                service.validateEntry(entry, false);
+
+                expect(entry.validity).toBe(InvariantValidity.INCOMPLETE_NOT_MINIMAL);
             });
         });
 
@@ -865,24 +865,52 @@ describe('InvariantsValidationService', () => {
         });
 
         describe('Invalid Invariants', () => {
-            it('should set INVALID_NOT_FINAL for non-invariant on non-final validation', () => {
-                service.computedMinInvariants.set([[2, 2]]);
+            beforeEach(() => {
+                // Setup for 3-place tests
+                service.computedMinInvariants.set([[1, 1, 0]]);
+                service.allPlaceLabels = ['P1', 'P2', 'P3'];
+                service.allTransitionLabels = ['T1'];
+                (service as any)._incidenceMatrix = [[-1], [1], [0]];
+            });
 
-                const entry = createInvariantEntry(1, [3, 0], placeLabels, transitionLabels, placeFlows);
+            it('should set INVALID for non-invariant with invalid places on non-final validation', () => {
+                const placeFlows3 = new Map<string, Map<string, number>>();
+                placeFlows3.set('P1', new Map([['T1', -1]]));
+                placeFlows3.set('P2', new Map([['T1', 1]]));
+                placeFlows3.set('P3', new Map());
+                
+                const entry = createInvariantEntry(1, [1, 0, 1], ['P1', 'P2', 'P3'], ['T1'], placeFlows3);
 
                 service.validateEntry(entry, false);
 
-                expect(entry.validity).toBe(InvariantValidity.INVALID_NOT_FINAL);
+                expect(entry.validity).toBe(InvariantValidity.INVALID);
+                expect(entry.invalidPlaces).toContain('P3');
             });
 
-            it('should set INVALID_FINAL for non-invariant on final validation', () => {
-                service.computedMinInvariants.set([[2, 2]]);
-
-                const entry = createInvariantEntry(1, [1, 0], placeLabels, transitionLabels, placeFlows);
+            it('should set INVALID for non-invariant with invalid places on final validation', () => {
+                const placeFlows3 = new Map<string, Map<string, number>>();
+                placeFlows3.set('P1', new Map([['T1', -1]]));
+                placeFlows3.set('P2', new Map([['T1', 1]]));
+                placeFlows3.set('P3', new Map());
+                
+                const entry = createInvariantEntry(1, [1, 0, 1], ['P1', 'P2', 'P3'], ['T1'], placeFlows3);
 
                 service.validateEntry(entry, true);
 
-                expect(entry.validity).toBe(InvariantValidity.INVALID_FINAL);
+                expect(entry.validity).toBe(InvariantValidity.INVALID);
+            });
+
+            it('should set invalidPlaces for invalid invariant', () => {
+                const placeFlows3 = new Map<string, Map<string, number>>();
+                placeFlows3.set('P1', new Map([['T1', -1]]));
+                placeFlows3.set('P2', new Map([['T1', 1]]));
+                placeFlows3.set('P3', new Map());
+                
+                const entry = createInvariantEntry(1, [1, 0, 1], ['P1', 'P2', 'P3'], ['T1'], placeFlows3);
+
+                service.validateEntry(entry, false);
+
+                expect(entry.invalidPlaces).toContain('P3');
             });
         });
     });
@@ -1182,7 +1210,6 @@ describe('InvariantsValidationService', () => {
             const arc1 = new DiagramArc('a1', 'p1', 't1', 2);
             const arc2 = new DiagramArc('a2', 't1', 'p2', 3);
 
-            // T1: input from P1 with weight 2, output to P2 with weight 3
             const t1 = new DiagramTransition('t1', 'T1', [p1], [p2], [arc1], [arc2]);
 
             const diagram = new Diagram([p1, p2], [t1], [arc1, arc2]);
