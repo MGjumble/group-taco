@@ -102,8 +102,7 @@ export class InvariantsValidationService {
             return;
         }
 
-        let computed = this.remainingMinInvariants();
-        if (computed.length === 0) computed = this.computedMinInvariants();
+        let computed = this.computedMinInvariants();
 
         const matchedInvariant = computed.find((inv) => vector.every((val, i) => inv[i] - val >= 0));
 
