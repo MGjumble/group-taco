@@ -5,7 +5,7 @@
 
     <div class="outer-wrapper">
         <div class="table-wrapper">
-            @if (diagram && inputEntries().length > 0) {
+            @if (diagram()) {
                 <div class="table-container">
                     <table class="table">
                         <thead>
@@ -107,7 +107,7 @@
                         </tbody>
                     </table>
                 </div>
-                @if (!isExamMode()) {
+                @if (!isExamMode() && validationService.computedMinInvariants().length > 0) {
                     <div class="progress-container">
                         {{ 'INVARIANTS.FOUND_INVARIANTS' | translate }}:
                         @for (found of validationService.foundMinInvariants(); track $index) {
