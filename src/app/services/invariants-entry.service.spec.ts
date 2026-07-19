@@ -44,7 +44,7 @@ function createTestInvariantEntry(
     transitionLabels: string[] = ['T1'],
     placeFlows: Map<string, Map<string, number>> = new Map(),
 ): InvariantEntry {
-    return new InvariantEntry(id, '', undefined, undefined, undefined, placeLabels, transitionLabels, placeFlows);
+    return new InvariantEntry(id, placeLabels, transitionLabels, placeFlows);
 }
 
 // #endregion

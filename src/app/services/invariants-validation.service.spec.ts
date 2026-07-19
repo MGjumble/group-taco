@@ -86,10 +86,6 @@ function createInvariantEntry(
 ): InvariantEntry {
     const entry = new InvariantEntry(
         id,
-        '',
-        undefined,
-        undefined,
-        undefined,
         placeLabels,
         transitionLabels,
         placeFlows,

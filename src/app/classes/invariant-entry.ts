@@ -6,32 +6,26 @@ import { signal } from '@angular/core';
  * place weights, and transition balances.
  */
 export class InvariantEntry {
+    notation = '';
+    validity: InvariantValidity | undefined = undefined;
+    missingPlacesCount: number | undefined = undefined;
+    missingWeightsCount: number | undefined = undefined;
+    invalidPlaces: string[] = [];
+    placeWeights = signal<Map<string, number>>(new Map());
+    transitionBalances = signal<Map<string, number>>(new Map());
+
     /**
      * Creates an instance of InvariantEntry.
      * @param id - Unique identifier for the invariant entry.
-     * @param notation - String representation of the invariant (e.g., "p1 + 3p2 - p3").
-     * @param validity - Current validity status of the invariant (default: undefined).
-     * @param missingPlacesCount - Number of places missing from the invariant (default: undefined).
-     * @param missingWeightsCount - Number of places with missing weights (default: undefined).
-     * @param invalidPlaces - Labels of invalid places (that are not part of any invariant).
      * @param allPlaces - Array of all place labels in the Petri net.
      * @param allTransitions - Array of all transition labels in the Petri net.
      * @param placeFlows - Map of place labels to their flow maps (place → transition → weight).
-     * @param placeWeights - Signal containing a map of place labels to their weights (default: empty map).
-     * @param transitionBalances - Signal containing a map of transition labels to their balance values (default: empty map).
      */
     constructor(
         public id: number,
-        public notation: string,
-        public validity: InvariantValidity | undefined = undefined,
-        public missingPlacesCount: number | undefined = undefined,
-        public missingWeightsCount: number | undefined = undefined,
-        public invalidPlaces: string[] = [],
         public allPlaces: string[],
         public allTransitions: string[],
         public placeFlows: Map<string, Map<string, number>>,
-        public placeWeights = signal<Map<string, number>>(new Map()),
-        public transitionBalances = signal<Map<string, number>>(new Map()),
     ) {
         this.placeWeights.set(new Map(this.allPlaces.map((label) => [label, 0])));
         this.transitionBalances.set(new Map(this.allTransitions.map((label) => [label, 0])));

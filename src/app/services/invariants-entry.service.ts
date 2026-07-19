@@ -94,11 +94,6 @@ export class InvariantsEntryService {
     addEmptyEntry(): InvariantEntry {
         const newEntry = new InvariantEntry(
             this.getNewId(),
-            '',
-            undefined,
-            undefined,
-            undefined,
-            [],
             this._validationService.allPlaceLabels,
             this._validationService.allTransitionLabels,
             this._validationService.placeFlows,
