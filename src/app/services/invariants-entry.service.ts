@@ -11,16 +11,16 @@ export class InvariantsEntryService {
     private _modeService = inject(ModeService);
     private _validationService = inject(InvariantsValidationService);
 
-    private _idCounter = 0;
-    private _isExamMode = computed(() => this._modeService.isExamMode(Tab.INVARIANTS));
+    idCounter = 0;
+    isExamMode = computed(() => this._modeService.isExamMode(Tab.INVARIANTS));
 
     activeEntry = signal<InvariantEntry | null>(null);
     overrideShowTransitionBalances = signal<boolean | null>(null);
-    showTransitionBalances = computed(() => this.overrideShowTransitionBalances() ?? !this._isExamMode());
+    showTransitionBalances = computed(() => this.overrideShowTransitionBalances() ?? !this.isExamMode());
 
     constructor() {
         effect(() => {
-            this._isExamMode();
+            this.isExamMode();
             this.overrideShowTransitionBalances.set(null);
         });
     }
@@ -42,7 +42,7 @@ export class InvariantsEntryService {
         if (!place) return;
         const entry = this.getActiveEntry();
         this.updateEntry(entry, place, weightDiff);
-        if (this._isExamMode()) entry.setValidity(undefined);
+        if (this.isExamMode()) entry.setValidity(undefined);
         else this._validationService.validateEntry(entry);
     }
 
@@ -107,7 +107,7 @@ export class InvariantsEntryService {
      * @returns The new unique ID.
      */
     getNewId(): number {
-        return ++this._idCounter;
+        return ++this.idCounter;
     }
 
     /**

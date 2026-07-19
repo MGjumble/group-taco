@@ -27,15 +27,13 @@ export class InvariantsValidationService {
 
     foundMinInvariants = computed<number[][]>(() => {
         const inputs = Array.from(this.inputEntries().map((entry) => entry.vector));
-        return this.computedMinInvariants().filter((comp) =>
-            inputs.some((input) => this._areVectorsEqual(input, comp)),
-        );
+        return this.computedMinInvariants().filter((comp) => inputs.some((input) => this.areVectorsEqual(input, comp)));
     });
 
     remainingMinInvariants = computed<number[][]>(() => {
         const found = this.foundMinInvariants();
         const remaining = this.computedMinInvariants().filter(
-            (comp) => !found.some((found) => this._areVectorsEqual(found, comp)),
+            (comp) => !found.some((found) => this.areVectorsEqual(found, comp)),
         );
         if (remaining.length === 0 && !this._modeService.isExamMode(Tab.INVARIANTS)) {
             this._notificationService.showSuccess('TOASTER.HEADER.SUCCESS', 'TOASTER.BODY.ALL_MIN_INVARIANTS_FOUND');
@@ -64,6 +62,15 @@ export class InvariantsValidationService {
     }
 
     /**
+     * Sets the incidence matrix for testing purposes.
+     *
+     * @param matrix - The incidence matrix to set.
+     */
+    set incidenceMatrix(matrix: number[][]) {
+        this._incidenceMatrix = matrix;
+    }
+
+    /**
      * Initializes the service with the given Petri net diagram.
      * Sets up place/transition labels, place flows, and computes the minimal invariants.
      *
@@ -73,7 +80,7 @@ export class InvariantsValidationService {
         this._allPlaceLabels = diagram.getPlaceLabels();
         this._allTransitionLabels = diagram.getTransitionLabels();
         this.setPlaceFlows(diagram.transitions);
-        this._computeMinimalInvariants(diagram);
+        this.computeMinimalInvariants(diagram);
     }
 
     /**
@@ -94,7 +101,7 @@ export class InvariantsValidationService {
         }
 
         const computedInvariants = this.computedMinInvariants();
-        const isExactMatch = computedInvariants.some((inv) => this._areVectorsEqual(vector, inv));
+        const isExactMatch = computedInvariants.some((inv) => this.areVectorsEqual(vector, inv));
 
         if (isExactMatch) {
             entry.setValidity(InvariantValidity.VALID_MINIMAL);
@@ -117,13 +124,13 @@ export class InvariantsValidationService {
             return;
         }
 
-        const isInvariant = this._isInvariant(vector);
+        const isInvariant = this.isInvariant(vector);
         if (isInvariant) {
             entry.setValidity(InvariantValidity.VALID_NOT_MINIMAL);
             return;
         }
 
-        entry.invalidPlaces = this._getInvalidPlaces(vector);
+        entry.invalidPlaces = this.getInvalidPlaces(vector);
 
         const incompleteNonMinimal = entry.invalidPlaces.length === 0 && !incompleteMinimal;
 
@@ -222,7 +229,7 @@ export class InvariantsValidationService {
      * @param b - Second vector to compare.
      * @returns true if all corresponding elements in a and b are equal (within epsilon), false otherwise.
      */
-    private _areVectorsEqual(a: number[], b: number[]): boolean {
+    areVectorsEqual(a: number[], b: number[]): boolean {
         if (a.length !== b.length) return false;
         return a.every((val, i) => Math.abs(val - b[i]) < this._EPSILON);
     }
@@ -237,7 +244,7 @@ export class InvariantsValidationService {
      * @note
      * Uses `_EPSILON` to account for floating-point precision errors.
      */
-    private _isInvariant(vector: number[]): boolean {
+    isInvariant(vector: number[]): boolean {
         for (let j = 0; j < this._incidenceMatrix[0].length; j++) {
             let sum = 0;
             for (let i = 0; i < vector.length; i++) {
@@ -254,14 +261,21 @@ export class InvariantsValidationService {
      *
      * @param diagram - The Petri net diagram to compute invariants for.
      */
-    private _computeMinimalInvariants(diagram: Diagram): void {
+    protected computeMinimalInvariants(diagram: Diagram): void {
         this._incidenceMatrix = this.createIncidenceMatrix(diagram);
         const allFoundInvariants = this._computingService.placeInvariants(this._incidenceMatrix);
         const minimalInvariants = this._computingService.calculateMinimalPIs(allFoundInvariants, this._incidenceMatrix);
         this.computedMinInvariants.set(minimalInvariants);
     }
 
-    private _getInvalidPlaces(vector: number[]): string[] {
+    /**
+     * Gets the list of places that are not part of any minimal invariant.
+     * Used to identify invalid places in a proposed invariant entry.
+     *
+     * @param vector - The vector to check for invalid places.
+     * @returns Array of place labels that are not in any minimal invariant.
+     */
+    protected getInvalidPlaces(vector: number[]): string[] {
         const invalidPlaces: string[] = [];
         vector.forEach((val, placeIndex) => {
             if (val !== 0) {
