@@ -108,9 +108,9 @@ export class InvariantsValidationService {
             return;
         }
 
-        const matchedInvariant = this.remainingMinInvariants().find(
-            (inv) => vector.every((val, i) => inv[i] - val >= 0)
-        ) || computedInvariants.find((inv) => vector.every((val, i) => inv[i] - val >= 0));
+        const matchedInvariant =
+            this.remainingMinInvariants().find((inv) => vector.every((val, i) => inv[i] - val >= 0)) ||
+            computedInvariants.find((inv) => vector.every((val, i) => inv[i] - val >= 0));
 
         const incompleteMinimal = matchedInvariant !== undefined;
 
